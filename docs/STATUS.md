@@ -11,7 +11,7 @@
 | Supabase | Vinculado | Proyecto `nrqmnaktnpcgqrqpoksi`, BD vacía, CLI local en `supabase/` |
 | GAS OTP | Desplegado | Script `13lSaw-...`, deployment v1.2 funcionando (GET OK) |
 | GAS Firma | Desplegado | Script `16yZGc-...`, deployment v1.1 funcionando (GET OK) |
-| GAS Drive | Conectado | Script `1pMbDQ-...`, vacío (Codigo.gs placeholder) |
+| GAS Drive | Desplegado | Script `1pMbDQ-...`, deployment v1.0 funcionando (GET OK) |
 
 ## GAS OTP — Servicio implementado
 
@@ -53,6 +53,20 @@ Guardados en `docs/` como referencia local:
 
 Los originales viven en Google Docs (DOC_ID_FDATO01 y DOC_ID_SICEPOL01) y se embeben como anexos en el PDF de constancia.
 
+## GAS Drive — Servicio implementado
+
+| Archivo | Contenido |
+|---------|-----------|
+| appsscript.json | Timezone Bogotá, webapp ANYONE_ANONYMOUS |
+| Codigo.gs | Router: doPost (crearCarpeta), doGet, respuesta_json |
+| Drive.gs | crear_carpeta_expediente, obtener_o_crear_subcarpeta, obtener_subcarpetas_por_tipo, validar_datos_carpeta |
+| Supabase.gs | actualizar_carpeta_perfil (PATCH profiles SET carpeta_drive_id) |
+
+Script Properties configuradas (4):
+- API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, CARPETA_RAIZ_ID
+
+Pendiente: pruebas con POST real (requiere tabla profiles en Supabase).
+
 ## Documentación actualizada
 
 - ARCHITECTURE.md — verificarOTP retorna access_token + refresh_token + token_verificacion, flujo login con GAS→tokens→setSession, auth_user_id null hasta primer login
@@ -64,15 +78,14 @@ Los originales viven en Google Docs (DOC_ID_FDATO01 y DOC_ID_SICEPOL01) y se emb
 | Prioridad | Componente | Archivos |
 |-----------|-----------|----------|
 | 1 | Migración SQL | supabase/migrations/001_schema.sql (7 tablas + funciones RLS + políticas) |
-| 2 | GAS Drive | gas/drive/Codigo.gs, Drive.gs |
-| 3 | Design system CSS | css/tokens.css, css/componentes.css |
-| 4 | Clientes JS | js/config.js, js/supabase-client.js, js/gas-client.js |
-| 5 | Login | pages/login.html |
-| 6 | Registro | pages/registro.html |
-| 7 | Firma standalone | pages/firma.html |
-| 8 | Mi expediente | pages/mi-expediente.html |
-| 9 | Dashboard | pages/dashboard.html |
-| 10 | Gestión accesos | pages/accesos.html |
+| 2 | Design system CSS | css/tokens.css, css/componentes.css |
+| 3 | Clientes JS | js/config.js, js/supabase-client.js, js/gas-client.js |
+| 4 | Login | pages/login.html |
+| 5 | Registro | pages/registro.html |
+| 6 | Firma standalone | pages/firma.html |
+| 7 | Mi expediente | pages/mi-expediente.html |
+| 8 | Dashboard | pages/dashboard.html |
+| 9 | Gestión accesos | pages/accesos.html |
 
 ## Preguntas arquitectónicas resueltas
 
