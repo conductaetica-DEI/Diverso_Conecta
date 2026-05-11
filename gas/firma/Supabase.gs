@@ -133,7 +133,7 @@ function consultar_perfil(perfil_id) {
   var props = PropertiesService.getScriptProperties();
   var url = props.getProperty('SUPABASE_URL') +
     '/rest/v1/profiles?id=eq.' + encodeURIComponent(perfil_id) +
-    '&select=nombre_completo,razon_social,email_principal,tipo_documento,numero_documento,profile_type' +
+    '&select=nombre,apellido,razon_social,email_principal,tipo_documento,numero_documento,profile_type' +
     '&limit=1';
   var key = props.getProperty('SUPABASE_SERVICE_ROLE_KEY');
 

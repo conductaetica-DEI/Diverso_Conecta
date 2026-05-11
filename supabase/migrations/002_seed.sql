@@ -22,8 +22,8 @@ BEGIN
   -- ------------------------------------------------------------
 
   -- Super Admin — todos los permisos
-  INSERT INTO profiles (profile_type, nombre_completo, tipo_documento, numero_documento, email_principal, telefono, estado_perfil)
-  VALUES ('miembro', 'Super Admin', 'CC', '0000000001', 'admin@diversolab.org', '+57 300 0000001', 'activo')
+  INSERT INTO profiles (profile_type, nombre, apellido, tipo_documento, numero_documento, email_principal, telefono, estado_perfil)
+  VALUES ('miembro', 'Super', 'Admin', 'CC', '0000000001', 'admin@diversolab.org', '+57 300 0000001', 'activo')
   RETURNING id INTO v_super_admin;
 
   INSERT INTO permisos_miembro (perfil_id, permiso) VALUES
@@ -33,16 +33,16 @@ BEGIN
     (v_super_admin, 'gestion_plataforma');
 
   -- Analista Inclusión — solo gestion_beneficiarios
-  INSERT INTO profiles (profile_type, nombre_completo, tipo_documento, numero_documento, email_principal, telefono, estado_perfil)
-  VALUES ('miembro', 'Analista Inclusión', 'CC', '0000000002', 'analista@diversolab.org', '+57 300 0000002', 'activo')
+  INSERT INTO profiles (profile_type, nombre, apellido, tipo_documento, numero_documento, email_principal, telefono, estado_perfil)
+  VALUES ('miembro', 'Ana', 'Rodríguez', 'CC', '0000000002', 'analista@diversolab.org', '+57 300 0000002', 'activo')
   RETURNING id INTO v_analista;
 
   INSERT INTO permisos_miembro (perfil_id, permiso) VALUES
     (v_analista, 'gestion_beneficiarios');
 
   -- Admin Proveedores — gestion_proveedores + gestion_accesos
-  INSERT INTO profiles (profile_type, nombre_completo, tipo_documento, numero_documento, email_principal, telefono, estado_perfil)
-  VALUES ('miembro', 'Admin Proveedores', 'CC', '0000000003', 'adminprov@diversolab.org', '+57 300 0000003', 'activo')
+  INSERT INTO profiles (profile_type, nombre, apellido, tipo_documento, numero_documento, email_principal, telefono, estado_perfil)
+  VALUES ('miembro', 'Carlos', 'Mendoza', 'CC', '0000000003', 'adminprov@diversolab.org', '+57 300 0000003', 'activo')
   RETURNING id INTO v_admin_prov;
 
   INSERT INTO permisos_miembro (perfil_id, permiso) VALUES
@@ -54,13 +54,13 @@ BEGIN
   -- ------------------------------------------------------------
 
   -- Beneficiario activo
-  INSERT INTO profiles (profile_type, nombre_completo, tipo_documento, numero_documento, email_principal, telefono, estado_perfil)
-  VALUES ('beneficiario', 'Juan Pérez', 'CC', '1234567890', 'juan.perez@test.com', '+57 300 1111111', 'activo')
+  INSERT INTO profiles (profile_type, nombre, apellido, tipo_documento, numero_documento, email_principal, telefono, estado_perfil)
+  VALUES ('beneficiario', 'Juan', 'Pérez', 'CC', '1234567890', 'juan.perez@test.com', '+57 300 1111111', 'activo')
   RETURNING id INTO v_juan;
 
   -- Beneficiaria pendiente (no puede autenticarse — auth_user_id queda NULL)
-  INSERT INTO profiles (profile_type, nombre_completo, tipo_documento, numero_documento, email_principal, telefono, estado_perfil)
-  VALUES ('beneficiario', 'María López', 'CC', '9876543210', 'maria.lopez@test.com', '+57 300 2222222', 'pendiente')
+  INSERT INTO profiles (profile_type, nombre, apellido, tipo_documento, numero_documento, email_principal, telefono, estado_perfil)
+  VALUES ('beneficiario', 'María', 'López', 'CC', '9876543210', 'maria.lopez@test.com', '+57 300 2222222', 'pendiente')
   RETURNING id INTO v_maria;
 
   -- Aliado (empresa)
@@ -69,8 +69,8 @@ BEGIN
   RETURNING id INTO v_empresa_abc;
 
   -- Contratista
-  INSERT INTO profiles (profile_type, nombre_completo, tipo_documento, numero_documento, email_principal, telefono, estado_perfil)
-  VALUES ('contratista', 'Pedro Gómez', 'CC', '5555555555', 'pedro.gomez@test.com', '+57 300 4444444', 'activo')
+  INSERT INTO profiles (profile_type, nombre, apellido, tipo_documento, numero_documento, email_principal, telefono, estado_perfil)
+  VALUES ('contratista', 'Pedro', 'Gómez', 'CC', '5555555555', 'pedro.gomez@test.com', '+57 300 4444444', 'activo')
   RETURNING id INTO v_pedro;
 
   -- Proveedor (empresa)

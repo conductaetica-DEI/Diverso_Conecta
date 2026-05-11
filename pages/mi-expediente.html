@@ -435,7 +435,7 @@
       try {
         var perfiles = await supabase_fetch(
           '/profiles?auth_user_id=eq.' + estado.sesion.user.id +
-          '&select=id,profile_type,nombre_completo,razon_social,tipo_documento,numero_documento,email_principal,estado_perfil&limit=1',
+          '&select=id,profile_type,nombre,apellido,razon_social,tipo_documento,numero_documento,email_principal,estado_perfil&limit=1',
           estado.jwt
         );
 
@@ -499,7 +499,7 @@
     // --- Encabezado ---
 
     function poblar_encabezado() {
-      var nombre = estado.perfil.razon_social || estado.perfil.nombre_completo || '';
+      var nombre = estado.perfil.razon_social || ((estado.perfil.nombre || '') + ' ' + (estado.perfil.apellido || '')).trim() || '';
       document.getElementById('encabezado-subtitulo').textContent = nombre;
     }
 
@@ -507,7 +507,7 @@
 
     function poblar_perfil() {
       var p = estado.perfil;
-      var nombre = p.razon_social || p.nombre_completo || '—';
+      var nombre = p.razon_social || ((p.nombre || '') + ' ' + (p.apellido || '')).trim() || '—';
 
       var html = '<div class="perfil-cabecera">' +
         '<div>' +

@@ -631,7 +631,7 @@
     async function cargar_perfil_y_permisos() {
       var datos = await supabase_fetch(
         '/profiles?auth_user_id=eq.' + estado.sesion.user.id +
-        '&select=id,profile_type,nombre_completo,email_principal,permisos_miembro(permiso,activo)&limit=1',
+        '&select=id,profile_type,nombre,apellido,email_principal,permisos_miembro(permiso,activo)&limit=1',
         estado.jwt
       );
 
@@ -670,7 +670,7 @@
       if (estado.es_plataforma) {
         estado.expedientes = await supabase_fetch(
           '/profiles?profile_type=neq.miembro&estado_perfil=eq.activo' +
-          '&select=id,nombre_completo,razon_social,profile_type,estado_perfil,email_principal,tipo_documento,numero_documento,fecha_registro,updated_at' +
+          '&select=id,nombre,apellido,razon_social,profile_type,estado_perfil,email_principal,tipo_documento,numero_documento,fecha_registro,updated_at' +
           '&order=fecha_registro.desc&limit=50',
           estado.jwt
         ) || [];
@@ -692,7 +692,7 @@
 
       var perfiles = await supabase_fetch(
         '/profiles?id=in.(' + ids.join(',') + ')' +
-        '&select=id,nombre_completo,razon_social,profile_type,estado_perfil,email_principal,tipo_documento,numero_documento,fecha_registro,updated_at' +
+        '&select=id,nombre,apellido,razon_social,profile_type,estado_perfil,email_principal,tipo_documento,numero_documento,fecha_registro,updated_at' +
         '&order=fecha_registro.desc',
         estado.jwt
       ) || [];
@@ -745,7 +745,7 @@
 
     function poblar_encabezado() {
       document.getElementById('encabezado-nombre').textContent =
-        estado.perfil.nombre_completo || estado.perfil.email_principal;
+        ((estado.perfil.nombre || '') + ' ' + (estado.perfil.apellido || '')).trim() || estado.perfil.email_principal;
 
       var badges_html = '';
       for (var i = 0; i < estado.permisos.length; i++) {
@@ -1080,7 +1080,7 @@
     // --- Helpers ---
 
     function nombre_display(perfil) {
-      return perfil.razon_social || perfil.nombre_completo || '—';
+      return perfil.razon_social || ((perfil.nombre || '') + ' ' + (perfil.apellido || '')).trim() || '—';
     }
 
     function buscar_expediente(perfil_id) {

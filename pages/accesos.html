@@ -361,9 +361,15 @@
       <button type="button" class="modal-cerrar" aria-label="Cerrar" data-cerrar-modal>&times;</button>
       <h3 class="modal-titulo" id="modal-nuevo-titulo">Nuevo miembro</h3>
 
-      <div class="modal-campo">
-        <label for="nuevo-nombre" class="campo-label">Nombre completo <span class="campo-obligatorio">*</span></label>
-        <input type="text" id="nuevo-nombre" class="campo-texto" autocomplete="name" aria-required="true">
+      <div class="modal-campo modal-campo-fila">
+        <div>
+          <label for="nuevo-nombre" class="campo-label">Nombre <span class="campo-obligatorio">*</span></label>
+          <input type="text" id="nuevo-nombre" class="campo-texto" autocomplete="given-name" aria-required="true">
+        </div>
+        <div>
+          <label for="nuevo-apellido" class="campo-label">Apellido <span class="campo-obligatorio">*</span></label>
+          <input type="text" id="nuevo-apellido" class="campo-texto" autocomplete="family-name" aria-required="true">
+        </div>
       </div>
 
       <div class="modal-campo">
@@ -629,7 +635,7 @@
 
       try {
         var datos = await supabase_fetch(
-          '/profiles?estado_perfil=eq.pendiente&select=id,nombre_completo,razon_social,profile_type,tipo_documento,numero_documento,email_principal,fecha_registro&order=fecha_registro.asc',
+          '/profiles?estado_perfil=eq.pendiente&select=id,nombre,apellido,razon_social,profile_type,tipo_documento,numero_documento,email_principal,fecha_registro&order=fecha_registro.asc',
           estado.jwt
         );
 
@@ -701,7 +707,7 @@
           await crear_carpeta({
             profile_id: perfil.id,
             profile_type: perfil.profile_type,
-            nombre: perfil.nombre_completo,
+            nombre: ((perfil.nombre || '') + ' ' + (perfil.apellido || '')).trim(),
             razon_social: perfil.razon_social
           });
         } catch (e) { /* carpeta se puede crear después */ }
@@ -763,7 +769,7 @@
 
       try {
         var datos = await supabase_fetch(
-          '/profiles?profile_type=eq.miembro&estado_perfil=eq.activo&select=id,nombre_completo,email_principal,permisos_miembro(permiso,activo)&order=nombre_completo.asc',
+          '/profiles?profile_type=eq.miembro&estado_perfil=eq.activo&select=id,nombre,apellido,email_principal,permisos_miembro(permiso,activo)&order=nombre.asc',
           estado.jwt
         );
 
@@ -794,7 +800,7 @@
         var permisos_activos = (m.permisos_miembro || []).filter(function(p) { return p.activo; });
 
         html += '<tr>' +
-          '<td>' + escapar_html(m.nombre_completo || '—') + '</td>' +
+          '<td>' + escapar_html(((m.nombre || '') + ' ' + (m.apellido || '')).trim() || '—') + '</td>' +
           '<td>' + escapar_html(m.email_principal) + '</td>' +
           '<td><div class="permisos-grupo">' + badges_permisos(permisos_activos) + '</div></td>' +
           '<td><button type="button" class="btn-accion btn-accion-editar" data-accion="editar" data-indice="' + i + '">Editar</button></td>' +
@@ -816,6 +822,7 @@
 
     function al_click_nuevo_miembro() {
       document.getElementById('nuevo-nombre').value = '';
+      document.getElementById('nuevo-apellido').value = '';
       document.getElementById('nuevo-email').value = '';
       document.getElementById('nuevo-tipo-doc').value = 'CC';
       document.getElementById('nuevo-num-doc').value = '';
@@ -830,11 +837,12 @@
 
     async function al_crear_miembro() {
       var nombre = document.getElementById('nuevo-nombre').value.trim();
+      var apellido = document.getElementById('nuevo-apellido').value.trim();
       var email = document.getElementById('nuevo-email').value.trim();
       var tipo_doc = document.getElementById('nuevo-tipo-doc').value;
       var num_doc = document.getElementById('nuevo-num-doc').value.trim();
 
-      if (!nombre || !email || !tipo_doc || !num_doc) {
+      if (!nombre || !apellido || !email || !tipo_doc || !num_doc) {
         mostrar_error('Todos los campos son obligatorios.');
         return;
       }
@@ -858,7 +866,8 @@
           metodo: 'POST',
           cuerpo: {
             profile_type: 'miembro',
-            nombre_completo: nombre,
+            nombre: nombre,
+            apellido: apellido,
             email_principal: email,
             tipo_documento: tipo_doc,
             numero_documento: num_doc,
@@ -907,7 +916,7 @@
       estado.miembro_editando_id = miembro.id;
 
       document.getElementById('editar-info-miembro').textContent =
-        (miembro.nombre_completo || '—') + ' — ' + miembro.email_principal;
+        (((miembro.nombre || '') + ' ' + (miembro.apellido || '')).trim() || '—') + ' — ' + miembro.email_principal;
 
       var permisos_activos = (miembro.permisos_miembro || [])
         .filter(function(p) { return p.activo; })
@@ -959,7 +968,7 @@
     async function cargar_datos_asignaciones() {
       try {
         var miembros = await supabase_fetch(
-          '/profiles?profile_type=eq.miembro&estado_perfil=eq.activo&select=id,nombre_completo&order=nombre_completo.asc',
+          '/profiles?profile_type=eq.miembro&estado_perfil=eq.activo&select=id,nombre,apellido&order=nombre.asc',
           estado.jwt
         );
         poblar_selector_analistas(miembros || []);
@@ -974,7 +983,7 @@
       var html = '<option value="">Seleccionar miembro...</option>';
       for (var i = 0; i < miembros.length; i++) {
         html += '<option value="' + miembros[i].id + '">' +
-          escapar_html(miembros[i].nombre_completo || '—') + '</option>';
+          escapar_html(((miembros[i].nombre || '') + ' ' + (miembros[i].apellido || '')).trim() || '—') + '</option>';
       }
       selector.innerHTML = html;
     }
@@ -1009,7 +1018,7 @@
 
         var ids = asigs.map(function(a) { return a.perfil_id; });
         var perfiles = await supabase_fetch(
-          '/profiles?id=in.(' + ids.join(',') + ')&select=id,nombre_completo,razon_social,profile_type,email_principal',
+          '/profiles?id=in.(' + ids.join(',') + ')&select=id,nombre,apellido,razon_social,profile_type,email_principal',
           estado.jwt
         );
 
@@ -1103,7 +1112,7 @@
 
       try {
         var todos = await supabase_fetch(
-          '/profiles?estado_perfil=eq.activo&profile_type=neq.miembro&select=id,nombre_completo,razon_social,profile_type&order=nombre_completo.asc',
+          '/profiles?estado_perfil=eq.activo&profile_type=neq.miembro&select=id,nombre,apellido,razon_social,profile_type&order=nombre.asc',
           estado.jwt
         );
 
@@ -1186,7 +1195,7 @@
     // --- Helpers ---
 
     function nombre_display(perfil) {
-      return perfil.razon_social || perfil.nombre_completo || '—';
+      return perfil.razon_social || ((perfil.nombre || '') + ' ' + (perfil.apellido || '')).trim() || '—';
     }
 
     function badge_tipo(tipo) {

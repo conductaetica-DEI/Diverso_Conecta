@@ -475,68 +475,110 @@
       <p class="seccion-subtitulo">Completa tus datos. Todos los campos marcados con <span class="campo-obligatorio">*</span> son obligatorios.</p>
 
       <div id="campos-natural">
-        <div class="campo-grupo">
-          <label for="campo-nombre" class="campo-label">Nombre completo <span class="campo-obligatorio" aria-hidden="true">*</span></label>
-          <input type="text" id="campo-nombre" class="campo-texto" autocomplete="name" aria-required="true" aria-describedby="campo-nombre-error">
-          <p id="campo-nombre-error" class="campo-mensaje-error" hidden>El nombre es obligatorio.</p>
+        <div class="campo-fila">
+          <div class="campo-grupo">
+            <label for="campo-nombre" class="campo-label">Nombre <span class="campo-obligatorio" aria-hidden="true">*</span></label>
+            <input type="text" id="campo-nombre" class="campo-texto" autocomplete="given-name" aria-required="true" aria-describedby="campo-nombre-error">
+            <p id="campo-nombre-error" class="campo-mensaje-error" hidden>El nombre es obligatorio.</p>
+          </div>
+          <div class="campo-grupo">
+            <label for="campo-apellido" class="campo-label">Apellido <span class="campo-obligatorio" aria-hidden="true">*</span></label>
+            <input type="text" id="campo-apellido" class="campo-texto" autocomplete="family-name" aria-required="true" aria-describedby="campo-apellido-error">
+            <p id="campo-apellido-error" class="campo-mensaje-error" hidden>El apellido es obligatorio.</p>
+          </div>
+        </div>
+        <div class="campo-fila">
+          <div class="campo-grupo">
+            <label for="campo-tipo-doc" class="campo-label">Tipo de documento <span class="campo-obligatorio" aria-hidden="true">*</span></label>
+            <select id="campo-tipo-doc" class="campo-select" aria-required="true" aria-describedby="campo-tipo-doc-error">
+              <option value="">Seleccionar...</option>
+              <option value="CC">Cédula de Ciudadanía</option>
+              <option value="CE">Cédula de Extranjería</option>
+              <option value="PA">Pasaporte</option>
+              <option value="PEP">PEP</option>
+              <option value="PPT">PPT</option>
+              <option value="TI">Tarjeta de Identidad</option>
+            </select>
+            <p id="campo-tipo-doc-error" class="campo-mensaje-error" hidden>Selecciona un tipo de documento.</p>
+          </div>
+          <div class="campo-grupo">
+            <label for="campo-num-doc" class="campo-label">Número de documento <span class="campo-obligatorio" aria-hidden="true">*</span></label>
+            <input type="text" id="campo-num-doc" class="campo-texto" aria-required="true" aria-describedby="campo-num-doc-error">
+            <p id="campo-num-doc-error" class="campo-mensaje-error" hidden>Ingresa un número de documento válido.</p>
+          </div>
         </div>
       </div>
 
       <div id="campos-juridica" hidden>
-        <div class="campo-grupo">
-          <label for="campo-razon-social" class="campo-label">Razón social <span class="campo-obligatorio" aria-hidden="true">*</span></label>
-          <input type="text" id="campo-razon-social" class="campo-texto" aria-required="true" aria-describedby="campo-razon-social-error">
-          <p id="campo-razon-social-error" class="campo-mensaje-error" hidden>La razón social es obligatoria.</p>
+        <p class="seccion-subtitulo" style="font-weight:700;margin-bottom:var(--spacing-sm)">Datos de la empresa</p>
+        <div class="campo-fila">
+          <div class="campo-grupo">
+            <label for="campo-razon-social" class="campo-label">Razón social <span class="campo-obligatorio" aria-hidden="true">*</span></label>
+            <input type="text" id="campo-razon-social" class="campo-texto" aria-required="true" aria-describedby="campo-razon-social-error">
+            <p id="campo-razon-social-error" class="campo-mensaje-error" hidden>La razón social es obligatoria.</p>
+          </div>
+          <div class="campo-grupo">
+            <label for="campo-nit-empresa" class="campo-label">NIT <span class="campo-obligatorio" aria-hidden="true">*</span></label>
+            <input type="text" id="campo-nit-empresa" class="campo-texto" placeholder="900123456-1" aria-required="true" aria-describedby="campo-nit-empresa-error">
+            <p id="campo-nit-empresa-error" class="campo-mensaje-error" hidden>Ingresa un NIT válido (mínimo 6 dígitos).</p>
+          </div>
         </div>
-        <div class="campo-grupo">
-          <label for="campo-representante" class="campo-label">Nombre del representante legal <span class="campo-obligatorio" aria-hidden="true">*</span></label>
-          <input type="text" id="campo-representante" class="campo-texto" autocomplete="name" aria-required="true" aria-describedby="campo-representante-error">
-          <p id="campo-representante-error" class="campo-mensaje-error" hidden>El nombre del representante es obligatorio.</p>
-        </div>
-        <div class="campo-grupo">
-          <label for="campo-nit-empresa" class="campo-label">NIT empresa <span class="campo-obligatorio" aria-hidden="true">*</span></label>
-          <input type="text" id="campo-nit-empresa" class="campo-texto" placeholder="900123456-1" aria-required="true" aria-describedby="campo-nit-empresa-error">
-          <p id="campo-nit-empresa-error" class="campo-mensaje-error" hidden>Ingresa un NIT válido (mínimo 6 dígitos).</p>
-        </div>
-        <div class="campo-grupo">
-          <label for="campo-cargo" class="campo-label">Cargo del firmante <span class="campo-obligatorio" aria-hidden="true">*</span></label>
-          <input type="text" id="campo-cargo" class="campo-texto" placeholder="Ej: Representante Legal" aria-required="true" aria-describedby="campo-cargo-error">
-          <p id="campo-cargo-error" class="campo-mensaje-error" hidden>El cargo es obligatorio.</p>
-        </div>
+
+        <p class="seccion-subtitulo" style="font-weight:700;margin-bottom:var(--spacing-sm)">Contacto de la empresa</p>
       </div>
 
       <div class="campo-fila">
         <div class="campo-grupo">
-          <label for="campo-tipo-doc" class="campo-label">Tipo de documento <span class="campo-obligatorio" aria-hidden="true">*</span></label>
-          <select id="campo-tipo-doc" class="campo-select" aria-required="true" aria-describedby="campo-tipo-doc-error">
-            <option value="">Seleccionar...</option>
-            <option value="CC">Cédula de Ciudadanía</option>
-            <option value="CE">Cédula de Extranjería</option>
-            <option value="NIT">NIT</option>
-            <option value="PA">Pasaporte</option>
-            <option value="PEP">PEP</option>
-            <option value="PPT">PPT</option>
-            <option value="TI">Tarjeta de Identidad</option>
-          </select>
-          <p id="campo-tipo-doc-error" class="campo-mensaje-error" hidden>Selecciona un tipo de documento.</p>
+          <label for="campo-email" class="campo-label">Correo electrónico <span class="campo-obligatorio" aria-hidden="true">*</span></label>
+          <input type="email" id="campo-email" class="campo-texto" autocomplete="email" aria-required="true" aria-describedby="campo-email-error">
+          <p id="campo-email-error" class="campo-mensaje-error" hidden>Ingresa un correo electrónico válido.</p>
         </div>
         <div class="campo-grupo">
-          <label for="campo-num-doc" class="campo-label">Número de documento <span class="campo-obligatorio" aria-hidden="true">*</span></label>
-          <input type="text" id="campo-num-doc" class="campo-texto" aria-required="true" aria-describedby="campo-num-doc-error">
-          <p id="campo-num-doc-error" class="campo-mensaje-error" hidden>Ingresa un número de documento válido.</p>
+          <label for="campo-telefono" class="campo-label">Teléfono <span class="campo-obligatorio" aria-hidden="true">*</span></label>
+          <input type="tel" id="campo-telefono" class="campo-texto" value="+57 " autocomplete="tel" aria-required="true" aria-describedby="campo-telefono-error">
+          <p id="campo-telefono-error" class="campo-mensaje-error" hidden>El teléfono es obligatorio.</p>
         </div>
       </div>
 
-      <div class="campo-grupo">
-        <label for="campo-email" class="campo-label">Correo electrónico <span class="campo-obligatorio" aria-hidden="true">*</span></label>
-        <input type="email" id="campo-email" class="campo-texto" autocomplete="email" aria-required="true" aria-describedby="campo-email-error">
-        <p id="campo-email-error" class="campo-mensaje-error" hidden>Ingresa un correo electrónico válido.</p>
-      </div>
-
-      <div class="campo-grupo">
-        <label for="campo-telefono" class="campo-label">Teléfono <span class="campo-obligatorio" aria-hidden="true">*</span></label>
-        <input type="tel" id="campo-telefono" class="campo-texto" value="+57 " autocomplete="tel" aria-required="true" aria-describedby="campo-telefono-error">
-        <p id="campo-telefono-error" class="campo-mensaje-error" hidden>El teléfono es obligatorio.</p>
+      <div id="campos-firmante-juridica" hidden>
+        <p class="seccion-subtitulo" style="font-weight:700;margin-bottom:var(--spacing-sm)">Datos del firmante</p>
+        <div class="campo-fila">
+          <div class="campo-grupo">
+            <label for="campo-nombre-firmante" class="campo-label">Nombre <span class="campo-obligatorio" aria-hidden="true">*</span></label>
+            <input type="text" id="campo-nombre-firmante" class="campo-texto" autocomplete="given-name" aria-required="true" aria-describedby="campo-nombre-firmante-error">
+            <p id="campo-nombre-firmante-error" class="campo-mensaje-error" hidden>El nombre es obligatorio.</p>
+          </div>
+          <div class="campo-grupo">
+            <label for="campo-apellido-firmante" class="campo-label">Apellido <span class="campo-obligatorio" aria-hidden="true">*</span></label>
+            <input type="text" id="campo-apellido-firmante" class="campo-texto" autocomplete="family-name" aria-required="true" aria-describedby="campo-apellido-firmante-error">
+            <p id="campo-apellido-firmante-error" class="campo-mensaje-error" hidden>El apellido es obligatorio.</p>
+          </div>
+        </div>
+        <div class="campo-grupo">
+          <label for="campo-cargo" class="campo-label">Cargo <span class="campo-obligatorio" aria-hidden="true">*</span></label>
+          <input type="text" id="campo-cargo" class="campo-texto" placeholder="Ej: Representante Legal, Director" aria-required="true" aria-describedby="campo-cargo-error">
+          <p id="campo-cargo-error" class="campo-mensaje-error" hidden>El cargo es obligatorio.</p>
+        </div>
+        <div class="campo-fila">
+          <div class="campo-grupo">
+            <label for="campo-tipo-doc-firmante" class="campo-label">Tipo de documento <span class="campo-obligatorio" aria-hidden="true">*</span></label>
+            <select id="campo-tipo-doc-firmante" class="campo-select" aria-required="true" aria-describedby="campo-tipo-doc-firmante-error">
+              <option value="">Seleccionar...</option>
+              <option value="CC">Cédula de Ciudadanía</option>
+              <option value="CE">Cédula de Extranjería</option>
+              <option value="PA">Pasaporte</option>
+              <option value="PEP">PEP</option>
+              <option value="PPT">PPT</option>
+              <option value="TI">Tarjeta de Identidad</option>
+            </select>
+            <p id="campo-tipo-doc-firmante-error" class="campo-mensaje-error" hidden>Selecciona un tipo de documento.</p>
+          </div>
+          <div class="campo-grupo">
+            <label for="campo-num-doc-firmante" class="campo-label">Número de documento <span class="campo-obligatorio" aria-hidden="true">*</span></label>
+            <input type="text" id="campo-num-doc-firmante" class="campo-texto" aria-required="true" aria-describedby="campo-num-doc-firmante-error">
+            <p id="campo-num-doc-firmante-error" class="campo-mensaje-error" hidden>Ingresa un número de documento válido.</p>
+          </div>
+        </div>
       </div>
 
       <div class="paso-navegacion">
@@ -792,9 +834,11 @@
 
     function vincular_validacion_blur() {
       var campos_blur = [
-        'campo-nombre', 'campo-razon-social', 'campo-representante',
-        'campo-nit-empresa', 'campo-cargo', 'campo-tipo-doc',
-        'campo-num-doc', 'campo-email', 'campo-telefono'
+        'campo-nombre', 'campo-apellido', 'campo-razon-social',
+        'campo-nit-empresa', 'campo-nombre-firmante', 'campo-apellido-firmante',
+        'campo-cargo', 'campo-tipo-doc', 'campo-num-doc',
+        'campo-tipo-doc-firmante', 'campo-num-doc-firmante',
+        'campo-email', 'campo-telefono'
       ];
       for (var i = 0; i < campos_blur.length; i++) {
         var el = document.getElementById(campos_blur[i]);
@@ -825,6 +869,7 @@
     function preparar_formulario() {
       document.getElementById('campos-natural').hidden = estado.es_juridica;
       document.getElementById('campos-juridica').hidden = !estado.es_juridica;
+      document.getElementById('campos-firmante-juridica').hidden = !estado.es_juridica;
     }
 
     function al_continuar_paso_2() {
@@ -838,15 +883,19 @@
 
       if (estado.es_juridica) {
         resultados.push(validar_campo_individual('campo-razon-social'));
-        resultados.push(validar_campo_individual('campo-representante'));
         resultados.push(validar_campo_individual('campo-nit-empresa'));
+        resultados.push(validar_campo_individual('campo-nombre-firmante'));
+        resultados.push(validar_campo_individual('campo-apellido-firmante'));
         resultados.push(validar_campo_individual('campo-cargo'));
+        resultados.push(validar_campo_individual('campo-tipo-doc-firmante'));
+        resultados.push(validar_campo_individual('campo-num-doc-firmante'));
       } else {
         resultados.push(validar_campo_individual('campo-nombre'));
+        resultados.push(validar_campo_individual('campo-apellido'));
+        resultados.push(validar_campo_individual('campo-tipo-doc'));
+        resultados.push(validar_campo_individual('campo-num-doc'));
       }
 
-      resultados.push(validar_campo_individual('campo-tipo-doc'));
-      resultados.push(validar_campo_individual('campo-num-doc'));
       resultados.push(validar_campo_individual('campo-email'));
       resultados.push(validar_campo_individual('campo-telefono'));
 
@@ -872,6 +921,10 @@
           var tipo = document.getElementById('campo-tipo-doc').value;
           valido = tipo ? validar_documento(tipo, valor) : valor.length > 0;
           break;
+        case 'campo-num-doc-firmante':
+          var tipo_f = document.getElementById('campo-tipo-doc-firmante').value;
+          valido = tipo_f ? validar_documento(tipo_f, valor) : valor.length > 0;
+          break;
         case 'campo-nit-empresa':
           valido = validar_documento('NIT', valor);
           break;
@@ -879,6 +932,7 @@
           valido = valor.replace(/[\s+\-()]/g, '').length >= 7;
           break;
         case 'campo-tipo-doc':
+        case 'campo-tipo-doc-firmante':
           valido = valor.length > 0;
           break;
         default:
@@ -1168,17 +1222,25 @@
     }
 
     function preparar_payload_firma() {
-      var firmante = {
-        nombre: obtener_nombre_firmante(),
-        email: obtener_email(),
-        tipo_documento: document.getElementById('campo-tipo-doc').value,
-        numero_documento: document.getElementById('campo-num-doc').value.trim()
-      };
+      var firmante;
 
       if (estado.es_juridica) {
-        firmante.empresa = document.getElementById('campo-razon-social').value.trim();
-        firmante.nit_empresa = document.getElementById('campo-nit-empresa').value.trim();
-        firmante.cargo = document.getElementById('campo-cargo').value.trim();
+        firmante = {
+          nombre: document.getElementById('campo-nombre-firmante').value.trim() + ' ' + document.getElementById('campo-apellido-firmante').value.trim(),
+          email: obtener_email(),
+          tipo_documento: document.getElementById('campo-tipo-doc-firmante').value,
+          numero_documento: document.getElementById('campo-num-doc-firmante').value.trim(),
+          empresa: document.getElementById('campo-razon-social').value.trim(),
+          nit_empresa: document.getElementById('campo-nit-empresa').value.trim(),
+          cargo: document.getElementById('campo-cargo').value.trim()
+        };
+      } else {
+        firmante = {
+          nombre: document.getElementById('campo-nombre').value.trim() + ' ' + document.getElementById('campo-apellido').value.trim(),
+          email: obtener_email(),
+          tipo_documento: document.getElementById('campo-tipo-doc').value,
+          numero_documento: document.getElementById('campo-num-doc').value.trim()
+        };
       }
 
       return {
@@ -1217,11 +1279,13 @@
 
       if (estado.es_juridica) {
         datos_perfil.razon_social = document.getElementById('campo-razon-social').value.trim();
-        datos_perfil.nombre_completo = document.getElementById('campo-representante').value.trim();
+        datos_perfil.nombre = document.getElementById('campo-nombre-firmante').value.trim();
+        datos_perfil.apellido = document.getElementById('campo-apellido-firmante').value.trim();
         datos_perfil.tipo_documento = 'NIT';
         datos_perfil.numero_documento = document.getElementById('campo-nit-empresa').value.trim();
       } else {
-        datos_perfil.nombre_completo = document.getElementById('campo-nombre').value.trim();
+        datos_perfil.nombre = document.getElementById('campo-nombre').value.trim();
+        datos_perfil.apellido = document.getElementById('campo-apellido').value.trim();
         datos_perfil.tipo_documento = document.getElementById('campo-tipo-doc').value;
         datos_perfil.numero_documento = document.getElementById('campo-num-doc').value.trim();
       }
@@ -1270,9 +1334,9 @@
 
     function obtener_nombre_firmante() {
       if (estado.es_juridica) {
-        return document.getElementById('campo-representante').value.trim();
+        return document.getElementById('campo-nombre-firmante').value.trim() + ' ' + document.getElementById('campo-apellido-firmante').value.trim();
       }
-      return document.getElementById('campo-nombre').value.trim();
+      return document.getElementById('campo-nombre').value.trim() + ' ' + document.getElementById('campo-apellido').value.trim();
     }
 
     function limpiar_html(html) {

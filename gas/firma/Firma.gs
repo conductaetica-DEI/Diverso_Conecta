@@ -157,7 +157,7 @@ function obtener_datos_firma(token) {
   var es_empresa = perfil.profile_type === 'aliado' || perfil.profile_type === 'proveedor';
 
   var firmante = {
-    nombre: perfil.nombre_completo || perfil.razon_social,
+    nombre: perfil.razon_social || ((perfil.nombre || '') + ' ' + (perfil.apellido || '')).trim(),
     email: perfil.email_principal,
     tipo_documento: perfil.tipo_documento,
     numero_documento: perfil.numero_documento
