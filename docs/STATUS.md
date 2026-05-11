@@ -10,7 +10,7 @@
 |----------|--------|---------|
 | Supabase | Vinculado | Proyecto `nrqmnaktnpcgqrqpoksi`, BD vacía, CLI local en `supabase/` |
 | GAS OTP | Desplegado | Script `13lSaw-...`, deployment v1.2 funcionando (GET OK) |
-| GAS Firma | Conectado | Script `16yZGc-...`, vacío (Codigo.gs placeholder) |
+| GAS Firma | Desplegado | Script `16yZGc-...`, deployment v1.1 funcionando (GET OK) |
 | GAS Drive | Conectado | Script `1pMbDQ-...`, vacío (Codigo.gs placeholder) |
 
 ## GAS OTP — Servicio implementado
@@ -26,6 +26,33 @@ Script Properties configuradas: API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
 
 Pendiente: pruebas con POST real (requiere API_KEY).
 
+## GAS Firma — Servicio implementado
+
+| Archivo | Contenido |
+|---------|-----------|
+| appsscript.json | Timezone Bogotá, webapp ANYONE_ANONYMOUS |
+| Codigo.gs | Router: doPost (firmar, verificarFirma), doGet, respuesta_json |
+| Firma.gs | firmar, verificarFirma, verificar_token_otp, validar_firmante, validar_consentimientos |
+| Folio.gs | generar_folio (DL-{codigo}-{año}-{secuencial}), generar_hash (SHA-256), bytes_a_hex |
+| Pdf.gs | generar_pdf_constancia, construir_encabezado/datos/tabla/evidencia, anexos legales (F-DATO-01, SICE-POL-01), estilos |
+| Supabase.gs | insertar_consentimientos, consultar_por_folio, registrar_log, obtener_carpeta_perfil |
+
+Script Properties configuradas (9):
+- API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
+- OTP_URL, OTP_API_KEY (inter-servicio con GAS OTP)
+- DRIVE_CARPETA_FIRMAS, FOLIO_PREFIJO (DL)
+- DOC_ID_FDATO01, DOC_ID_SICEPOL01 (Google Docs con documentos legales completos)
+
+Pendiente: pruebas con POST real (requiere tabla consentimientos en Supabase).
+
+## Documentos legales de referencia
+
+Guardados en `docs/` como referencia local:
+- `F-DATO-01_Consentimiento-Integral.md` — 7 consentimientos con textos aprobados
+- `SICE-POL-01_Politica-Datos.md` — Política de Protección de Datos (39 artículos)
+
+Los originales viven en Google Docs (DOC_ID_FDATO01 y DOC_ID_SICEPOL01) y se embeben como anexos en el PDF de constancia.
+
 ## Documentación actualizada
 
 - ARCHITECTURE.md — verificarOTP retorna access_token + refresh_token + token_verificacion, flujo login con GAS→tokens→setSession, auth_user_id null hasta primer login
@@ -37,16 +64,15 @@ Pendiente: pruebas con POST real (requiere API_KEY).
 | Prioridad | Componente | Archivos |
 |-----------|-----------|----------|
 | 1 | Migración SQL | supabase/migrations/001_schema.sql (7 tablas + funciones RLS + políticas) |
-| 2 | GAS Firma | gas/firma/Codigo.gs, Firma.gs, Pdf.gs |
-| 3 | GAS Drive | gas/drive/Codigo.gs, Drive.gs |
-| 4 | Design system CSS | css/tokens.css, css/componentes.css |
-| 5 | Clientes JS | js/config.js, js/supabase-client.js, js/gas-client.js |
-| 6 | Login | pages/login.html |
-| 7 | Registro | pages/registro.html |
-| 8 | Firma standalone | pages/firma.html |
-| 9 | Mi expediente | pages/mi-expediente.html |
-| 10 | Dashboard | pages/dashboard.html |
-| 11 | Gestión accesos | pages/accesos.html |
+| 2 | GAS Drive | gas/drive/Codigo.gs, Drive.gs |
+| 3 | Design system CSS | css/tokens.css, css/componentes.css |
+| 4 | Clientes JS | js/config.js, js/supabase-client.js, js/gas-client.js |
+| 5 | Login | pages/login.html |
+| 6 | Registro | pages/registro.html |
+| 7 | Firma standalone | pages/firma.html |
+| 8 | Mi expediente | pages/mi-expediente.html |
+| 9 | Dashboard | pages/dashboard.html |
+| 10 | Gestión accesos | pages/accesos.html |
 
 ## Preguntas arquitectónicas resueltas
 

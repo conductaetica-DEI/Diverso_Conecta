@@ -113,6 +113,8 @@ Mismo proceso que OTP pero con nombre "DiversoLab Firma" y directorio `gas/firma
 - `OTP_API_KEY`: API key del servicio OTP (para validar token_verificacion)
 - `DRIVE_CARPETA_FIRMAS`: ID de carpeta Drive para PDFs de constancia
 - `FOLIO_PREFIJO`: "DL" (o el prefijo del proyecto)
+- `DOC_ID_FDATO01`: ID del Google Doc con el Consentimiento Informado Integral (F-DATO-01)
+- `DOC_ID_SICEPOL01`: ID del Google Doc con la Política de Protección de Datos (SICE-POL-01)
 
 ---
 

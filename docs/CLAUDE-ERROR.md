@@ -51,3 +51,43 @@ Registro de errores cometidos por Claude durante el desarrollo. Propósito: evit
 **Qué debí hacer:** Al mover el archivo, verificar qué otros archivos dependían de su ubicación y limpiar.
 
 **Regla violada:** QUALITY.md: "No dejar funciones que nadie llama" (aplica también a archivos de configuración sin propósito).
+
+---
+
+## Error 6 — No generar API keys para el usuario
+
+**Qué pasó:** Le dije al usuario "ejecuta `openssl rand -hex 32` para obtener la API key" sin explicar que eso genera un valor aleatorio que debe copiar. El usuario escribió literalmente `openssl rand -hex 32` como valor de la API key en Script Properties.
+
+**Qué debí hacer:** Generar la key directamente con bash y entregar el valor listo para copiar. No asumir que el usuario sabe cómo funciona openssl.
+
+**Regla violada:** QUALITY.md: mensajes al usuario claros. Regla de oro: no asumir conocimiento técnico del usuario.
+
+---
+
+## Error 7 — Auditoría incompleta para GAS Firma
+
+**Qué pasó:** Al iniciar la implementación de Firma, no verifiqué qué archivos ya existían en gas/firma/ ni cuáles había que crear vs modificar. El usuario tuvo que señalar que la auditoría estaba incompleta.
+
+**Qué debí hacer:** Antes de planificar, listar archivos existentes en gas/firma/, verificar su contenido, y presentar explícitamente qué se crea nuevo vs qué se modifica.
+
+**Regla violada:** Ciclo obligatorio paso 1 (AUDITAR): auditar implica conocer el estado actual completo.
+
+---
+
+## Error 8 — Múltiples iteraciones en textos de consentimiento
+
+**Qué pasó:** Los textos de consentimiento requirieron muchas correcciones: formato incorrecto (C1 vs "Consentimiento 1"), faltaba "Declaro que leí", incluían paréntesis innecesarios, nombre de C4 truncado ("Analítica" en vez de "Analítica, modelos predictivos e inteligencia artificial").
+
+**Qué debí hacer:** Presentar los textos exactos desde el primer intento, verificando que cumplieran con el formato del documento F-DATO-01 y los nombres completos de cada consentimiento.
+
+**Regla violada:** Ciclo obligatorio paso 3 (PLANIFICAR): el plan debe ser preciso. Regla de oro: "Si no está en los docs, pregunta."
+
+---
+
+## Error 9 — GAS Firma deployment "Access Denied"
+
+**Qué pasó:** Después de hacer `clasp push` y `clasp deploy`, el GET al servicio Firma retornó "Access Denied". Esto ya había ocurrido conceptualmente con OTP — `clasp deploy` no siempre aplica la configuración de webapp del appsscript.json. Se requirió configuración manual de permisos en la consola de GAS.
+
+**Qué debí hacer:** Anticipar el problema basado en la experiencia con OTP. Advertir al usuario que los permisos de webapp deben verificarse manualmente en Deploy → Manage deployments → "Who has access" → "Anyone".
+
+**Regla violada:** Ciclo obligatorio paso 6 (VERIFICAR): no anticipé un problema conocido. Debí documentar el patrón desde el primer servicio.
