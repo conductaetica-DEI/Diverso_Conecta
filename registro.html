@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Registro · DiversoLab</title>
+<link rel="stylesheet" href="diversolab.css" />
+<script src="shared.js"></script>
+<style>
+  body { background: var(--color-crema); }
+  .reg-wrap { max-width: 640px; margin: 0 auto; padding: var(--space-6) var(--space-4) var(--space-12); }
+  .reg-header { text-align: center; margin-bottom: var(--space-6); }
+  .reg-header .logo { justify-content: center; margin-bottom: var(--space-4); }
+  .reg-card { padding: var(--space-6); }
+  .perfil-grid { display: grid; gap: var(--space-3); }
+  @media (min-width: 540px) { .perfil-grid { grid-template-columns: 1fr 1fr; } }
+  .perfil-option {
+    display: flex; gap: var(--space-3); align-items: flex-start;
+    padding: var(--space-4); border: 2px solid var(--color-lavanda); border-radius: var(--radius-md);
+    background: white; cursor: pointer; transition: all var(--transition-fast); text-align: left; width: 100%;
+    font-family: var(--font-secondary);
+  }
+  .perfil-option:hover { border-color: var(--color-violeta); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+  .perfil-option.selected { border-color: var(--color-violeta); background: color-mix(in srgb, var(--color-lavanda) 25%, white); box-shadow: var(--shadow-sm); }
+  .perfil-option .emoji { font-size: 28px; line-height: 1; }
+  .perfil-option .perfil-title { font-family: var(--font-primary); font-weight: var(--fw-bold); color: var(--color-violeta); font-size: var(--text-base); margin-bottom: 2px; }
+  .perfil-option .perfil-desc { font-size: var(--text-sm); color: color-mix(in srgb, var(--color-violeta) 70%, white); line-height: 1.4; }
+  .step-content { animation: fadeIn 300ms ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .review-row { display: flex; justify-content: space-between; align-items: center; padding: var(--space-3) 0; border-bottom: 1px dashed color-mix(in srgb, var(--color-lavanda) 70%, white); }
+  .review-row:last-child { border-bottom: none; }
+  .review-row .lbl { font-family: var(--font-narrow); font-size: var(--text-xs); color: color-mix(in srgb, var(--color-violeta) 65%, white); text-transform: uppercase; letter-spacing: 0.06em; }
+  .review-row .val { font-family: var(--font-secondary); color: var(--color-media-noche); font-size: var(--text-sm); text-align: right; }
+  .review-row button { background: none; border: none; color: var(--color-coral); font-family: var(--font-narrow); font-size: var(--text-xs); cursor: pointer; text-decoration: underline; margin-left: var(--space-3); }
+  .legal-toggle { background: none; border: none; color: var(--color-violeta); text-decoration: underline; cursor: pointer; font-family: var(--font-narrow); font-size: var(--text-sm); padding: 0; }
+  .legal-text { font-family: var(--font-secondary); font-size: var(--text-sm); line-height: 1.6; color: var(--color-media-noche); padding: var(--space-3); background: color-mix(in srgb, var(--color-lavanda) 20%, white); border-radius: var(--radius-md); margin-top: var(--space-2); }
+  .legal-text p + p { margin-top: var(--space-2); }
+  .step-actions { display: flex; justify-content: space-between; gap: var(--space-3); margin-top: var(--space-6); }
+  .step-actions .btn { flex: 1; }
+  @media (max-width: 380px) { .step-actions { flex-direction: column-reverse; } }
+</style>
+</head>
+<body>
+  <main class="reg-wrap" data-screen-label="Registro">
+    <div class="reg-header">
+      <a href="index.html" class="logo">
+        <span class="logo-mark" aria-hidden="true">D</span>
+        <span style="display:flex;flex-direction:column;line-height:1;align-items:flex-start;">DiversoLab<small>inclusión con propósito</small></span>
+      </a>
+      <h1 style="font-size:var(--text-2xl);margin-top:var(--space-2);">Crea tu cuenta</h1>
+    </div>
+
+    <!-- Step indicator -->
+    <div class="steps" role="progressbar" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1" id="step-indicator">
+      <div class="step active" data-step="1">
+        <span class="step-dot">1</span>
+        <span class="step-label">Tipo</span>
+      </div>
+      <span class="step-line"></span>
+      <div class="step" data-step="2">
+        <span class="step-dot">2</span>
+        <span class="step-label">Datos</span>
+      </div>
+      <span class="step-line"></span>
+      <div class="step" data-step="3">
+        <span class="step-dot">3</span>
+        <span class="step-label">Revisar</span>
+      </div>
+      <span class="step-line"></span>
+      <div class="step" data-step="4">
+        <span class="step-dot">4</span>
+        <span class="step-label">Listo</span>
+      </div>
+    </div>
+
+    <div class="card reg-card" style="margin-top:var(--space-6);">
+
+      <!-- PASO 1 -->
+      <div class="step-content" data-step-content="1">
+        <h2 style="font-size:var(--text-xl);margin-bottom:var(--space-2);">¿Qué tipo de perfil quieres registrar?</h2>
+        <p style="font-size:var(--text-sm);color:color-mix(in srgb, var(--color-violeta) 70%, white);margin-bottom:var(--space-4);">
+          Elige una opción. Esto define qué información te pediremos.
+        </p>
+
+        <div class="perfil-grid" role="radiogroup" aria-label="Tipo de perfil">
+          <button type="button" class="perfil-option" data-perfil="beneficiario" role="radio" aria-checked="false">
+            <span class="emoji" aria-hidden="true">👤</span>
+            <span>
+              <span class="perfil-title">Beneficiario</span>
+              <span class="perfil-desc">Persona que recibirá acompañamiento de DiversoLab</span>
+            </span>
+          </button>
+          <button type="button" class="perfil-option" data-perfil="aliado" role="radio" aria-checked="false">
+            <span class="emoji" aria-hidden="true">🤝</span>
+            <span>
+              <span class="perfil-title">Aliado</span>
+              <span class="perfil-desc">Empresa u organización interesada en inclusión</span>
+            </span>
+          </button>
+          <button type="button" class="perfil-option" data-perfil="contractor" role="radio" aria-checked="false">
+            <span class="emoji" aria-hidden="true">👷</span>
+            <span>
+              <span class="perfil-title">Contractor</span>
+              <span class="perfil-desc">Profesional independiente que prestará servicios</span>
+            </span>
+          </button>
+          <button type="button" class="perfil-option" data-perfil="supplier" role="radio" aria-checked="false">
+            <span class="emoji" aria-hidden="true">🏢</span>
+            <span>
+              <span class="perfil-title">Supplier</span>
+              <span class="perfil-desc">Empresa proveedora de bienes o servicios</span>
+            </span>
+          </button>
+        </div>
+
+        <div class="step-actions">
+          <a href="login.html" class="btn btn-ghost">← Cancelar</a>
+          <button type="button" class="btn btn-primary" id="to-step-2" disabled>Continuar →</button>
+        </div>
+      </div>
+
+      <!-- PASO 2 -->
+      <div class="step-content" data-step-content="2" hidden>
+        <h2 style="font-size:var(--text-xl);margin-bottom:var(--space-2);">Tus datos básicos</h2>
+        <p style="font-size:var(--text-sm);color:color-mix(in srgb, var(--color-violeta) 70%, white);margin-bottom:var(--space-4);">
+          <span id="perfil-context">—</span>
+        </p>
+
+        <form id="form-2" novalidate>
+          <div class="field" id="field-razonsocial" hidden>
+            <label class="label label-required" for="razonsocial">Razón social</label>
+            <input class="input" id="razonsocial" name="razonsocial" placeholder="Ej: Inclusión Total SAS" autocomplete="organization" />
+          </div>
+
+          <div class="field" id="field-nombre">
+            <label class="label label-required" for="nombre">Nombre completo</label>
+            <input class="input" id="nombre" name="nombre" placeholder="Ej: María Alejandra Gómez Pérez" autocomplete="name" />
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="label label-required" for="tipo-doc">Tipo de documento</label>
+              <select class="select" id="tipo-doc" name="tipo-doc">
+                <option value="CC">CC — Cédula de Ciudadanía</option>
+                <option value="CE">CE — Cédula de Extranjería</option>
+                <option value="NIT">NIT — Número Identificación Tributaria</option>
+                <option value="PA">Pasaporte</option>
+                <option value="PEP">PEP — Permiso Especial de Permanencia</option>
+                <option value="PPT">PPT — Permiso por Protección Temporal</option>
+                <option value="TI">TI — Tarjeta de Identidad</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="label label-required" for="num-doc">Número de documento</label>
+              <input class="input" id="num-doc" name="num-doc" placeholder="1.023.456.789" inputmode="numeric" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label label-required" for="email-reg">Correo electrónico</label>
+            <input class="input" id="email-reg" name="email" type="email" placeholder="tunombre@correo.co" autocomplete="email" />
+          </div>
+
+          <div class="field">
+            <label class="label label-required" for="tel">Teléfono de contacto</label>
+            <input class="input" id="tel" name="tel" type="tel" placeholder="+57 311 234 5678" autocomplete="tel" />
+            <div class="help-text">Incluye indicativo. Ej: +57 para Colombia.</div>
+          </div>
+        </form>
+
+        <div class="step-actions">
+          <button type="button" class="btn btn-outline" data-back>← Atrás</button>
+          <button type="button" class="btn btn-primary" id="to-step-3">Continuar →</button>
+        </div>
+      </div>
+
+      <!-- PASO 3 -->
+      <div class="step-content" data-step-content="3" hidden>
+        <h2 style="font-size:var(--text-xl);margin-bottom:var(--space-2);">Revisa y autoriza</h2>
+        <p style="font-size:var(--text-sm);color:color-mix(in srgb, var(--color-violeta) 70%, white);margin-bottom:var(--space-4);">
+          Confirma que tus datos son correctos antes de continuar.
+        </p>
+
+        <div style="border:1px solid color-mix(in srgb, var(--color-lavanda) 60%, white); border-radius:var(--radius-md); padding:var(--space-4); margin-bottom:var(--space-4);">
+          <div id="review-list"></div>
+        </div>
+
+        <div class="note note-lavanda" style="margin-bottom:var(--space-4);">
+          <span aria-hidden="true">🔒</span>
+          <div>
+            <strong style="font-family:var(--font-primary);">Tratamiento de tus datos personales</strong>
+            <button type="button" class="legal-toggle" id="legal-toggle">Leer política completa ↓</button>
+            <div class="legal-text" id="legal-text" hidden>
+              <p>De acuerdo con la Ley 1581 de 2012 y el Decreto 1377 de 2013, DiversoLab S.A.S., con domicilio en Bogotá, Colombia, será responsable del tratamiento de tus datos personales con las finalidades de: (i) acompañamiento social en procesos de inclusión, (ii) verificación KYC y compliance regulatorio, (iii) generación de reportes de impacto.</p>
+              <p>Tienes derecho a conocer, actualizar, rectificar y suprimir tus datos. Puedes ejercer estos derechos escribiendo a <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7e161f1c1b1f0d531a1f0a1f3e1a17081b0c0d11121f1c50110c19">[email&#160;protected]</a>.</p>
+              <p>Tus datos podrán ser compartidos únicamente con aliados estratégicos previamente autorizados y con autoridades cuando la ley lo requiera.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="check">
+            <input type="checkbox" id="consent" />
+            <span>Autorizo el tratamiento de mis datos personales conforme a la <strong>Política de tratamiento de datos personales</strong> de DiversoLab.</span>
+          </label>
+        </div>
+
+        <div class="field">
+          <label class="check">
+            <input type="checkbox" id="terms" />
+            <span>Acepto los <a href="#">Términos y condiciones</a> del servicio.</span>
+          </label>
+        </div>
+
+        <div class="step-actions">
+          <button type="button" class="btn btn-outline" data-back>← Atrás</button>
+          <button type="button" class="btn btn-primary" id="to-step-4" disabled>Crear cuenta</button>
+        </div>
+      </div>
+
+      <!-- PASO 4 -->
+      <div class="step-content" data-step-content="4" hidden style="text-align:center; padding: var(--space-4) 0;">
+        <div style="width:88px;height:88px;margin:0 auto var(--space-4);border-radius:50%;background:color-mix(in srgb, var(--color-aqua) 50%, white);display:flex;align-items:center;justify-content:center;color:var(--color-violeta);">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <h2 style="font-size:var(--text-2xl);margin-bottom:var(--space-2);">¡Listo! Revisa tu correo 📧</h2>
+        <p style="color:color-mix(in srgb, var(--color-violeta) 70%, white);max-width:380px;margin:0 auto;">
+          Te enviamos un enlace de confirmación a <strong id="confirm-email">—</strong>. Haz clic en el enlace para activar tu cuenta.
+        </p>
+
+        <div style="margin-top:var(--space-6); padding:var(--space-4); background:color-mix(in srgb, var(--color-sol) 20%, white); border-radius:var(--radius-md); text-align:left;">
+          <h3 style="font-size:var(--text-base); margin-bottom:var(--space-2);">¿Qué sigue?</h3>
+          <ol style="padding-left: 20px; font-size:var(--text-sm); line-height: 1.7; color:var(--color-media-noche);">
+            <li>Confirma tu cuenta desde el enlace en tu correo.</li>
+            <li>Tu analista de DiversoLab se pondrá en contacto contigo.</li>
+            <li>Completa los formularios de tu expediente cuando te lleguen.</li>
+          </ol>
+        </div>
+
+        <a href="mi-expediente.html" class="btn btn-primary btn-block" style="margin-top:var(--space-6);">Ir a mi expediente</a>
+        <a href="index.html" class="btn btn-ghost btn-sm" style="margin-top:var(--space-3);">← Volver al inicio</a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    DiversoLab · <a href="login.html">Ya tengo cuenta</a> · <a href="index.html">Mockups</a>
+  </footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  (function() {
+    let currentStep = 1;
+    let perfilSel = null;
+    const data = {};
+
+    const PERFIL_LABEL = {
+      beneficiario: { tipo: 'Beneficiario 👤', persona: 'natural', defaultDoc: 'CC' },
+      aliado:       { tipo: 'Aliado 🤝',       persona: 'juridica', defaultDoc: 'NIT' },
+      contractor:   { tipo: 'Contractor 👷',   persona: 'natural', defaultDoc: 'CC' },
+      supplier:     { tipo: 'Supplier 🏢',     persona: 'juridica', defaultDoc: 'NIT' },
+    };
+
+    const stepIndicator = document.getElementById('step-indicator');
+    const setStep = (n) => {
+      currentStep = n;
+      document.querySelectorAll('[data-step-content]').forEach(el => {
+        el.hidden = parseInt(el.dataset.stepContent) !== n;
+      });
+      const dots = stepIndicator.querySelectorAll('.step');
+      const lines = stepIndicator.querySelectorAll('.step-line');
+      dots.forEach((d, i) => {
+        d.classList.toggle('active', i + 1 === n);
+        d.classList.toggle('done', i + 1 < n);
+      });
+      lines.forEach((l, i) => l.classList.toggle('done', i + 1 < n));
+      stepIndicator.setAttribute('aria-valuenow', n);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    // Paso 1
+    document.querySelectorAll('.perfil-option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.perfil-option').forEach(b => {
+          b.classList.remove('selected');
+          b.setAttribute('aria-checked', 'false');
+        });
+        btn.classList.add('selected');
+        btn.setAttribute('aria-checked', 'true');
+        perfilSel = btn.dataset.perfil;
+        document.getElementById('to-step-2').disabled = false;
+      });
+    });
+
+    document.getElementById('to-step-2').addEventListener('click', () => {
+      const cfg = PERFIL_LABEL[perfilSel];
+      const fieldRazon = document.getElementById('field-razonsocial');
+      const labelNombre = document.querySelector('#field-nombre .label');
+      const inputNombre = document.getElementById('nombre');
+      if (cfg.persona === 'juridica') {
+        fieldRazon.hidden = false;
+        labelNombre.textContent = 'Nombre del representante legal';
+        inputNombre.placeholder = 'Ej: Andrea Restrepo Ríos';
+      } else {
+        fieldRazon.hidden = true;
+        labelNombre.textContent = 'Nombre completo';
+        inputNombre.placeholder = 'Ej: María Alejandra Gómez Pérez';
+      }
+      document.getElementById('tipo-doc').value = cfg.defaultDoc;
+      document.getElementById('perfil-context').innerHTML = `Registrándote como <strong style="color:var(--color-violeta);">${cfg.tipo}</strong>. <a href="#" id="change-perfil">Cambiar</a>`;
+      document.getElementById('change-perfil').addEventListener('click', (e) => { e.preventDefault(); setStep(1); });
+      setStep(2);
+    });
+
+    document.querySelectorAll('[data-back]').forEach(b => {
+      b.addEventListener('click', () => setStep(currentStep - 1));
+    });
+
+    // Paso 2 → 3
+    document.getElementById('to-step-3').addEventListener('click', () => {
+      const form = document.getElementById('form-2');
+      let valid = true;
+      const required = form.querySelectorAll('input:not([type=hidden]):not([hidden]), select');
+      required.forEach(el => {
+        const fieldEl = el.closest('.field');
+        if (fieldEl && !fieldEl.hidden && !el.value.trim()) {
+          el.style.borderColor = 'var(--color-error)';
+          valid = false;
+        } else {
+          el.style.borderColor = '';
+        }
+      });
+      const email = document.getElementById('email-reg');
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
+        email.style.borderColor = 'var(--color-error)';
+        valid = false;
+      }
+      if (!valid) return;
+
+      data.razonsocial = document.getElementById('razonsocial').value.trim();
+      data.nombre = document.getElementById('nombre').value.trim();
+      data.tipoDoc = document.getElementById('tipo-doc').value;
+      data.numDoc = document.getElementById('num-doc').value.trim();
+      data.email = email.value.trim();
+      data.tel = document.getElementById('tel').value.trim();
+      data.perfil = perfilSel;
+
+      const review = document.getElementById('review-list');
+      const cfg = PERFIL_LABEL[perfilSel];
+      const rows = [
+        ['Tipo de perfil', cfg.tipo],
+      ];
+      if (data.razonsocial) rows.push(['Razón social', data.razonsocial]);
+      rows.push(
+        [cfg.persona === 'juridica' ? 'Representante legal' : 'Nombre', data.nombre],
+        ['Documento', `${data.tipoDoc} · ${data.numDoc}`],
+        ['Correo', data.email],
+        ['Teléfono', data.tel],
+      );
+      review.innerHTML = rows.map(([k, v]) => `
+        <div class="review-row">
+          <div><div class="lbl">${k}</div></div>
+          <div style="display:flex;align-items:center;"><div class="val">${v}</div><button type="button" data-edit>Editar</button></div>
+        </div>
+      `).join('');
+      review.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => setStep(2)));
+      setStep(3);
+    });
+
+    // Paso 3
+    const consent = document.getElementById('consent');
+    const terms = document.getElementById('terms');
+    const finalBtn = document.getElementById('to-step-4');
+    [consent, terms].forEach(c => c.addEventListener('change', () => {
+      finalBtn.disabled = !(consent.checked && terms.checked);
+    }));
+    document.getElementById('legal-toggle').addEventListener('click', (e) => {
+      const t = document.getElementById('legal-text');
+      t.hidden = !t.hidden;
+      e.target.textContent = t.hidden ? 'Leer política completa ↓' : 'Ocultar política ↑';
+    });
+
+    finalBtn.addEventListener('click', () => {
+      document.getElementById('confirm-email').textContent = data.email;
+      setStep(4);
+    });
+  })();
+</script>
+</body>
+</html>

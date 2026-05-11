@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mi expediente · DiversoLab</title>
+<link rel="stylesheet" href="diversolab.css" />
+<script src="shared.js"></script>
+<style>
+  body { background: var(--color-crema); }
+  .me-wrap { max-width: 980px; margin: 0 auto; padding: var(--space-4); padding-bottom: var(--space-12); }
+  .greet { padding: var(--space-6) 0 var(--space-4); display: flex; gap: var(--space-4); align-items: center; flex-wrap: wrap; }
+  .greet h1 { font-size: var(--text-2xl); margin-bottom: var(--space-1); }
+  .greet p { color: color-mix(in srgb, var(--color-violeta) 70%, white); font-size: var(--text-base); }
+  .layout { display: grid; gap: var(--space-4); }
+  @media (min-width: 880px) { .layout { grid-template-columns: 1fr 280px; } }
+  .layer-list { display: flex; flex-direction: column; gap: var(--space-3); }
+  .layer-item { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border-radius: var(--radius-md); background: white; border: 1px solid color-mix(in srgb, var(--color-lavanda) 50%, white); }
+  .layer-status { width: 36px; height: 36px; border-radius: 50%; display:flex;align-items:center;justify-content:center; font-size: 16px; flex-shrink: 0; font-family: var(--font-primary); font-weight: var(--fw-bold); }
+  .layer-status.done { background: color-mix(in srgb, var(--color-aqua) 60%, white); color: var(--color-violeta); }
+  .layer-status.progress { background: color-mix(in srgb, var(--color-sol) 50%, white); color: var(--color-violeta); }
+  .layer-status.alert { background: var(--color-coral); color: white; }
+  .layer-info { flex: 1; min-width: 0; }
+  .layer-info .ttl { font-family: var(--font-primary); font-weight: var(--fw-semibold); font-size: var(--text-sm); color: var(--color-violeta); }
+  .layer-info .sub { font-family: var(--font-narrow); font-size: var(--text-xs); color: color-mix(in srgb, var(--color-violeta) 65%, white); }
+  .programa-tag { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: var(--radius-full); font-family: var(--font-primary); font-weight: var(--fw-semibold); font-size: var(--text-xs); background: color-mix(in srgb, var(--color-violeta) 15%, white); color: var(--color-violeta); }
+  .programa-tag .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-violeta); }
+  .programa-pcp .dot { background: var(--color-coral); }
+  .programa-pcp { background: color-mix(in srgb, var(--color-coral) 18%, white); color: var(--color-coral); }
+  .programa-empresarial .dot { background: var(--color-aqua); }
+  .programa-empresarial { background: color-mix(in srgb, var(--color-aqua) 28%, white); color: color-mix(in srgb, var(--color-violeta) 90%, white); }
+  .programa-onboarding .dot { background: var(--color-sol); }
+  .programa-onboarding { background: color-mix(in srgb, var(--color-sol) 28%, white); color: var(--color-violeta); }
+  .programa-base .dot { background: var(--color-violeta); }
+  .programa-base { background: color-mix(in srgb, var(--color-violeta) 12%, white); color: var(--color-violeta); }
+  .task-card { padding: var(--space-4); display:flex;flex-direction:column;gap:var(--space-3); }
+  .task-card .head { display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: center; justify-content: space-between; }
+  .task-card .head h3 { font-size: var(--text-base); }
+  .task-card .meta { display:flex; gap:var(--space-2); flex-wrap:wrap; }
+  .task-card .req-by { font-family: var(--font-narrow); font-size: var(--text-xs); color: color-mix(in srgb, var(--color-violeta) 65%, white); }
+  .task-actions { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+  .reportes-grid { display:grid; gap: var(--space-3); }
+  @media (min-width: 540px) { .reportes-grid { grid-template-columns: 1fr 1fr; } }
+  .analista-card { padding: var(--space-4); display:flex;flex-direction:column;gap:var(--space-3); }
+  .section-h { display:flex;align-items:baseline;justify-content:space-between;margin: var(--space-6) 0 var(--space-3); flex-wrap: wrap; gap: var(--space-2); }
+  .section-h h2 { font-size: var(--text-xl); }
+  .section-h .count { font-family: var(--font-narrow); font-size: var(--text-xs); color: color-mix(in srgb, var(--color-violeta) 65%, white); }
+  .table-wrap { overflow-x: auto; border-radius: var(--radius-md); border: 1px solid color-mix(in srgb, var(--color-lavanda) 50%, white); background: white; }
+  /* Reportes acordeón */
+  .reportes-acc { display: flex; flex-direction: column; gap: var(--space-3); }
+  .rep-cat { background: white; border: 1px solid color-mix(in srgb, var(--color-lavanda) 50%, white); border-radius: var(--radius-md); overflow: hidden; }
+  .rep-cat-head { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); cursor: pointer; user-select: none; background: color-mix(in srgb, var(--color-lavanda) 25%, white); transition: background 0.15s; border: 0; width: 100%; text-align: left; font: inherit; }
+  .rep-cat-head:hover { background: color-mix(in srgb, var(--color-lavanda) 40%, white); }
+  .rep-cat-head .ico { width: 36px; height: 36px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; }
+  .rep-cat-head .ico.aqua { background: color-mix(in srgb, var(--color-aqua) 60%, white); color: var(--color-violeta); }
+  .rep-cat-head .ico.sol { background: color-mix(in srgb, var(--color-sol) 70%, white); color: var(--color-violeta); }
+  .rep-cat-head .ico.coral { background: color-mix(in srgb, var(--color-coral) 70%, white); color: white; }
+  .rep-cat-head .ico.violeta { background: var(--color-violeta); color: white; }
+  .rep-cat-head .ttl { flex: 1; min-width: 0; }
+  .rep-cat-head .ttl .name { font-family: var(--font-primary); font-weight: var(--fw-bold); color: var(--color-violeta); font-size: var(--text-base); }
+  .rep-cat-head .ttl .meta { font-family: var(--font-narrow); font-size: var(--text-xs); color: color-mix(in srgb, var(--color-violeta) 65%, white); margin-top: 2px; }
+  .rep-cat-head .chev { transition: transform 0.2s; color: color-mix(in srgb, var(--color-violeta) 70%, white); flex-shrink: 0; }
+  .rep-cat[open] .chev { transform: rotate(90deg); }
+  .rep-cat-body { display: none; border-top: 1px solid color-mix(in srgb, var(--color-lavanda) 50%, white); }
+  .rep-cat[open] .rep-cat-body { display: block; }
+  /* Fila compacta — sin embed inline */
+  .rep-row { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-bottom: 1px dashed color-mix(in srgb, var(--color-lavanda) 60%, white); cursor: pointer; transition: background 0.12s; background: white; border-left: 3px solid transparent; width: 100%; box-sizing: border-box; text-align: left; font: inherit; color: inherit; border-top: 0; border-right: 0; }
+  .rep-row:last-child { border-bottom: 0; }
+  .rep-row:hover { background: color-mix(in srgb, var(--color-lavanda) 18%, white); border-left-color: var(--color-violeta); }
+  .rep-row:focus-visible { outline: 2px solid var(--color-aqua); outline-offset: -2px; }
+  .rep-row .file-ico { width: 36px; height: 44px; border-radius: 4px; flex-shrink: 0; background: white; box-shadow: var(--shadow-sm); border: 1px solid color-mix(in srgb, var(--color-lavanda) 60%, white); position: relative; display:flex;align-items:flex-end;justify-content:center; padding-bottom: 4px; font-family: var(--font-narrow); font-size: 8px; font-weight: var(--fw-bold); color: var(--color-violeta); letter-spacing: 0.05em; }
+  .rep-row .file-ico::before { content: ''; position: absolute; top: 0; right: 0; width: 10px; height: 10px; background: color-mix(in srgb, var(--color-lavanda) 60%, white); clip-path: polygon(0 0, 100% 100%, 0 100%); }
+  .rep-row .file-ico::after { content: ''; position: absolute; top: 8px; left: 6px; right: 6px; height: 2px; border-radius: 1px; background: color-mix(in srgb, var(--color-violeta) 18%, white); box-shadow: 0 4px 0 0 color-mix(in srgb, var(--color-violeta) 18%, white), 0 8px 0 0 color-mix(in srgb, var(--color-violeta) 18%, white); }
+  .rep-row .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .rep-row .info .name { font-family: var(--font-primary); font-weight: var(--fw-semibold); color: var(--color-violeta); font-size: var(--text-sm); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rep-row .info .sub { font-family: var(--font-narrow); font-size: var(--text-xs); color: color-mix(in srgb, var(--color-violeta) 65%, white); }
+  .rep-row .row-badge { flex-shrink: 0; }
+  .rep-row .arrow { flex-shrink: 0; color: color-mix(in srgb, var(--color-violeta) 50%, white); font-size: 18px; line-height: 1; }
+  /* Modal lightbox del reporte */
+  .rep-modal-backdrop { position: fixed; inset: 0; background: rgba(31, 24, 69, 0.55); z-index: 100; display: none; align-items: center; justify-content: center; padding: var(--space-4); animation: rep-fade 0.15s ease-out; }
+  .rep-modal-backdrop.open { display: flex; }
+  @keyframes rep-fade { from { opacity: 0; } to { opacity: 1; } }
+  .rep-modal { background: white; border-radius: var(--radius-lg); max-width: 920px; width: 100%; max-height: 92vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--shadow-lg); animation: rep-slide 0.2s ease-out; }
+  @keyframes rep-slide { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .rep-modal-head { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4); border-bottom: 1px solid color-mix(in srgb, var(--color-lavanda) 50%, white); }
+  .rep-modal-head .info { flex: 1; min-width: 0; }
+  .rep-modal-head .info h3 { font-family: var(--font-primary); font-weight: var(--fw-bold); color: var(--color-violeta); font-size: var(--text-lg); margin-bottom: 2px; }
+  .rep-modal-head .info .sub { font-family: var(--font-narrow); font-size: var(--text-xs); color: color-mix(in srgb, var(--color-violeta) 65%, white); }
+  .rep-modal-close { background: transparent; border: 0; cursor: pointer; padding: 8px; border-radius: var(--radius-sm); color: var(--color-violeta); font-size: 22px; line-height: 1; }
+  .rep-modal-close:hover { background: color-mix(in srgb, var(--color-lavanda) 30%, white); }
+  .rep-modal-body { flex: 1; overflow-y: auto; padding: var(--space-4); background: color-mix(in srgb, var(--color-lavanda) 12%, white); display: flex; align-items: flex-start; justify-content: center; }
+  .rep-modal-foot { display: flex; gap: var(--space-2); padding: var(--space-3) var(--space-4); border-top: 1px solid color-mix(in srgb, var(--color-lavanda) 50%, white); flex-wrap: wrap; align-items: center; }
+  .rep-modal-foot .grow { flex: 1; }
+  /* Embed grande dentro del modal */
+  .rep-embed { background: white; border: 1px solid color-mix(in srgb, var(--color-lavanda) 50%, white); border-radius: var(--radius-sm); aspect-ratio: 8.5 / 11; width: 100%; max-width: 520px; box-shadow: var(--shadow-md); padding: 36px 32px; display: flex; flex-direction: column; gap: 10px; position: relative; }
+  .rep-embed .ln { height: 6px; border-radius: 3px; background: color-mix(in srgb, var(--color-violeta) 14%, white); }
+  .rep-embed .ln.t { background: var(--color-violeta); width: 60%; height: 12px; margin-bottom: 6px; }
+  .rep-embed .ln.h2 { background: color-mix(in srgb, var(--color-violeta) 60%, white); width: 45%; height: 8px; margin-top: 8px; }
+  .rep-embed .ln.short { width: 70%; }
+  .rep-embed .ln.med { width: 90%; }
+  .rep-embed .row2 { display: flex; gap: 10px; margin: 10px 0; }
+  .rep-embed .row2 .box { flex: 1; height: 56px; border-radius: 6px; background: color-mix(in srgb, var(--color-aqua) 35%, white); }
+  .rep-embed .row2 .box.coral { background: color-mix(in srgb, var(--color-coral) 35%, white); }
+  .rep-embed .row2 .box.sol { background: color-mix(in srgb, var(--color-sol) 50%, white); }
+  .rep-embed .badge-pages { position: absolute; top: 12px; right: 12px; background: var(--color-violeta); color: white; font-family: var(--font-narrow); font-size: 10px; padding: 3px 10px; border-radius: var(--radius-full); letter-spacing: 0.05em; }
+  .rep-empty-cat { padding: var(--space-4); color: color-mix(in srgb, var(--color-violeta) 60%, white); font-family: var(--font-narrow); font-size: var(--text-sm); text-align: center; }
+
+  .completitud-bar { display:flex; gap:var(--space-3); align-items:center; }
+  .completitud-bar .progress-seg { flex: 1; }
+  .completitud-pct { font-family: var(--font-primary); font-weight: var(--fw-bold); color: var(--color-violeta); font-size: var(--text-sm); min-width: 40px; text-align: right; }
+
+  /* Programas activos card */
+  .programs-strip { display: flex; gap: var(--space-3); flex-wrap: wrap; padding: var(--space-3) var(--space-4); background: white; border-radius: var(--radius-md); border: 1px solid color-mix(in srgb, var(--color-lavanda) 50%, white); margin-bottom: var(--space-4); }
+  .programs-strip .lbl { font-family: var(--font-narrow); font-size: var(--text-xs); color: color-mix(in srgb, var(--color-violeta) 65%, white); text-transform: uppercase; letter-spacing: 0.06em; align-self: center; margin-right: var(--space-2); }
+</style>
+</head>
+<body>
+  <div id="demo-bar-mount"></div>
+
+  <header class="topbar">
+    <a href="index.html" class="logo">
+      <span class="logo-mark" aria-hidden="true">D</span>
+      <span style="display:flex;flex-direction:column;line-height:1;align-items:flex-start;">DiversoLab<small>mi expediente</small></span>
+    </a>
+    <div style="display:flex;gap:var(--space-2);align-items:center;">
+      <button class="btn btn-ghost btn-sm" aria-label="Notificaciones" style="padding:8px;position:relative;">
+        <span id="ic-bell" style="display:inline-flex;width:18px;height:18px;"></span>
+        <span style="position:absolute;top:4px;right:4px;width:8px;height:8px;background:var(--color-coral);border-radius:50%;"></span>
+      </button>
+      <span class="avatar avatar-sm" id="user-avatar">MG</span>
+    </div>
+  </header>
+
+  <main class="me-wrap" data-screen-label="Mi expediente">
+    <div class="greet">
+      <span class="avatar avatar-lg" id="big-avatar">MG</span>
+      <div style="flex:1; min-width: 220px;">
+        <h1>Hola, <span id="greet-name">María Alejandra</span>.</h1>
+        <p>Bienvenida a tu expediente <span id="greet-perfil-chip"></span></p>
+      </div>
+    </div>
+
+    <!-- Programas activos -->
+    <div class="programs-strip" id="programs-strip">
+      <span class="lbl">Procesos activos</span>
+      <!-- inyectado por JS según perfil -->
+    </div>
+
+    <!-- Resumen completitud — info base del perfil (solo VISTA) -->
+    <div class="card card-violeta">
+      <div class="row between center" style="margin-bottom: var(--space-1);">
+        <h2 style="font-size:var(--text-lg);">Estado de tu expediente</h2>
+        <span class="badge" id="exp-status-badge">En progreso</span>
+      </div>
+      <p class="text-sm" style="color: color-mix(in srgb, var(--color-violeta) 70%, white); margin-bottom: var(--space-4);" id="exp-status-desc">
+        Información base que necesitas tener al día para participar en cualquier proceso de DiversoLab.
+      </p>
+      <div class="completitud-bar" style="margin-bottom: var(--space-4);">
+        <div class="progress-seg" aria-label="Completitud por capa" id="prog-segs">
+          <span class="done"></span>
+          <span class="done"></span>
+          <span class="partial"></span>
+        </div>
+        <span class="completitud-pct" id="exp-pct">75%</span>
+      </div>
+      <div class="layer-list" id="layer-list">
+        <!-- inyectado por JS -->
+      </div>
+      <p class="text-sm" id="exp-pending-hint" style="display:none; margin-top: var(--space-3); padding: var(--space-3); background: color-mix(in srgb, var(--color-sol) 22%, white); border-radius: var(--radius-sm); font-family: var(--font-narrow); color: var(--color-violeta);">
+        <span aria-hidden="true">↓</span> Las acciones pendientes se gestionan abajo, en <strong>Tareas pendientes</strong>.
+      </p>
+    </div>
+
+    <div class="layout" style="margin-top: var(--space-6);">
+      <div>
+
+        <!-- Tareas pendientes — atadas a procesos -->
+        <div class="section-h">
+          <div>
+            <h2>Tareas pendientes</h2>
+            <p class="text-sm" style="font-family:var(--font-narrow); color: color-mix(in srgb, var(--color-violeta) 65%, white); margin-top: 4px;">
+              Solicitudes de tu analista vinculadas a los procesos en los que estás participando.
+            </p>
+          </div>
+          <span class="count" id="task-count">3 activas</span>
+        </div>
+
+        <div class="stack-3" id="task-list">
+          <!-- inyectado por JS -->
+        </div>
+
+        <!-- Documentos -->
+        <div class="section-h">
+          <h2>Mis documentos</h2>
+          <span class="count" id="doc-count">4 de 7</span>
+        </div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr><th>Documento</th><th>Proceso</th><th>Estado</th><th>Fecha</th><th></th></tr>
+            </thead>
+            <tbody id="doc-tbody">
+              <!-- inyectado por JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Reportes -->
+        <div class="section-h">
+          <h2>Reportes disponibles</h2>
+          <span class="count" id="rep-count">2 reportes</span>
+        </div>
+        <div class="reportes-acc" id="reportes-acc">
+          <!-- inyectado por JS -->
+        </div>
+      </div>
+
+      <!-- Sidebar: analista -->
+      <aside>
+        <div class="card analista-card" style="position:sticky; top: 80px;">
+          <h6 style="color:color-mix(in srgb, var(--color-violeta) 65%, white);">Tu analista</h6>
+          <div class="row row-3 center">
+            <span class="avatar avatar-coral avatar-lg">DL</span>
+            <div>
+              <div style="font-family:var(--font-primary);font-weight:var(--fw-bold);color:var(--color-violeta);">Diana López</div>
+              <div class="text-sm" style="color:color-mix(in srgb, var(--color-violeta) 65%, white);">Analista DiversoLab</div>
+            </div>
+          </div>
+          <div class="text-sm" style="color:color-mix(in srgb, var(--color-violeta) 70%, white); display:flex;align-items:center;gap:var(--space-2);">
+            <span aria-hidden="true">✉</span> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="36525f575857185a5946534c76525f40534445595a575418594451">[email&#160;protected]</a>
+          </div>
+          <button class="btn btn-primary btn-sm btn-block">💬 Enviar mensaje</button>
+          <hr class="divider" style="margin:var(--space-2) 0;" />
+          <div class="text-sm" style="color:color-mix(in srgb, var(--color-violeta) 65%, white); line-height: 1.5;">
+            Diana te acompañará durante todo tu proceso en DiversoLab. Disponible lunes a viernes, 8am – 5pm.
+          </div>
+        </div>
+      </aside>
+    <!-- Modal de reporte -->
+    <div class="rep-modal-backdrop" id="rep-modal" role="dialog" aria-modal="true" aria-labelledby="rep-modal-name">
+      <div class="rep-modal" onclick="event.stopPropagation()">
+        <div class="rep-modal-head">
+          <span class="rep-modal-title-cat"></span>
+          <div class="info">
+            <h3 class="rep-modal-name" id="rep-modal-name"></h3>
+            <div class="sub rep-modal-meta"></div>
+          </div>
+          <button class="rep-modal-close" aria-label="Cerrar">×</button>
+        </div>
+        <div class="rep-modal-body">
+          <div class="rep-embed" aria-label="Vista previa del documento">
+            <span class="badge-pages">12 págs</span>
+            <span class="ln t"></span>
+            <span class="ln med"></span>
+            <span class="ln short"></span>
+            <span class="ln"></span>
+            <span class="ln med"></span>
+            <div class="row2"><span class="box"></span><span class="box coral"></span></div>
+            <span class="ln h2"></span>
+            <span class="ln med"></span>
+            <span class="ln short"></span>
+            <span class="ln"></span>
+            <div class="row2"><span class="box sol"></span><span class="box"></span><span class="box coral"></span></div>
+            <span class="ln med"></span>
+            <span class="ln short"></span>
+          </div>
+        </div>
+        <div class="rep-modal-foot">
+          <span class="text-sm grow" style="font-family: var(--font-narrow); color: color-mix(in srgb, var(--color-violeta) 55%, white);">Vista previa — 5 de las primeras páginas</span>
+          <span class="rep-modal-actions" style="display:flex;gap:var(--space-2);flex-wrap:wrap;"></span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  (function() {
+
+    // ───────────────────────────────────
+    // DATA POR PERFIL
+    // El expediente base = capas universales (0,1,2) que TODOS deben tener.
+    // Los procesos (PCP, empresarial, onboarding) tienen sus propias tareas
+    // que pueden incluir caracterizaciones, formularios extensos, documentos.
+    // ───────────────────────────────────
+    const EXP_BASE = [
+      { id: 0, ttl: 'Registro completado', sub: 'Capa 0 · Identidad y contacto', estado: 'done' },
+      { id: 1, ttl: 'Ubicación completada', sub: 'Capa 1 · Residencia y origen', estado: 'done' },
+      { id: 2, ttl: 'Verificación KYC en progreso', sub: 'Capa 2 · Cumplimiento (AML/PEP)', estado: 'progress' },
+    ];
+
+    const DATA = {
+      beneficiario: {
+        procesos: [
+          { id: 'pcp', tag: 'programa-pcp', label: 'PCP — Plan Centrado en la Persona' },
+          { id: 'onb', tag: 'programa-onboarding', label: 'Onboarding inicial' },
+        ],
+        expBase: EXP_BASE,
+        pct: 67, status: 'En progreso', statusBadge: 'badge-progreso',
+        statusDesc: 'Información base que necesitas tener al día para participar en cualquier proceso de DiversoLab.',
+        tareas: [
+          { proceso: { tag: 'programa-pcp', label: 'PCP' }, ttl: 'Diligenciar caracterización PCDi', desc: 'Formulario extenso (≈25 min) sobre tu perfil de discapacidad: apoyos, intereses, redes de cuidado y metas. Solo se pide a quienes ingresan al PCP.', urgente: true, vence: 'vence el 15 may', solicitada: 'hace 3 días', cta: 'Completar caracterización →', href: '#', tipo: 'form' },
+          { proceso: { tag: 'programa-onboarding', label: 'Onboarding' }, ttl: 'Subir cédula (frente y reverso)', desc: 'Documento de identidad por ambos lados, JPG o PDF.', urgente: false, vence: 'vence el 12 may', solicitada: 'hace 5 días', cta: '📎 Subir archivo', href: '#', tipo: 'upload' },
+          { proceso: { tag: 'programa-pcp', label: 'PCP' }, ttl: 'Firmar consentimiento de participación', desc: 'Lee y firma el consentimiento informado para el programa PCP.', urgente: false, vence: 'vence el 18 may', solicitada: 'hace 1 semana', cta: '✍ Firmar', href: '#', tipo: 'sign' },
+        ],
+        documentos: [
+          { ttl: 'Consentimiento tratamiento de datos', proc: 'Onboarding', estado: 'badge-aprobado', estadoTxt: 'Aprobado', fecha: '02 abr', accion: 'ver' },
+          { ttl: 'Formulario de ubicación', proc: 'Onboarding', estado: 'badge-aprobado', estadoTxt: 'Entregado', fecha: '14 abr', accion: 'ver' },
+          { ttl: 'Cédula (frente)', proc: 'Onboarding', estado: 'badge-revision', estadoTxt: 'En revisión', fecha: '22 abr', accion: 'ver' },
+          { ttl: 'Cédula (reverso)', proc: 'Onboarding', estado: 'badge-pendiente', estadoTxt: 'Pendiente', fecha: '—', accion: 'subir' },
+          { ttl: 'Caracterización PCDi', proc: 'PCP', estado: 'badge-pendiente', estadoTxt: 'Pendiente', fecha: '—', accion: 'completar' },
+        ],
+        reportes: [
+          { categoria: 'evaluacion', items: [
+            { ttl: 'Reporte QoL — Enero 2026', autor: 'Diana López', fecha: '28 ene 2026', pags: 12, estado: 'publicado' },
+            { ttl: 'Reporte QoL — Octubre 2025', autor: 'Diana López', fecha: '14 oct 2025', pags: 10, estado: 'publicado' },
+          ]},
+          { categoria: 'plan', items: [
+            { ttl: 'Plan individual de inclusión', autor: 'Diana López', fecha: '15 mar 2026', pags: 8, estado: 'firmado' },
+          ]},
+          { categoria: 'caracterizacion', items: [
+            { ttl: 'Caracterización PCDi (borrador)', autor: 'Tú', fecha: '22 abr 2026', pags: 4, estado: 'borrador' },
+          ]},
+        ]
+      },
+      aliado: {
+        procesos: [
+          { id: 'emp', tag: 'programa-empresarial', label: 'Acompañamiento empresarial DEI' },
+        ],
+        expBase: EXP_BASE,
+        pct: 80, status: 'En progreso', statusBadge: 'badge-progreso',
+        statusDesc: 'Información base de tu organización requerida para cualquier proceso con DiversoLab.',
+        tareas: [
+          { proceso: { tag: 'programa-empresarial', label: 'Empresarial DEI' }, ttl: 'Diligenciar caracterización empresarial DEI', desc: 'Diagnóstico extenso (≈45 min) de prácticas de diversidad, equidad e inclusión en tu organización.', urgente: true, vence: 'vence el 20 may', solicitada: 'hace 2 días', cta: 'Completar caracterización →', href: '#', tipo: 'form' },
+          { proceso: { tag: 'programa-empresarial', label: 'Empresarial DEI' }, ttl: 'Subir certificación bancaria', desc: 'No mayor a 30 días, en PDF.', urgente: false, vence: 'vence el 14 may', solicitada: 'hace 4 días', cta: '📎 Subir archivo', href: '#', tipo: 'upload' },
+        ],
+        documentos: [
+          { ttl: 'RUT', proc: 'Onboarding', estado: 'badge-aprobado', estadoTxt: 'Aprobado', fecha: '05 abr', accion: 'ver' },
+          { ttl: 'Cámara de Comercio', proc: 'Onboarding', estado: 'badge-aprobado', estadoTxt: 'Aprobado', fecha: '05 abr', accion: 'ver' },
+          { ttl: 'Estados financieros 2025', proc: 'Empresarial DEI', estado: 'badge-revision', estadoTxt: 'En revisión', fecha: '20 abr', accion: 'ver' },
+          { ttl: 'Certificación bancaria', proc: 'Empresarial DEI', estado: 'badge-pendiente', estadoTxt: 'Pendiente', fecha: '—', accion: 'subir' },
+        ],
+        reportes: [
+          { categoria: 'diagnostico', items: [
+            { ttl: 'Diagnóstico DEI — Q1 2026', autor: 'Diana López', fecha: '10 abr 2026', pags: 24, estado: 'publicado' },
+          ]},
+          { categoria: 'caracterizacion', items: [
+            { ttl: 'Caracterización empresarial DEI (borrador)', autor: 'Tu equipo', fecha: '24 abr 2026', pags: 6, estado: 'borrador' },
+          ]},
+        ]
+      },
+      contractor: {
+        procesos: [
+          { id: 'onb', tag: 'programa-onboarding', label: 'Onboarding contractor' },
+        ],
+        expBase: [
+          { id: 0, ttl: 'Registro completado', sub: 'Capa 0 · Identidad y contacto', estado: 'done' },
+          { id: 1, ttl: 'Ubicación pendiente', sub: 'Capa 1 · Residencia y origen', estado: 'progress' },
+          { id: 2, ttl: 'KYC pendiente', sub: 'Capa 2 · Cumplimiento (AML/PEP)', estado: 'alert' },
+        ],
+        pct: 33, status: 'Necesita atención', statusBadge: 'badge-rechazado',
+        statusDesc: 'Tu información base aún no está completa. Termina las capas pendientes para poder firmar contratos.',
+        tareas: [
+          { proceso: { tag: 'programa-base', label: 'Datos base · Capa 1' }, ttl: 'Completar formulario de ubicación', desc: 'Datos de residencia y origen — necesarios para todos los procesos.', urgente: true, vence: 'vence mañana', solicitada: 'hace 1 semana', cta: 'Completar →', href: 'formulario-ubicacion.html', tipo: 'form' },
+          { proceso: { tag: 'programa-base', label: 'Datos base · Capa 2' }, ttl: 'Completar declaración KYC', desc: 'AML, PEP y documentos de identidad — necesarios para firmar contratos.', urgente: false, vence: 'vence el 16 may', solicitada: 'hace 5 días', cta: 'Completar →', href: 'formulario-kyc.html', tipo: 'form' },
+        ],
+        documentos: [
+          { ttl: 'Hoja de vida', proc: 'Onboarding', estado: 'badge-aprobado', estadoTxt: 'Aprobado', fecha: '15 abr', accion: 'ver' },
+          { ttl: 'Cédula (frente)', proc: 'Onboarding', estado: 'badge-pendiente', estadoTxt: 'Pendiente', fecha: '—', accion: 'subir' },
+        ],
+        reportes: []
+      },
+      supplier: {
+        procesos: [
+          { id: 'emp', tag: 'programa-empresarial', label: 'Vinculación supplier' },
+        ],
+        expBase: [
+          { id: 0, ttl: 'Registro completado', sub: 'Capa 0 · Identidad y contacto', estado: 'done' },
+          { id: 1, ttl: 'Ubicación completada', sub: 'Capa 1 · Residencia y origen', estado: 'done' },
+          { id: 2, ttl: 'KYC aprobado', sub: 'Capa 2 · Cumplimiento (AML/PEP)', estado: 'done' },
+        ],
+        pct: 100, status: 'Aprobado', statusBadge: 'badge-aprobado',
+        statusDesc: 'Tu información base está completa. Estás habilitado para participar en procesos.',
+        tareas: [
+          { proceso: { tag: 'programa-empresarial', label: 'Vinculación' }, ttl: 'Renovar pólizas de seguros', desc: 'Vence el 30 jun. Sube las pólizas vigentes en PDF.', urgente: false, vence: 'vence 30 jun', solicitada: 'hace 2 días', cta: '📎 Subir pólizas', href: '#', tipo: 'upload' },
+        ],
+        documentos: [
+          { ttl: 'RUT', proc: 'Onboarding', estado: 'badge-aprobado', estadoTxt: 'Aprobado', fecha: '12 mar', accion: 'ver' },
+          { ttl: 'Cámara de Comercio', proc: 'Onboarding', estado: 'badge-aprobado', estadoTxt: 'Aprobado', fecha: '12 mar', accion: 'ver' },
+          { ttl: 'Estados financieros 2025', proc: 'Vinculación', estado: 'badge-aprobado', estadoTxt: 'Aprobado', fecha: '20 mar', accion: 'ver' },
+          { ttl: 'Pólizas de seguros', proc: 'Vinculación', estado: 'badge-revision', estadoTxt: 'Por renovar', fecha: '—', accion: 'subir' },
+        ],
+        reportes: [
+          { categoria: 'evaluacion', items: [
+            { ttl: 'Evaluación de proveedor 2026', autor: 'Diana López', fecha: '02 abr 2026', pags: 6, estado: 'publicado' },
+            { ttl: 'Evaluación de proveedor 2025', autor: 'Diana López', fecha: '15 ene 2025', pags: 5, estado: 'publicado' },
+          ]},
+          { categoria: 'contrato', items: [
+            { ttl: 'Acuerdo marco de suministro', autor: 'DiversoLab Legal', fecha: '20 mar 2026', pags: 18, estado: 'firmado' },
+          ]},
+        ]
+      }
+    };
+
+    const CATEGORIAS = {
+      evaluacion: { ttl: 'Evaluaciones', desc: 'Reportes de calidad de vida y desempeño', ico: '📊', icoCls: 'aqua' },
+      plan: { ttl: 'Planes individuales', desc: 'Hojas de ruta personalizadas', ico: '🗺', icoCls: 'sol' },
+      caracterizacion: { ttl: 'Caracterizaciones', desc: 'Diagnósticos extensos diligenciados por ti', ico: '📝', icoCls: 'coral' },
+      diagnostico: { ttl: 'Diagnósticos', desc: 'Análisis DEI de tu organización', ico: '🔍', icoCls: 'aqua' },
+      contrato: { ttl: 'Documentos contractuales', desc: 'Contratos, acuerdos y pólizas', ico: '📄', icoCls: 'violeta' },
+    };
+
+    const ESTADO_BADGES = {
+      publicado: { cls: 'badge-aprobado', txt: 'Publicado' },
+      firmado: { cls: 'badge-aprobado', txt: 'Firmado' },
+      borrador: { cls: 'badge-pendiente', txt: 'Borrador' },
+      revision: { cls: 'badge-revision', txt: 'En revisión' },
+    };
+
+    function statusIcon(estado) {
+      if (estado === 'done') return '✓';
+      if (estado === 'progress') return '⏳';
+      return '!';
+    }
+    function statusBadge(estado) {
+      // Bloque "Estado" es solo VISTA — no se muestra texto de acción aquí
+      // (las acciones viven todas en Tareas pendientes para no duplicar).
+      if (estado === 'done') return ['badge-aprobado','Completo'];
+      if (estado === 'progress') return ['badge-progreso','Parcial'];
+      return ['badge-rechazado','Pendiente'];
+    }
+    function progressSegState(estado) {
+      if (estado === 'done') return 'done';
+      if (estado === 'progress') return 'partial';
+      return 'alert';
+    }
+
+    function render(p) {
+      const data = DATA[p.key] || DATA.beneficiario;
+
+      // Greeting
+      document.getElementById('greet-name').textContent = p.alias;
+      document.getElementById('user-avatar').textContent = p.iniciales;
+      document.getElementById('user-avatar').className = 'avatar avatar-sm ' + p.avatar;
+      document.getElementById('big-avatar').textContent = p.iniciales;
+      document.getElementById('big-avatar').className = 'avatar avatar-lg ' + p.avatar;
+      document.getElementById('greet-perfil-chip').innerHTML = `<span class="perfil-chip ${p.chip}" style="margin-left:6px;">${p.emoji} ${p.tipo}</span>`;
+
+      // Programas activos
+      const progs = document.getElementById('programs-strip');
+      progs.innerHTML = '<span class="lbl">Procesos activos</span>';
+      data.procesos.forEach(pr => {
+        const t = document.createElement('span');
+        t.className = 'programa-tag ' + pr.tag;
+        t.innerHTML = `<span class="dot"></span> ${pr.label}`;
+        progs.appendChild(t);
+      });
+
+      // Estado expediente
+      document.getElementById('exp-pct').textContent = data.pct + '%';
+      const statusBadgeEl = document.getElementById('exp-status-badge');
+      statusBadgeEl.className = 'badge ' + data.statusBadge;
+      statusBadgeEl.textContent = data.status;
+      document.getElementById('exp-status-desc').textContent = data.statusDesc;
+
+      const segs = document.getElementById('prog-segs');
+      segs.innerHTML = '';
+      data.expBase.forEach(l => {
+        const s = document.createElement('span');
+        s.className = progressSegState(l.estado);
+        segs.appendChild(s);
+      });
+
+      const list = document.getElementById('layer-list');
+      list.innerHTML = '';
+      let hasPending = false;
+      data.expBase.forEach(l => {
+        const [bcls, btxt] = statusBadge(l.estado);
+        if (l.estado !== 'done') hasPending = true;
+        const it = document.createElement('div');
+        it.className = 'layer-item';
+        it.innerHTML = `
+          <span class="layer-status ${l.estado}" aria-hidden="true">${statusIcon(l.estado)}</span>
+          <div class="layer-info"><div class="ttl">${l.ttl}</div><div class="sub">${l.sub}</div></div>
+          <span class="badge ${bcls}">${btxt}</span>`;
+        list.appendChild(it);
+      });
+      // Hint que apunta a Tareas pendientes solo si hay capas incompletas
+      document.getElementById('exp-pending-hint').style.display = hasPending ? 'block' : 'none';
+
+      // Tareas
+      document.getElementById('task-count').textContent = data.tareas.length + ' activa' + (data.tareas.length === 1 ? '' : 's');
+      const tlist = document.getElementById('task-list');
+      tlist.innerHTML = '';
+      if (data.tareas.length === 0) {
+        tlist.innerHTML = `<div class="card" style="padding: var(--space-5); text-align:center; color: color-mix(in srgb, var(--color-violeta) 65%, white);">No tienes tareas pendientes en este momento.</div>`;
+      }
+      data.tareas.forEach(t => {
+        const cardCls = t.urgente ? 'card-coral' : 'card-aqua';
+        const card = document.createElement('div');
+        card.className = 'card ' + cardCls + ' task-card';
+        const linkOut = t.href !== '#' ? `<a href="${t.href}" class="btn btn-primary btn-sm">${t.cta}</a>` : `<button class="btn btn-primary btn-sm">${t.cta}</button>`;
+        card.innerHTML = `
+          <div class="head">
+            <div style="display:flex;gap:var(--space-2);align-items:center;flex-wrap:wrap;">
+              <span class="programa-tag ${t.proceso.tag}"><span class="dot"></span> ${t.proceso.label}</span>
+              ${t.urgente ? '<span class="badge badge-urgente">Urgente</span>' : ''}
+            </div>
+          </div>
+          <h3 style="font-size: var(--text-base);">${t.ttl}</h3>
+          <p class="text-sm" style="font-family:var(--font-secondary);font-size:var(--text-sm);">${t.desc}</p>
+          <div class="meta">
+            <span class="req-by">Solicitada por <strong>Diana López</strong> · ${t.solicitada} · ${t.vence}</span>
+          </div>
+          <div class="task-actions">${linkOut}</div>`;
+        tlist.appendChild(card);
+      });
+
+      // Documentos
+      const totalDocs = data.documentos.length;
+      const okDocs = data.documentos.filter(d => d.estado === 'badge-aprobado').length;
+      document.getElementById('doc-count').textContent = `${okDocs} de ${totalDocs}`;
+      const tbody = document.getElementById('doc-tbody');
+      tbody.innerHTML = '';
+      data.documentos.forEach(d => {
+        const tr = document.createElement('tr');
+        const accionBtn = d.accion === 'subir' ? '<button class="btn btn-ghost btn-sm">Subir</button>' :
+                         d.accion === 'completar' ? '<button class="btn btn-ghost btn-sm">Completar</button>' :
+                         '<button class="btn btn-ghost btn-sm" aria-label="Ver">👁</button>';
+        tr.innerHTML = `
+          <td><strong>${d.ttl}</strong></td>
+          <td><span class="text-sm" style="color: color-mix(in srgb, var(--color-violeta) 70%, white);">${d.proc}</span></td>
+          <td><span class="badge ${d.estado}">${d.estadoTxt}</span></td>
+          <td>${d.fecha}</td>
+          <td>${accionBtn}</td>`;
+        tbody.appendChild(tr);
+      });
+
+      // Reportes — acordeón por categoría
+      const rep = document.getElementById('reportes-acc');
+      rep.innerHTML = '';
+      const totalReps = data.reportes.reduce((acc, c) => acc + c.items.length, 0);
+      document.getElementById('rep-count').textContent = totalReps + ' documento' + (totalReps === 1 ? '' : 's');
+      if (totalReps === 0) {
+        rep.innerHTML = `<div class="card" style="padding: var(--space-4); color: color-mix(in srgb, var(--color-violeta) 65%, white); font-family: var(--font-narrow); font-size: var(--text-sm); text-align: center;">Aún no hay reportes generados para tu expediente.</div>`;
+        return;
+      }
+
+      data.reportes.forEach((cat, idx) => {
+        const meta = CATEGORIAS[cat.categoria] || { ttl: cat.categoria, desc: '', ico: '📄', icoCls: 'violeta' };
+        const det = document.createElement('details');
+        det.className = 'rep-cat';
+        if (idx === 0) det.setAttribute('open', '');
+
+        const head = document.createElement('summary');
+        head.className = 'rep-cat-head';
+        head.innerHTML = `
+          <span class="ico ${meta.icoCls}" aria-hidden="true">${meta.ico}</span>
+          <span class="ttl">
+            <span class="name">${meta.ttl}</span>
+            <span class="meta">${cat.items.length} documento${cat.items.length === 1 ? '' : 's'} · ${meta.desc}</span>
+          </span>
+          <span class="chev" aria-hidden="true">▸</span>`;
+        det.appendChild(head);
+
+        const body = document.createElement('div');
+        body.className = 'rep-cat-body';
+
+        cat.items.forEach(item => {
+          const row = document.createElement('button');
+          row.type = 'button';
+          row.className = 'rep-row';
+          const estadoB = ESTADO_BADGES[item.estado] || ESTADO_BADGES.publicado;
+          row.innerHTML = `
+            <span class="file-ico" aria-hidden="true">PDF</span>
+            <span class="info">
+              <span class="name">${item.ttl}</span>
+              <span class="sub">${item.autor} · ${item.fecha} · ${item.pags} págs</span>
+            </span>
+            <span class="row-badge"><span class="badge ${estadoB.cls}">${estadoB.txt}</span></span>
+            <span class="arrow" aria-hidden="true">›</span>`;
+          row.addEventListener('click', () => openRepModal(item, meta));
+          body.appendChild(row);
+        });
+
+        det.appendChild(body);
+        rep.appendChild(det);
+      });
+    }
+
+    // Modal de reporte
+    function openRepModal(item, catMeta) {
+      const estadoB = ESTADO_BADGES[item.estado] || ESTADO_BADGES.publicado;
+      let actions = '<button class="btn btn-primary btn-sm">⬇ Descargar PDF</button>';
+      if (item.estado === 'borrador') {
+        actions = '<button class="btn btn-primary btn-sm">✎ Continuar editando</button>'
+                + '<button class="btn btn-outline btn-sm">⬇ Descargar borrador</button>'
+                + '<button class="btn btn-ghost btn-sm" style="color: var(--color-coral);">🗑 Eliminar</button>';
+      } else if (item.estado === 'publicado') {
+        actions = '<button class="btn btn-primary btn-sm">⬇ Descargar PDF</button>'
+                + '<button class="btn btn-outline btn-sm">⚐ Refutar / pedir revisión</button>';
+      } else if (item.estado === 'firmado') {
+        actions = '<button class="btn btn-primary btn-sm">⬇ Descargar PDF firmado</button>'
+                + '<button class="btn btn-ghost btn-sm" disabled style="opacity: 0.45; cursor: not-allowed;" title="Documento firmado: no se puede refutar">🔒 Documento firme</button>';
+      }
+      const modal = document.getElementById('rep-modal');
+      modal.querySelector('.rep-modal-title-cat').innerHTML = `<span class="ico ${catMeta.icoCls}" style="width:36px;height:36px;border-radius:var(--radius-sm);display:inline-flex;align-items:center;justify-content:center;font-size:18px;background:color-mix(in srgb, var(--color-${catMeta.icoCls === 'aqua' ? 'aqua' : catMeta.icoCls === 'sol' ? 'sol' : catMeta.icoCls === 'coral' ? 'coral' : 'violeta'}) 50%, white);" aria-hidden="true">${catMeta.ico}</span>`;
+      modal.querySelector('.rep-modal-name').textContent = item.ttl;
+      modal.querySelector('.rep-modal-meta').innerHTML = `Generado por <strong>${item.autor}</strong> · ${item.fecha} · ${item.pags} págs · <span class="badge ${estadoB.cls}" style="vertical-align:middle;margin-left:4px;">${estadoB.txt}</span>`;
+      modal.querySelector('.rep-embed .badge-pages').textContent = item.pags + ' págs';
+      modal.querySelector('.rep-modal-actions').innerHTML = actions;
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeRepModal() {
+      document.getElementById('rep-modal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('demo-bar-mount').appendChild(window.DL_renderDemoBar({
+      onChange: (p) => render(p)
+    }));
+    document.getElementById('ic-bell').innerHTML = window.DL_icon('bell');
+    render(window.DL_getPerfilActivo());
+
+    // Wire modal close
+    const modalEl = document.getElementById('rep-modal');
+    modalEl.addEventListener('click', (e) => { if (e.target === modalEl) closeRepModal(); });
+    modalEl.querySelector('.rep-modal-close').addEventListener('click', closeRepModal);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeRepModal(); });
+
+    document.body.appendChild(window.DL_indexLink());
+  })();
+</script>
+</body>
+</html>

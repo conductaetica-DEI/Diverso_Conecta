@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matriz de instrumentos — DiversoLab Members Connect</title>
+<link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700;900&family=PT+Sans:wght@400;700&family=PT+Sans+Narrow:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sol:#fdda64;--aqua:#a2ddd2;--coral:#ff8e6f;--lavanda:#cad2e9;--violeta:#3f2b56;
+  --crema:#fffaef;--media-noche:#1f1845;
+  --sol-10:#fffaef;--sol-30:#fef0c3;--aqua-10:#eef9f5;--aqua-30:#c8ece4;
+  --coral-10:#fff3ee;--coral-30:#ffc9b5;--lavanda-10:#f2f4fa;--lavanda-30:#dde1f0;
+  --violeta-10:#ede9f3;--violeta-30:#b8a8cc;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'PT Sans',sans-serif;background:var(--crema);color:var(--violeta);line-height:1.6;padding:1.5rem 2rem}
+h1{font-family:'Titillium Web',sans-serif;font-weight:900;font-size:1.75rem;color:var(--violeta);margin-bottom:.25rem}
+.subtitle{font-size:.9rem;color:var(--violeta);opacity:.65;margin-bottom:1.5rem}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;margin-bottom:1.5rem;flex-wrap:wrap}
+.tab{font-family:'Titillium Web',sans-serif;font-weight:700;font-size:.78rem;padding:8px 16px;border:2px solid var(--lavanda);border-radius:8px;background:#fff;cursor:pointer;transition:all .2s;color:var(--violeta);letter-spacing:.3px}
+.tab:hover{background:var(--lavanda-10)}
+.tab.active{background:var(--violeta);color:#fff;border-color:var(--violeta)}
+.section{display:none}.section.active{display:block}
+
+/* Tables */
+.mt{width:100%;border-collapse:separate;border-spacing:0;font-size:.82rem;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 16px rgba(63,43,86,.06);margin-bottom:1.5rem}
+.mt th{font-family:'PT Sans Narrow',sans-serif;font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;padding:11px 10px;text-align:center;color:#fff;background:var(--violeta);border-bottom:2px solid var(--sol)}
+.mt th:first-child{text-align:left;padding-left:14px}
+.mt td{padding:9px 10px;border-bottom:1px solid #f0ece0;text-align:center;vertical-align:middle}
+.mt td:first-child{text-align:left;padding-left:14px;font-weight:700;font-family:'PT Sans Narrow',sans-serif;font-size:.85rem}
+.mt tr:last-child td{border-bottom:none}
+.mt tr:hover td{background:var(--sol-10)}
+
+/* Badges */
+.badge{display:inline-block;padding:3px 9px;border-radius:6px;font-family:'PT Sans Narrow',sans-serif;font-weight:700;font-size:.72rem;letter-spacing:.3px;white-space:nowrap}
+.b-ben{background:var(--aqua-10);color:#0a6b52}.b-ali{background:var(--lavanda-10);color:#3f2b56}
+.b-con{background:var(--sol-10);color:#8a6b00}.b-pro{background:var(--coral-10);color:#a04020}
+.b-reg{background:var(--aqua-30);color:#085041}.b-vin{background:var(--sol-30);color:#6b5200}
+.b-ope{background:var(--lavanda-30);color:#2a1d3a}.b-cie{background:var(--coral-30);color:#6b2810}
+.b-wix{background:#0a6b52;color:#fff}.b-gf{background:#1a73e8;color:#fff}.b-html{background:var(--violeta);color:#fff}
+.b-firm{background:#8a6b00;color:#fff}
+
+.ck{color:#0a6b52;font-weight:900;font-size:1.1rem}.no{color:#ccc;font-size:.9rem}
+
+/* Cards */
+.cg{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-bottom:1.5rem}
+.ic{background:#fff;border-radius:12px;padding:18px;box-shadow:0 2px 12px rgba(63,43,86,.06);border-left:4px solid var(--aqua)}
+.ic.warn{border-left-color:var(--coral)}.ic.note{border-left-color:var(--sol)}.ic.purple{border-left-color:var(--violeta)}
+.ic h4{font-family:'Titillium Web',sans-serif;font-weight:700;font-size:.88rem;margin-bottom:6px;color:var(--violeta)}
+.ic p,.ic li{font-size:.82rem;line-height:1.55;color:var(--violeta);opacity:.8}
+.ic ul{padding-left:1.2rem;margin-top:5px}.ic li{margin-bottom:3px}
+
+.stitle{font-family:'Titillium Web',sans-serif;font-weight:700;font-size:1.1rem;color:var(--violeta);margin:1.5rem 0 .75rem;padding-bottom:5px;border-bottom:3px solid var(--sol);display:inline-block}
+.legend{font-size:.72rem;color:var(--violeta);opacity:.55;margin-bottom:1.25rem}
+
+/* Accordion */
+.acc{background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(63,43,86,.06);margin-bottom:10px;overflow:hidden}
+.acc-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;font-family:'Titillium Web',sans-serif;font-weight:700;font-size:.9rem;color:var(--violeta);border-left:4px solid var(--lavanda);transition:background .2s}
+.acc-head:hover{background:var(--sol-10)}
+.acc-head .arrow{transition:transform .25s;font-size:.8rem;color:var(--violeta);opacity:.5}
+.acc.open .acc-head .arrow{transform:rotate(180deg)}
+.acc-head .badges{display:flex;gap:4px;margin-left:auto;margin-right:12px}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.acc.open .acc-body{max-height:3000px}
+.acc-inner{padding:0 18px 16px 22px;font-size:.82rem;line-height:1.6}
+.acc-inner p{margin-bottom:8px}.acc-inner ul{padding-left:1.2rem;margin:6px 0}
+.acc-inner li{margin-bottom:3px}
+.acc-inner .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;margin:8px 0;font-size:.78rem}
+.acc-inner .field-grid span{padding:3px 0;border-bottom:1px dotted #ece8da}
+.meta-row{display:flex;gap:16px;flex-wrap:wrap;margin:8px 0;font-size:.78rem}
+.meta-row span{background:var(--lavanda-10);padding:3px 10px;border-radius:6px}
+
+/* Recom box */
+.rbox{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 16px rgba(63,43,86,.06);margin-bottom:1.25rem;border:2px solid var(--aqua)}
+.rbox h4{font-family:'Titillium Web',sans-serif;font-weight:700;font-size:.95rem;margin-bottom:10px;color:var(--violeta)}
+.rbox table{width:100%;font-size:.82rem;border-collapse:collapse}
+.rbox td{padding:5px 8px;border-bottom:1px solid #f0ece0;vertical-align:top}
+.rbox td:first-child{font-weight:700;white-space:nowrap;width:190px}
+.rbox tr:last-child td{border-bottom:none}
+
+/* Highlight row */
+.hl{background:var(--sol-10)}
+</style>
+</head>
+<body>
+
+<h1>Matriz de instrumentos DiversoLab</h1>
+<p class="subtitle">Formularios, consentimientos y compliance — quién, cuándo, dónde · Versión actualizada</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('inventario')">Inventario completo</button>
+  <button class="tab" onclick="showTab('perfil')">Formularios × perfil</button>
+  <button class="tab" onclick="showTab('consent')">Consentimientos</button>
+  <button class="tab" onclick="showTab('compliance')">Compliance / SARLAFT</button>
+  <button class="tab" onclick="showTab('evaluaciones')">Evaluaciones</button>
+  <button class="tab" onclick="showTab('plataforma')">Recomendación plataforma</button>
+  <button class="tab" onclick="showTab('gforms')">Inventario Google Forms</button>
+</div>
+
+<!-- ==================== TAB 1: INVENTARIO ==================== -->
+<div class="section active" id="inventario">
+<p class="stitle">Inventario completo — 14 instrumentos en 4 grupos</p>
+<p class="legend">Clic en cada instrumento para ver detalle completo: campos, público, momento, quién lo diligencia, plataforma.</p>
+
+<!-- GRUPO 1 -->
+<p style="font-family:'Titillium Web',sans-serif;font-weight:700;font-size:.85rem;color:#0a6b52;margin:1.25rem 0 .5rem;text-transform:uppercase;letter-spacing:1px">Grupo 1 — Expediente digital (Wix + Supabase)</p>
+
+<div class="acc" onclick="this.classList.toggle('open')">
+<div class="acc-head" style="border-left-color:var(--aqua)">
+  Registro (Capa 0)
+  <div class="badges"><span class="badge b-ben">BEN</span><span class="badge b-ali">ALI</span><span class="badge b-con">CON</span><span class="badge b-pro">PRO</span></div>
+  <span class="arrow">▼</span>
+</div>
+<div class="acc-body"><div class="acc-inner">
+  <div class="meta-row">
+    <span>~10 campos</span><span class="badge b-reg">Registro</span><span class="badge b-wix">Wix + Supabase</span>
+  </div>
+  <p>Punto de entrada de todos los perfiles. Captura lo mínimo para crear la identidad digital. Lo diligencia el propio usuario externo.</p>
+  <p><strong>Campos:</strong> nombre o razón social, tipo documento (CC/CE/NIT/Pasaporte/PEP/PPT/TI), número documento, email, teléfono, tipo de perfil.</p>
+  <p><strong>Al completar:</strong> crea registro en Supabase (profiles), carpeta en Drive, item en Monday. Dispara consentimiento C1.</p>
+  <p><strong>Estado:</strong> por construir en Wix.</p>
+</div></div></div>
+
+<div class="acc" onclick="this.classList.toggle('open')">
+<div class="acc-head" style="border-left-color:var(--aqua)">
+  Ubicación (Capa 1)
+  <div class="badges"><span class="badge b-ben">BEN</span><span class="badge b-ali">ALI</span><span class="badge b-con">CON</span><span class="badge b-pro">PRO</span></div>
+  <span class="arrow">▼</span>
+</div>
+<div class="acc-body"><div class="acc-inner">
+  <div class="meta-row">
+    <span>~18 campos</span><span class="badge b-vin">Post-registro</span><span class="badge b-wix">Wix + Supabase</span>
+  </div>
+  <p>Datos de origen, migración y residencia. Mismo formulario base para todos; jurídicas agregan dirección de sede y sedes adicionales. Lo diligencia el propio perfil como tarea asignada.</p>
+  <p><strong>Campos:</strong> país/departamento nacimiento, nacionalidades, doble nacionalidad, estatus migratorio, país/departamento/municipio residencia, zona (urbana/rural/rural dispersa), tiempo residencia, víctima desplazamiento, estrato socioeconómico. Jurídicas: dirección sede principal, sedes adicionales.</p>
+  <p><strong>Precarga:</strong> nombre y documento desde Capa 0.</p>
+  <p><strong>Estado:</strong> campos definidos en mockup. Plataforma: Wix + Supabase (decisión tomada).</p>
+</div></div></div>
+
+<div class="acc" onclick="this.classList.toggle('open')">
+<div class="acc-head" style="border-left-color:var(--aqua)">
+  KYC Persona Natural (Capa 2)
+  <div class="badges"><span class="badge b-ben">BEN</span><span class="badge b-con">CON</span></div>
+  <span class="arrow">▼</span>
+</div>
+<div class="acc-body"><div class="acc-inner">
+  <div class="meta-row">
+    <span>~25 campos</span><span class="badge b-vin">Post-registro</span><span class="badge b-wix">Wix + Supabase</span>
+  </div>
+  <p>Compliance para personas naturales. El perfil lo diligencia, el analista revisa y aprueba/rechaza cada documento.</p>
+  <p><strong>Declaración AML:</strong> actividad económica, ingresos mensuales, origen de fondos, declaración de licitud.</p>
+  <p><strong>Declaración PEP:</strong> ¿es PEP o tiene vínculos? Si sí: cargo, entidad, fecha inicio/fin, vínculo. Repetible para múltiples PEP.</p>
+  <p><strong>Documentos:</strong> cédula frente, cédula reverso, selfie. Contratistas agregan: certificación bancaria (&lt;30 días).</p>
+  <p><strong>Consentimiento previo:</strong> C2 (identificación) obligatorio antes de iniciar.</p>
+  <p><strong>Nivel de diligencia:</strong> Simplificada para beneficiarios. Normal para contratistas.</p>
+  <p><strong>Estado:</strong> campos definidos en mockup KYC. Plataforma: Wix + Supabase (decisión tomada).</p>
+</div></div></div>
+
+<div class="acc" onclick="this.classList.toggle('open')">
+<div class="acc-head" style="border-left-color:var(--aqua)">
+  KYC Persona Jurídica (Capa 2)
+  <div class="badges"><span class="badge b-ali">ALI</span><span class="badge b-pro">PRO</span></div>
+  <span class="arrow">▼</span>
+</div>
+<div class="acc-body"><div class="acc-inner">
+  <div class="meta-row">
+    <span>~35 campos</span><span class="badge b-vin">Post-registro</span><span class="badge b-wix">Wix + Supabase</span>
+  </div>
+  <p>Compliance reforzada para personas jurídicas. Lo diligencia el representante legal. Analista revisa.</p>
+  <p><strong>Declaración AML corporativa:</strong> ingresos anuales, patrimonio, origen de fondos.</p>
+  <p><strong>Declaración PEP:</strong> del representante legal. Repetible.</p>
+  <p><strong>UBO (beneficiarios finales &gt;25%):</strong> nombre, documento, nacionalidad, % participación de cada uno.</p>
+  <p><strong>Documentos:</strong> RUT, Cámara de Comercio, NIT, cédula rep. legal, estados financieros (último año fiscal), pólizas (si aplica), certificación bancaria.</p>
+  <p><strong>Consentimiento previo:</strong> C2 (identificación) + Política P01 (SICE).</p>
+  <p><strong>Nivel de diligencia:</strong> Reforzada.</p>
+  <p><strong>Estado:</strong> campos definidos en mockup KYC. Plataforma: Wix + Supabase (decisión tomada).</p>
+</div></div></div>
+
+<div class="acc" onclick="this.classList.toggle('open')">
+<div class="acc-head" style="border-left-color:var(--aqua)">
+  Consentimientos C1–C7
+  <div class="badges"><span class="badge b-ben">BEN</span><span class="badge b-ali">ALI</span><span class="badge b-con">CON</span><span class="badge b-pro">PRO</span></div>
+  <span class="arrow">▼</span>
+</div>
+<div class="acc-body"><div class="acc-inner">
+  <div class="meta-row">
+    <span>7 ítems de firma</span><span>Momento variable</span><span class="badge b-firm">Wix + Supabase + Firma-GAS</span>
+  </div>
+  <p>Cada consentimiento se pide justo antes de necesitar los datos que autoriza. No se piden todos juntos.</p>
+  <ul>
+    <li><strong>C1</strong> — Datos básicos → al registrarse (todos)</li>
+    <li><strong>C2</strong> — Identificación → antes de KYC (todos)</li>
+    <li><strong>C3</strong> — Datos sensibles (discapacidad, salud, género, etnia) → antes de caracterización (solo beneficiario)</li>
+    <li><strong>C4</strong> — Analítica e IA → antes de módulos QoL/DEI (beneficiario + aliado)</li>
+    <li><strong>C5</strong> — Comunicaciones → al registrarse, opcional (todos)</li>
+    <li><strong>C6</strong> — Imagen, voz, testimonios → antes de intervención (solo beneficiario)</li>
+    <li><strong>C7</strong> — Seguimiento del proceso → antes de intervención (solo beneficiario)</li>
+  </ul>
+  <p><strong>Firma-GAS</strong> registra: persona_id, código consentimiento, versión del texto, timestamp, IP, user-agent. Cumple Ley 527/1999 y Ley 1581/2012.</p>
+</div></div></div>
+
+<!-- GRUPO 2 -->
+<p style="font-family:'Titillium Web',sans-serif;font-weight:700;font-size:.85rem;color:#1a73e8;margin:1.75rem 0 .5rem;text-transform:uppercase;letter-spacing:1px">Grupo 2 — Instrumentos de análisis (Google Forms → GAS/IA)</p>
+
+<div class="acc" onclick="this.classList.toggle('open')">
+<div class="acc-head" style="border-left-color:#1a73e8">
+  Caracterización PCDi (Capa 3) — 4 formularios
+  <div class="badges"><span class="badge b-ben">BEN</span></div>
+  <span class="arrow">▼</span>
+</div>
+<div class="acc-body"><div class="acc-inner">
+  <div class="meta-row">
+    <span>~76 campos total</span><span class="badge b-ope">Operación</span><span class="badge b-gf">Google Forms</span>
+  </div>
+  <p>Solo para beneficiarios. Lo diligencia el analista con el beneficiario y/o cuidador. Se separa en 4 formularios para permitir aplicación en sesiones distintas.</p>
+  <table class="mt" style="font-size:.78rem;margin:12px 0">
+    <thead><tr><th style="text-align:left">Formulario</th><th>Bloques</th><th>Campos</th><th>Quién responde</th></tr></thead>
+    <tbody>
+    <tr><td>PCDi Parte 1 — Identidad y contexto</td><td>B1 Identidad + B2 Origen/residencia + B7 Marco normativo</td><td>~28</td><td>Analista + beneficiario/cuidador</td></tr>
+    <tr><td>PCDi Parte 2 — Discapacidad y apoyo</td><td>B3 Discapacidad + B4 Entorno apoyo + B5 Participación</td><td>~22</td><td>Analista + beneficiario/cuidador</td></tr>
+    <tr><td>PCDi Parte 3 — Perfil del cuidador</td><td>B6 completo (6.1–6.5)</td><td>~20</td><td>Cuidador (solo si existe)</td></tr>
+    <tr><td>PCDi Parte 4 — Cierre</td><td>B8 Percepciones y expectativas</td><td>~6</td><td>Beneficiario</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Alimenta:</strong> módulo QoL (contexto), expediente Supabase (Fase 2).</p>
+  <p><strong>Consentimiento previo:</strong> C3 (datos sensibles) obligatorio.</p>
+  <p><strong>Detalle B1:</strong> sexo biológico, identidad de género, orientación sexual, expresión de género (cada uno con justificación clínica/social), rango etario, ID interno PCDi.</p>
+  <p><strong>Detalle B3:</strong> tipo discapacidad, diagnóstico (opcional, no va a IA), grado apoyo AAIDD (leve/moderado/extenso/generalizado), origen, edad diagnóstico, condiciones asociadas, barreras percibidas (múltiple).</p>
+  <p><strong>Detalle B6:</strong> módulo independiente con 5 sub-bloques: identidad del cuidador, situación socioeconómica, experiencia de cuidado, bienestar (carga 1-10, burnout, descanso, salud, grupos apoyo, acompañamiento psicológico), relación con PCDi.</p>
+  <p><strong>Estado:</strong> estructura refinada en documento. Google Forms por crear.</p>
+</div></div></div>
+
+<div class="acc" onclick="this.classList.toggle('open')">
+<div class="acc-head" style="border-left-color:#1a73e8">
+  Caracterización Empresarial + Diagnóstico DEI — 2 formularios
+  <div class="badges"><span class="badge b-ali">ALI</span></div>
+  <span class="arrow">▼</span>
+</div>
+<div class="acc-body"><div class="acc-inner">
+  <div class="meta-row">
+    <span>~50 campos total</span><span class="badge b-ope">Operación</span><span class="badge b-gf">Google Forms</span>
+  </div>
+  <p>Las preguntas 1–23 del DEI actual YA SON la Caracterización Empresarial (Capa 3 de aliados). Se separa en 2 formularios.</p>
+  <table class="mt" style="font-size:.78rem;margin:12px 0">
+    <thead><tr><th style="text-align:left">Formulario</th><th>Contenido</th><th>Campos</th><th>Frecuencia</th></tr></thead>
+    <tbody>
+    <tr><td>Caract. Empresarial (preguntas 1–23)</td><td>Nombre, NIT, ciudad, sector, naturaleza, tamaño, distribución género/nivel/edad, diversidad presente, PcD, normatividad, ESG, detonante, etapa, expectativa</td><td>~23</td><td>Una vez (no cambia)</td></tr>
+    <tr><td>Diagnóstico DEI dimensiones (1.1+)</td><td>Dimensión 1: conocimiento diversidad (1.1–1.8). Dimensión 2: planeación estratégica (2.1–2.15). Dimensión 3: atracción talento (3.1+)</td><td>~27</td><td>Periódica (mide evolución)</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Ventaja de separar:</strong> la caracterización se llena una vez. El diagnóstico dimensional se puede reaplicar para medir evolución sin que la empresa repita NIT, sector y tamaño.</p>
+  <p><strong>Alimenta:</strong> módulo DEI GAS → Gemini → reporte.</p>
+  <p><strong>Consentimiento previo:</strong> C4 (analítica/IA) antes del diagnóstico dimensional.</p>
+  <p><strong>Estado:</strong> DEI completo ya en producción como 1 Google Form. Separar en 2.</p>
+</div></div></div>
+
+<div class="acc" onclick="this.classList.toggle('open')">
+<div class="acc-head" style="border-left-color:#1a73e8">
+  QoL Autoinforme (INICO-FEAPS)
+  <div class="badges"><span class="badge b-ben">BEN</span></div>
+  <span class="arrow">▼</span>
+</div>
+<div class="acc-body"><div class="acc-inner">
+  <div class="meta-row">
+    <span>~46 campos Likert</span><span class="badge b-ope">Operación</span><span class="badge b-gf">Google Forms</span>
+  </div>
+  <p>Escala INICO-FEAPS estandarizada, versión autoinforme. La responde el propio beneficiario (con apoyo si necesita). Mide 8 dimensiones: autodeterminación, derechos, bienestar emocional, inclusión social, relaciones interpersonales, bienestar material, desarrollo personal, bienestar físico. Se responde en 15-20 minutos.</p>
+  <p><strong>Identificación:</strong> ID PCDi + nombre completo.</p>
+  <p><strong>No se separa:</strong> instrumento estandarizado validado académicamente. Separarlo rompería integridad y complicaría cálculos de dimensiones en GAS.</p>
+  <p><strong>Alimenta:</strong> módulo QoL GAS → Gemini → reporte multi-agente.</p>
+  <p><strong>Consentimiento previo:</strong> C4 (analítica/IA).</p>
+  <p><strong>Estado:</strong> en producción.</p>
+</div></div></div>
+
+<div class="acc" onclick="this.classList.toggle('open')">
+<div class="acc-head" style="border-left-color:#1a73e8">
+  QoL Otros (INICO-FEAPS)
+  <div class="badges"><span class="badge b-ben">BEN</span></div>
+  <span class="arrow">▼</span>
+</div>
+<div class="acc-body"><div class="acc-inner">
+  <div class="meta-row">
+    <span>~44 campos Likert</span><span class="badge b-ope">Operación</span><span class="badge b-gf">Google Forms</span>
+  </div>
+  <p>Misma escala INICO-FEAPS pero en tercera persona. La responde un familiar, cuidador o profesional sobre el beneficiario. Complementa autoinforme con perspectiva externa.</p>
+  <p><strong>Identificación adicional:</strong> nombre del respondente + parentesco/vínculo con PCDi.</p>
+  <p><strong>No se separa:</strong> misma razón que autoinforme.</p>
+  <p><strong>Alimenta:</strong> módulo QoL GAS (mismo que autoinforme, perspectiva cruzada).</p>
+  <p><strong>Estado:</strong> en producción.</p>
+</div></div></div>
+
+<div class="acc" onclick="this.classList.toggle('open')">
+<div class="acc-head" style="border-left-color:#1a73e8">
+  Perfil de Cargo DEI — 4 formularios
+  <div class="badges"><span class="badge b-ali">ALI</span></div>
+  <span class="arrow">▼</span>
+</div>
+<div class="acc-body"><div class="acc-inner">
+  <div class="meta-row">
+    <span>~120 campos total</span><span class="badge b-ope">Operación</span><span class="badge b-gf">Google Forms</span>
+  </div>
+  <p>Lo llena el analista presencialmente con la empresa aliada. Se separa en 4 formularios por la estructura natural del instrumento. Permite llenar Partes 1-2 en una sesión con Gestión Humana, y Partes 3-4 después de visitar el puesto de trabajo.</p>
+  <table class="mt" style="font-size:.78rem;margin:12px 0">
+    <thead><tr><th style="text-align:left">Formulario</th><th>Bloques</th><th>Campos</th></tr></thead>
+    <tbody>
+    <tr><td>Cargo DEI Parte 1 — Identificación y estructura</td><td>B0 Control documental + B1 Identificación cargo + B2 Propósito</td><td>~20</td></tr>
+    <tr><td>Cargo DEI Parte 2 — Funciones y requisitos</td><td>B3 Análisis funcional + B4 Requisitos ingreso + B5 Competencias</td><td>~35</td></tr>
+    <tr><td>Cargo DEI Parte 3 — Demandas y condiciones</td><td>B6 Demandas cargo + B7 Condiciones/riesgo + B8 Accesibilidad entorno</td><td>~35</td></tr>
+    <tr><td>Cargo DEI Parte 4 — Compatibilidad e implementación</td><td>B9 Compatibilidad/ajustes + B10 KPIs + B11 Fases + B12 Incentivos + B13 Observaciones + B14 Aprobaciones</td><td>~30</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Para el módulo GAS:</strong> las 4 hojas de Sheets se consolidan en un solo JSON filtrando por ID de cargo compartido. El motor de IA lee las 4 hojas.</p>
+  <p><strong>Estado:</strong> existía como HTML offline → JSON → GAS. Se migra a 4 Google Forms para crear módulo GAS propio.</p>
+</div></div></div>
+
+<!-- GRUPO 3 -->
+<p style="font-family:'Titillium Web',sans-serif;font-weight:700;font-size:.85rem;color:#a04020;margin:1.75rem 0 .5rem;text-transform:uppercase;letter-spacing:1px">Grupo 3 — Evaluaciones de satisfacción (Google Forms, sin cambios)</p>
+
+<div class="acc" onclick="this.classList.toggle('open')">
+<div class="acc-head" style="border-left-color:var(--coral)">
+  Ev. Cursos
+  <div class="badges"><span class="badge b-ben">BEN</span><span class="badge b-ali">ALI</span></div>
+  <span class="arrow">▼</span>
+</div>
+<div class="acc-body"><div class="acc-inner">
+  <div class="meta-row">
+    <span>~29 campos</span><span class="badge b-cie">Post-evento</span><span class="badge b-gf">Google Forms</span>
+  </div>
+  <p>Mide calidad de cursos/talleres en 7 dimensiones: contenido y objetivos (5), facilitador (5), tiempo (2), recursos (3), impacto DEI (6), aplicabilidad (2), satisfacción (4) + 2 abiertas. Lo responden participantes después de un curso. En producción, sin cambios.</p>
+</div></div></div>
+
+<div class="acc" onclick="this.classList.toggle('open')">
+<div class="acc-head" style="border-left-color:var(--coral)">
+  Ev. Experiencias
+  <div class="badges"><span class="badge b-ben">BEN</span><span class="badge b-ali">ALI</span></div>
+  <span class="arrow">▼</span>
+</div>
+<div class="acc-body"><div class="acc-inner">
+  <div class="meta-row">
+    <span>~28 campos</span><span class="badge b-cie">Post-evento</span><span class="badge b-gf">Google Forms</span>
+  </div>
+  <p>Para experiencias vivenciales (no cursos formales). Dimensiones: bienvenida y respeto (5), participación e inclusión (5), accesibilidad y recursos (5), facilitadores (5), aprendizaje y reflexión (4), satisfacción (2) + 2 abiertas. En producción, sin cambios.</p>
+</div></div></div>
+
+<div class="acc" onclick="this.classList.toggle('open')">
+<div class="acc-head" style="border-left-color:var(--coral)">
+  Ev. Proveedores
+  <div class="badges"><span class="badge b-con">CON</span><span class="badge b-pro">PRO</span></div>
+  <span class="arrow">▼</span>
+</div>
+<div class="acc-body"><div class="acc-inner">
+  <div class="meta-row">
+    <span>~16 campos</span><span class="badge b-cie">Post-proyecto</span><span class="badge b-gf">Google Forms</span>
+  </div>
+  <p>Feedback inverso — DiversoLab evalúa la experiencia de sus contratistas y proveedores. Dimensiones: claridad contractual/financiera (5), comunicación y relación (5), satisfacción general (1) + 1 abierta + 4 identificación. En producción, sin cambios.</p>
+</div></div></div>
+
+<!-- GRUPO 4 - ya está en Grupo 1 como accordion -->
+
+<p class="stitle" style="margin-top:2rem">Resumen numérico</p>
+<div class="cg">
+  <div class="ic purple">
+    <h4>Wix + Supabase</h4>
+    <p><strong>~95 campos + 7 firmas</strong></p>
+    <ul>
+      <li>Registro Capa 0 (~10)</li>
+      <li>Ubicación Capa 1 (~18)</li>
+      <li>KYC natural Capa 2 (~25)</li>
+      <li>KYC jurídica Capa 2 (~35)</li>
+      <li>Consentimientos C1–C7 (7 firmas)</li>
+    </ul>
+  </div>
+  <div class="ic" style="border-left-color:#1a73e8">
+    <h4>Google Forms (15 formularios)</h4>
+    <p><strong>~411 campos en instrumentos</strong></p>
+    <ul>
+      <li>PCDi × 4 partes (~76)</li>
+      <li>Caract. Empresarial (~23)</li>
+      <li>Diagnóstico DEI dims (~27)</li>
+      <li>QoL Autoinforme (~46)</li>
+      <li>QoL Otros (~44)</li>
+      <li>Cargo DEI × 4 partes (~120)</li>
+      <li>Ev. Cursos (~29)</li>
+      <li>Ev. Experiencias (~28)</li>
+      <li>Ev. Proveedores (~16)</li>
+    </ul>
+  </div>
+  <div class="ic warn">
+    <h4>Total general</h4>
+    <p><strong>~506 campos + 7 firmas</strong> distribuidos en 5 formularios Wix + 15 Google Forms + sistema de firma GAS.</p>
+  </div>
+</div>
+</div>
+
+<!-- ==================== TAB 2: FORMULARIOS × PERFIL ==================== -->
+<div class="section" id="perfil">
+<p class="stitle">Qué formularios ve cada perfil y cuándo</p>
+
+<table class="mt">
+<thead>
+<tr><th style="width:22%">Instrumento</th><th style="width:8%">BEN</th><th style="width:8%">ALI</th><th style="width:8%">CON</th><th style="width:8%">PRO</th><th style="width:10%">Momento</th><th>Quién diligencia</th></tr>
+</thead>
+<tbody>
+<tr><td>Registro Capa 0</td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="badge b-reg">Registro</span></td><td>El propio perfil</td></tr>
+<tr><td>C1 — datos básicos</td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="badge b-reg">Registro</span></td><td>El propio perfil</td></tr>
+<tr><td>C5 — comunicaciones</td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="badge b-reg">Registro</span></td><td>El propio perfil (opcional)</td></tr>
+<tr><td>Ubicación Capa 1</td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="badge b-vin">Post-registro</span></td><td>El propio perfil</td></tr>
+<tr><td>C2 — identificación</td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="badge b-vin">Pre-KYC</span></td><td>El propio perfil</td></tr>
+<tr><td>KYC persona natural</td><td><span class="ck">✓</span></td><td><span class="no">—</span></td><td><span class="ck">✓</span></td><td><span class="no">—</span></td><td><span class="badge b-vin">Post-registro</span></td><td>Perfil + analista revisa</td></tr>
+<tr><td>KYC persona jurídica</td><td><span class="no">—</span></td><td><span class="ck">✓</span></td><td><span class="no">—</span></td><td><span class="ck">✓</span></td><td><span class="badge b-vin">Post-registro</span></td><td>Rep. legal + analista revisa</td></tr>
+<tr><td>C3 — datos sensibles</td><td><span class="ck">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="badge b-vin">Pre-caract.</span></td><td>Beneficiario o cuidador</td></tr>
+<tr><td>Caract. PCDi (4 partes)</td><td><span class="ck">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="badge b-ope">Operación</span></td><td>Analista + beneficiario/cuidador</td></tr>
+<tr><td>Caract. Empresarial</td><td><span class="no">—</span></td><td><span class="ck">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="badge b-ope">Operación</span></td><td>Rep. empresa + analista</td></tr>
+<tr><td>C4 — analítica/IA</td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="badge b-ope">Pre-análisis IA</span></td><td>Beneficiario o rep. empresa</td></tr>
+<tr><td>QoL Autoinforme</td><td><span class="ck">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="badge b-ope">Operación</span></td><td>Beneficiario (con apoyo)</td></tr>
+<tr><td>QoL Otros</td><td><span class="ck">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="badge b-ope">Operación</span></td><td>Familiar/cuidador/profesional</td></tr>
+<tr><td>Diagnóstico DEI dims</td><td><span class="no">—</span></td><td><span class="ck">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="badge b-ope">Operación</span></td><td>Rep. empresa</td></tr>
+<tr><td>Perfil Cargo DEI (4 partes)</td><td><span class="no">—</span></td><td><span class="ck">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="badge b-ope">Operación</span></td><td>Analista con la empresa</td></tr>
+<tr><td>C6 — imagen/voz</td><td><span class="ck">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="badge b-ope">Pre-intervención</span></td><td>Beneficiario o cuidador</td></tr>
+<tr><td>C7 — seguimiento</td><td><span class="ck">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="badge b-ope">Pre-intervención</span></td><td>Beneficiario o cuidador</td></tr>
+<tr><td>Ev. Cursos</td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="badge b-cie">Post-evento</span></td><td>Participante</td></tr>
+<tr><td>Ev. Experiencias</td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="badge b-cie">Post-evento</span></td><td>Participante</td></tr>
+<tr><td>Ev. Proveedores</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="badge b-cie">Post-proyecto</span></td><td>Contratista/proveedor</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ==================== TAB 3: CONSENTIMIENTOS ==================== -->
+<div class="section" id="consent">
+<p class="stitle">Mapa de consentimientos informados</p>
+
+<table class="mt">
+<thead><tr><th style="width:5%">ID</th><th style="width:28%">Texto</th><th style="width:7%">BEN</th><th style="width:7%">ALI</th><th style="width:7%">CON</th><th style="width:7%">PRO</th><th>Momento</th><th>Marco legal</th></tr></thead>
+<tbody>
+<tr><td><strong>C1</strong></td><td>Tratamiento de datos básicos</td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td>Registro — obligatorio</td><td>Ley 1581/2012, Art. 9</td></tr>
+<tr><td><strong>C2</strong></td><td>Identificación personal</td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td>Pre-KYC — obligatorio</td><td>Ley 1581, SARLAFT</td></tr>
+<tr><td><strong>C3</strong></td><td>Datos sensibles (discapacidad, salud, género, etnia)</td><td><span class="ck">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td>Pre-caracterización — obligatorio</td><td>Ley 1581, Art. 6</td></tr>
+<tr><td><strong>C4</strong></td><td>Analítica e IA (datos anonimizados)</td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td>Pre-análisis IA — obligatorio para IA</td><td>Ley 1581, Ley 1712</td></tr>
+<tr><td><strong>C5</strong></td><td>Comunicaciones informativas y promocionales</td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td>Registro — opcional</td><td>Ley 1581</td></tr>
+<tr><td><strong>C6</strong></td><td>Imagen, voz y testimonios</td><td><span class="ck">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td>Pre-intervención</td><td>Ley 1581, Ley 23/1982</td></tr>
+<tr><td><strong>C7</strong></td><td>Seguimiento del proceso de acompañamiento</td><td><span class="ck">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td><td>Pre-intervención — obligatorio</td><td>Ley 1581, Ley 1618/2013</td></tr>
+</tbody>
+</table>
+
+<div class="cg">
+  <div class="ic purple"><h4>Firma-GAS</h4><p>Registra: persona_id, código consentimiento, versión texto, timestamp, IP, user-agent. Cumple Ley 527/1999 y Ley 1581/2012.</p></div>
+  <div class="ic warn"><h4>Posibles adicionales</h4><ul><li><strong>SARLAFT</strong> — origen lícito de fondos (KYC)</li><li><strong>PEP</strong> — persona expuesta políticamente (KYC)</li><li><strong>NDA</strong> — confidencialidad (contratistas, aliados)</li><li><strong>Contrato vinculación</strong> — términos por perfil</li></ul></div>
+  <div class="ic note"><h4>Criterio de cuándo pedir</h4><p>Justo antes de necesitar los datos que autoriza. No todo junto al registrarse — reduce fatiga de checkbox y mejora calidad del consentimiento.</p></div>
+</div>
+</div>
+
+<!-- ==================== TAB 4: COMPLIANCE ==================== -->
+<div class="section" id="compliance">
+<p class="stitle">Compliance, SARLAFT y PEP</p>
+
+<table class="mt">
+<thead><tr><th style="width:18%">Requisito</th><th style="width:7%">BEN</th><th style="width:7%">ALI</th><th style="width:7%">CON</th><th style="width:7%">PRO</th><th>Detalle</th><th>Cuándo</th></tr></thead>
+<tbody>
+<tr><td><strong>Declaración AML</strong></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td>Actividad económica, ingresos, origen fondos. Jurídicas: ingresos anuales, patrimonio.</td><td>Capa 2 — KYC</td></tr>
+<tr><td><strong>Declaración PEP</strong></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td>¿Es PEP o vínculos? Cargo, entidad, fechas, vínculo. Repetible.</td><td>Capa 2 — KYC</td></tr>
+<tr><td><strong>UBO (&gt;25%)</strong></td><td><span class="no">—</span></td><td><span class="ck">✓</span></td><td><span class="no">—</span></td><td><span class="ck">✓</span></td><td>Nombre, documento, nacionalidad, % participación.</td><td>Capa 2 — KYC jurídica</td></tr>
+<tr><td><strong>Documentos identidad</strong></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td>Cédula, selfie (naturales). RUT, Cám. Comercio, NIT, cédula rep. legal (jurídicas).</td><td>Capa 2 — KYC</td></tr>
+<tr><td><strong>Cert. bancaria</strong></td><td><span class="no">—</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td>No mayor a 30 días.</td><td>Capa 2 — KYC</td></tr>
+<tr><td><strong>Estados financieros</strong></td><td><span class="no">—</span></td><td><span class="ck">✓</span></td><td><span class="no">—</span></td><td><span class="ck">✓</span></td><td>Último año fiscal.</td><td>Capa 2 — KYC</td></tr>
+<tr><td><strong>Pólizas</strong></td><td><span class="no">—</span></td><td><span class="ck">✓</span></td><td><span class="no">—</span></td><td><span class="ck">✓</span></td><td>Cumplimiento, responsabilidad civil.</td><td>Capa 2 — KYC</td></tr>
+<tr><td><strong>Política P01 (SICE)</strong></td><td><span class="no">—</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td>Aceptación política prevención LA/FT.</td><td>Capa 2 — KYC</td></tr>
+<tr><td><strong>Listas restrictivas</strong></td><td><span class="no">—</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td>OFAC, ONU, UE (API o manual — futuro).</td><td>Post-KYC</td></tr>
+</tbody>
+</table>
+
+<div class="cg">
+  <div class="ic"><h4>Niveles de diligencia</h4><ul><li><strong>Simplificada:</strong> Beneficiario — C1, C2, documento, AML básica</li><li><strong>Normal:</strong> Contratista — C1, C2, AML, PEP, documento, cert. bancaria, P01</li><li><strong>Reforzada:</strong> Aliado, Proveedor — todo + UBO, estados financieros, pólizas, listas</li></ul></div>
+  <div class="ic warn"><h4>Beneficiario PCDi y compliance</h4><p>Riesgo SARLAFT bajo, pero Ley 1581 y SICE requieren verificación mínima de identidad y declaración AML/PEP para todos.</p></div>
+</div>
+</div>
+
+<!-- ==================== TAB 5: EVALUACIONES ==================== -->
+<div class="section" id="evaluaciones">
+<p class="stitle">Evaluaciones de satisfacción e impacto</p>
+
+<table class="mt">
+<thead><tr><th style="width:16%">Instrumento</th><th>Dimensiones</th><th style="width:7%">Campos</th><th>Aplica a</th><th>Frecuencia</th></tr></thead>
+<tbody>
+<tr><td><strong>Ev. Cursos</strong></td><td>Contenido (5), Facilitador (5), Tiempo (2), Recursos (3), Impacto DEI (6), Aplicabilidad (2), Satisfacción (4), Abiertas (2)</td><td>29</td><td><span class="badge b-ben">BEN</span> <span class="badge b-ali">ALI</span></td><td>Post-curso</td></tr>
+<tr><td><strong>Ev. Experiencias</strong></td><td>Bienvenida (5), Participación (5), Accesibilidad (5), Facilitadores (5), Aprendizaje (4), Satisfacción (2), Abiertas (2)</td><td>28</td><td><span class="badge b-ben">BEN</span> <span class="badge b-ali">ALI</span></td><td>Post-experiencia</td></tr>
+<tr><td><strong>Ev. Proveedores</strong></td><td>Claridad contractual (5), Comunicación (5), Satisfacción (1), Abierta (1) + Identificación (4)</td><td>16</td><td><span class="badge b-con">CON</span> <span class="badge b-pro">PRO</span></td><td>Post-proyecto</td></tr>
+</tbody>
+</table>
+
+<div class="ic note" style="max-width:550px"><h4>Sin migración necesaria</h4><p>Instrumentos ligeros, post-evento, semi-anónimos. Google Forms ideal: $0, distribuible por link, respuestas en Sheets.</p></div>
+</div>
+
+<!-- ==================== TAB 6: RECOMENDACIÓN ==================== -->
+<div class="section" id="plataforma">
+<p class="stitle">Dónde construir cada formulario</p>
+
+<div class="rbox">
+<h4>Criterio de decisión</h4>
+<table>
+<tr><td><span class="badge b-wix">Wix + Supabase</span></td><td>Forma parte del expediente, requiere auth, RLS, precarga de datos, revisión del analista, o firma de consentimiento.</td></tr>
+<tr><td><span class="badge b-gf">Google Forms</span></td><td>Instrumento estandarizado, autónomo, alimenta GAS/IA, o es anónimo/post-evento.</td></tr>
+</table>
+</div>
+
+<table class="mt">
+<thead><tr><th style="width:25%">Instrumento</th><th style="width:18%">Plataforma</th><th>Razón</th></tr></thead>
+<tbody>
+<tr><td>Registro Capa 0</td><td><span class="badge b-wix">Wix + Supabase</span></td><td>Crea identidad. Auth, RLS, Drive.</td></tr>
+<tr><td>Ubicación Capa 1</td><td><span class="badge b-wix">Wix + Supabase</span></td><td>Expediente. Precarga Capa 0.</td></tr>
+<tr><td>KYC natural/jurídica</td><td><span class="badge b-wix">Wix + Supabase</span></td><td>Datos sensibles, RLS, docs a Drive, compliance.</td></tr>
+<tr><td>Consentimientos C1–C7</td><td><span class="badge b-firm">Wix + Supabase + GAS</span></td><td>Evidencia jurídica Ley 527.</td></tr>
+<tr class="hl"><td>Caract. PCDi (4 partes)</td><td><span class="badge b-gf">Google Forms</span></td><td>76 campos. Alimenta QoL. Aplicación en sesiones.</td></tr>
+<tr class="hl"><td>Caract. Empresarial (DEI 1–23)</td><td><span class="badge b-gf">Google Forms</span></td><td>Ya existe en DEI. No duplicar.</td></tr>
+<tr><td>Diagnóstico DEI dims</td><td><span class="badge b-gf">Google Forms</span></td><td>Alimenta GAS/IA. Reaplicable.</td></tr>
+<tr><td>QoL Autoinforme</td><td><span class="badge b-gf">Google Forms</span></td><td>INICO-FEAPS estandarizado.</td></tr>
+<tr><td>QoL Otros</td><td><span class="badge b-gf">Google Forms</span></td><td>Igual, perspectiva tercero.</td></tr>
+<tr class="hl"><td>Perfil Cargo DEI (4 partes)</td><td><span class="badge b-gf">Google Forms</span></td><td>120 campos. Módulo GAS propio.</td></tr>
+<tr><td>Ev. Cursos / Experiencias</td><td><span class="badge b-gf">Google Forms</span></td><td>Post-evento, ligeros, $0.</td></tr>
+<tr><td>Ev. Proveedores</td><td><span class="badge b-gf">Google Forms</span></td><td>Post-proyecto, semi-anónimo.</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ==================== TAB 7: INVENTARIO GOOGLE FORMS ==================== -->
+<div class="section" id="gforms">
+<p class="stitle">Inventario final — 15 Google Forms</p>
+
+<table class="mt">
+<thead><tr><th style="width:4%">#</th><th style="width:28%">Formulario</th><th style="width:7%">Campos</th><th>Público</th><th>Alimenta</th><th style="width:10%">Estado</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>PCDi Parte 1 — Identidad y contexto</td><td>~28</td><td><span class="badge b-ben">BEN</span></td><td>Expediente + QoL</td><td>Por crear</td></tr>
+<tr><td>2</td><td>PCDi Parte 2 — Discapacidad y apoyo</td><td>~22</td><td><span class="badge b-ben">BEN</span></td><td>Expediente + QoL</td><td>Por crear</td></tr>
+<tr><td>3</td><td>PCDi Parte 3 — Perfil del cuidador</td><td>~20</td><td><span class="badge b-ben">BEN</span> (cuidador)</td><td>Expediente</td><td>Por crear</td></tr>
+<tr><td>4</td><td>PCDi Parte 4 — Cierre</td><td>~6</td><td><span class="badge b-ben">BEN</span></td><td>Expediente</td><td>Por crear</td></tr>
+<tr><td>5</td><td>Caract. Empresarial (DEI 1–23)</td><td>~23</td><td><span class="badge b-ali">ALI</span></td><td>Expediente + DEI</td><td>Separar del actual</td></tr>
+<tr><td>6</td><td>Diagnóstico DEI dimensiones</td><td>~27</td><td><span class="badge b-ali">ALI</span></td><td>GAS → IA → reporte</td><td>Separar del actual</td></tr>
+<tr><td>7</td><td>QoL Autoinforme</td><td>~46</td><td><span class="badge b-ben">BEN</span></td><td>GAS → IA → reporte</td><td>✅ En producción</td></tr>
+<tr><td>8</td><td>QoL Otros</td><td>~44</td><td><span class="badge b-ben">BEN</span> (tercero)</td><td>GAS → IA → reporte</td><td>✅ En producción</td></tr>
+<tr><td>9</td><td>Cargo DEI Parte 1 — Identificación</td><td>~20</td><td><span class="badge b-ali">ALI</span> (analista)</td><td>GAS → IA → reporte</td><td>Por crear</td></tr>
+<tr><td>10</td><td>Cargo DEI Parte 2 — Funciones</td><td>~35</td><td><span class="badge b-ali">ALI</span> (analista)</td><td>GAS → IA → reporte</td><td>Por crear</td></tr>
+<tr><td>11</td><td>Cargo DEI Parte 3 — Demandas</td><td>~35</td><td><span class="badge b-ali">ALI</span> (analista)</td><td>GAS → IA → reporte</td><td>Por crear</td></tr>
+<tr><td>12</td><td>Cargo DEI Parte 4 — Implementación</td><td>~30</td><td><span class="badge b-ali">ALI</span> (analista)</td><td>GAS → IA → reporte</td><td>Por crear</td></tr>
+<tr><td>13</td><td>Ev. Cursos</td><td>~29</td><td><span class="badge b-ben">BEN</span> <span class="badge b-ali">ALI</span></td><td>Métricas impacto</td><td>✅ En producción</td></tr>
+<tr><td>14</td><td>Ev. Experiencias</td><td>~28</td><td><span class="badge b-ben">BEN</span> <span class="badge b-ali">ALI</span></td><td>Métricas impacto</td><td>✅ En producción</td></tr>
+<tr><td>15</td><td>Ev. Proveedores</td><td>~16</td><td><span class="badge b-con">CON</span> <span class="badge b-pro">PRO</span></td><td>Mejora interna</td><td>✅ En producción</td></tr>
+</tbody>
+</table>
+
+<div class="cg">
+  <div class="ic"><h4>Ya en producción: 4</h4><p>QoL Autoinforme, QoL Otros, Ev. Cursos, Ev. Experiencias, Ev. Proveedores.</p></div>
+  <div class="ic note"><h4>Por separar del actual: 2</h4><p>DEI se divide en Caract. Empresarial (1-23) + Diagnóstico dimensiones (1.1+).</p></div>
+  <div class="ic warn"><h4>Por crear desde cero: 8</h4><p>PCDi × 4 + Cargo DEI × 4. Todos los campos y bloques ya están definidos.</p></div>
+</div>
+</div>
+
+<script>
+function showTab(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

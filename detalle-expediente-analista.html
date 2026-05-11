@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Detalle de expediente · DiversoLab</title>
+<link rel="stylesheet" href="diversolab.css" />
+<script src="shared.js"></script>
+<style>
+  body { background: var(--color-crema); }
+  .de-wrap { max-width: 1100px; margin: 0 auto; padding: var(--space-4) var(--space-4) var(--space-12); }
+  .de-header { background: white; border-radius: var(--radius-md); padding: var(--space-5); border: 1px solid color-mix(in srgb, var(--color-lavanda) 50%, white); margin-bottom: var(--space-4); }
+  .de-id-row { display: flex; gap: var(--space-4); align-items: center; flex-wrap: wrap; }
+  .de-meta { display: grid; grid-template-columns: 1fr; gap: var(--space-3); margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px dashed color-mix(in srgb, var(--color-lavanda) 70%, white); }
+  @media (min-width: 540px) { .de-meta { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 880px) { .de-meta { grid-template-columns: repeat(4, 1fr); } }
+  .de-meta .lbl { font-family: var(--font-narrow); font-size: var(--text-xs); color: color-mix(in srgb, var(--color-violeta) 65%, white); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+  .de-meta .val { font-family: var(--font-secondary); color: var(--color-violeta); font-size: var(--text-sm); }
+  .de-actions { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-top: var(--space-3); }
+  .layer-row { display: flex; align-items: center; gap: var(--space-3); flex: 1; }
+  .layer-badge { width: 28px; height: 28px; border-radius: 50%; display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size: 14px; }
+  .layer-badge.done { background: color-mix(in srgb, var(--color-aqua) 60%, white); color: var(--color-violeta); }
+  .layer-badge.partial { background: color-mix(in srgb, var(--color-sol) 50%, white); color: var(--color-violeta); }
+  .layer-badge.alert { background: var(--color-coral); color: white; }
+  .layer-pct { font-family: var(--font-primary); font-weight: var(--fw-bold); font-size: var(--text-sm); color: var(--color-violeta); margin-left: auto; }
+  .sub-status { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); margin-top: var(--space-3); }
+  .sub-status .item { display: flex; gap: var(--space-2); align-items: center; padding: var(--space-2); background: color-mix(in srgb, var(--color-lavanda) 18%, white); border-radius: var(--radius-sm); font-size: var(--text-sm); }
+  .timeline { position: relative; padding-left: var(--space-6); }
+  .timeline::before { content: ''; position: absolute; left: 12px; top: 12px; bottom: 12px; width: 2px; background: var(--color-lavanda); }
+  .timeline-item { position: relative; padding-bottom: var(--space-4); }
+  .timeline-item::before { content: ''; position: absolute; left: -22px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--color-violeta); border: 2px solid white; box-shadow: 0 0 0 2px var(--color-lavanda); }
+  .timeline-item.done::before { background: var(--color-aqua); }
+  .timeline-item.alert::before { background: var(--color-coral); }
+  .timeline-time { font-family: var(--font-narrow); font-size: var(--text-xs); color: color-mix(in srgb, var(--color-violeta) 65%, white); }
+  .timeline-text { font-size: var(--text-sm); color: var(--color-media-noche); margin-top: 2px; }
+  .timeline-text strong { font-family: var(--font-primary); color: var(--color-violeta); }
+  .doc-status-select { padding: 4px 8px; border: 1px solid var(--color-lavanda); border-radius: var(--radius-sm); font-size: var(--text-xs); font-family: var(--font-primary); font-weight: var(--fw-semibold); background: white; cursor: pointer; }
+  .tab-content { padding-top: var(--space-4); }
+  .table-wrap { background: white; border-radius: var(--radius-md); border: 1px solid color-mix(in srgb, var(--color-lavanda) 50%, white); overflow-x: auto; }
+  .doc-actions-bar { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-bottom: var(--space-3); }
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <a href="dashboard-analista.html" class="btn btn-ghost btn-sm">← Dashboard</a>
+    <a href="index.html" class="logo">
+      <span class="logo-mark" aria-hidden="true">D</span>
+      <span style="display:flex;flex-direction:column;line-height:1;align-items:flex-start;">DiversoLab</span>
+    </a>
+    <span class="avatar avatar-sm avatar-violeta">DL</span>
+  </header>
+
+  <main class="de-wrap" data-screen-label="Detalle expediente">
+
+    <div class="de-header">
+      <div class="de-id-row">
+        <span class="avatar avatar-lg avatar-sol">MG</span>
+        <div style="flex: 1; min-width: 220px;">
+          <div class="row row-2 wrap" style="margin-bottom: 4px;">
+            <span class="perfil-chip perfil-beneficiario">👤 Beneficiario</span>
+            <span class="badge badge-progreso">Activo</span>
+          </div>
+          <h1 style="font-size: var(--text-2xl);">María Alejandra Gómez Pérez</h1>
+          <div class="text-sm" style="color: color-mix(in srgb, var(--color-violeta) 65%, white);">CC 1.023.456.789</div>
+        </div>
+        <div class="de-actions">
+          <a href="solicitar-tarea-modal.html" class="btn btn-primary btn-sm">+ Solicitar tarea</a>
+          <button class="btn btn-outline btn-sm">📁 Drive</button>
+        </div>
+      </div>
+
+      <div class="de-meta">
+        <div><div class="lbl">Email</div><div class="val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e68b87948f87c881898b839ca6858994948389c88589">[email&#160;protected]</a></div></div>
+        <div><div class="lbl">Teléfono</div><div class="val">+57 311 234 5678</div></div>
+        <div><div class="lbl">Fecha de registro</div><div class="val">02 abr 2026</div></div>
+        <div><div class="lbl">Analista asignado</div><div class="val">Diana López (yo)</div></div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-tab="datos" role="tab" aria-selected="true">Datos</button>
+      <button class="tab" data-tab="docs" role="tab" aria-selected="false">Documentos</button>
+      <button class="tab" data-tab="tareas" role="tab" aria-selected="false">Tareas</button>
+      <button class="tab" data-tab="hist" role="tab" aria-selected="false">Historial</button>
+    </div>
+
+    <!-- TAB: Datos -->
+    <div class="tab-content" data-panel="datos">
+      <!-- Capa 0 -->
+      <div class="accordion open">
+        <div class="accordion-head">
+          <span class="layer-badge done" aria-hidden="true">✓</span>
+          <div class="layer-row">
+            <strong style="font-family:var(--font-primary);color:var(--color-violeta);">Capa 0 — Registro base</strong>
+            <span class="badge badge-aprobado">Completa</span>
+          </div>
+          <span class="layer-pct">100%</span>
+          <span class="chev">›</span>
+        </div>
+        <div class="accordion-body">
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);">
+            <div><div class="lbl" style="font-family:var(--font-narrow);font-size:var(--text-xs);text-transform:uppercase;color:color-mix(in srgb, var(--color-violeta) 65%, white);">Nombre completo</div><div>María Alejandra Gómez Pérez</div></div>
+            <div><div class="lbl" style="font-family:var(--font-narrow);font-size:var(--text-xs);text-transform:uppercase;color:color-mix(in srgb, var(--color-violeta) 65%, white);">Documento</div><div>CC 1.023.456.789</div></div>
+            <div><div class="lbl" style="font-family:var(--font-narrow);font-size:var(--text-xs);text-transform:uppercase;color:color-mix(in srgb, var(--color-violeta) 65%, white);">Email</div><div><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="bfd2decdd6de91d8d0d2dac5ffdcd0cdcddad091dcd0">[email&#160;protected]</a></div></div>
+            <div><div class="lbl" style="font-family:var(--font-narrow);font-size:var(--text-xs);text-transform:uppercase;color:color-mix(in srgb, var(--color-violeta) 65%, white);">Teléfono</div><div>+57 311 234 5678</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Capa 1 -->
+      <div class="accordion">
+        <div class="accordion-head">
+          <span class="layer-badge done" aria-hidden="true">✓</span>
+          <div class="layer-row">
+            <strong style="font-family:var(--font-primary);color:var(--color-violeta);">Capa 1 — Ubicación</strong>
+            <span class="badge badge-aprobado">Completa</span>
+          </div>
+          <span class="layer-pct">100%</span>
+          <span class="chev">›</span>
+        </div>
+        <div class="accordion-body">
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);">
+            <div><div class="lbl" style="font-family:var(--font-narrow);font-size:var(--text-xs);text-transform:uppercase;color:color-mix(in srgb, var(--color-violeta) 65%, white);">Origen</div><div>Bogotá D.C., Colombia</div></div>
+            <div><div class="lbl" style="font-family:var(--font-narrow);font-size:var(--text-xs);text-transform:uppercase;color:color-mix(in srgb, var(--color-violeta) 65%, white);">Residencia</div><div>Kennedy, Bogotá · Estrato 2</div></div>
+            <div><div class="lbl" style="font-family:var(--font-narrow);font-size:var(--text-xs);text-transform:uppercase;color:color-mix(in srgb, var(--color-violeta) 65%, white);">Zona</div><div>Urbana</div></div>
+            <div><div class="lbl" style="font-family:var(--font-narrow);font-size:var(--text-xs);text-transform:uppercase;color:color-mix(in srgb, var(--color-violeta) 65%, white);">Desplazamiento</div><div>No</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Capa 2 -->
+      <div class="accordion open">
+        <div class="accordion-head">
+          <span class="layer-badge partial" aria-hidden="true">⏳</span>
+          <div class="layer-row">
+            <strong style="font-family:var(--font-primary);color:var(--color-violeta);">Capa 2 — KYC / Compliance</strong>
+            <span class="badge badge-progreso">En progreso</span>
+          </div>
+          <span class="layer-pct">65%</span>
+          <span class="chev">›</span>
+        </div>
+        <div class="accordion-body">
+          <div class="sub-status">
+            <div class="item"><span class="layer-badge done" style="width:20px;height:20px;font-size:11px;">✓</span> AML</div>
+            <div class="item"><span class="layer-badge done" style="width:20px;height:20px;font-size:11px;">✓</span> PEP</div>
+            <div class="item"><span class="layer-badge partial" style="width:20px;height:20px;font-size:11px;">⏳</span> Documentos</div>
+            <div class="item"><span class="layer-badge alert" style="width:20px;height:20px;font-size:11px;">!</span> OFAC pendiente</div>
+          </div>
+          <p class="text-sm" style="margin-top: var(--space-3); color: color-mix(in srgb, var(--color-violeta) 70%, white);">Faltan: cédula reverso, certificación bancaria.</p>
+          <a href="solicitar-tarea-modal.html" class="btn btn-outline btn-sm" style="margin-top: var(--space-3);">Solicitar completar KYC</a>
+        </div>
+      </div>
+
+      <!-- Capa 3 -->
+      <div class="accordion">
+        <div class="accordion-head">
+          <span class="layer-badge alert" aria-hidden="true">!</span>
+          <div class="layer-row">
+            <strong style="font-family:var(--font-primary);color:var(--color-violeta);">Capa 3 — Caracterización (perfil de discapacidad)</strong>
+            <span class="badge badge-rechazado">Pendiente</span>
+          </div>
+          <span class="layer-pct">0%</span>
+          <span class="chev">›</span>
+        </div>
+        <div class="accordion-body">
+          <p class="text-sm">El perfil aún no ha completado la caracterización temática.</p>
+          <a href="solicitar-tarea-modal.html" class="btn btn-primary btn-sm" style="margin-top: var(--space-3);">Solicitar caracterización</a>
+        </div>
+      </div>
+
+      <!-- Capa 4 -->
+      <div class="accordion">
+        <div class="accordion-head">
+          <span class="layer-badge partial" aria-hidden="true">⏳</span>
+          <div class="layer-row">
+            <strong style="font-family:var(--font-primary);color:var(--color-violeta);">Capa 4 — Documentos del expediente</strong>
+            <span class="badge badge-progreso">4 de 7</span>
+          </div>
+          <span class="layer-pct">57%</span>
+          <span class="chev">›</span>
+        </div>
+        <div class="accordion-body">
+          <p class="text-sm">Ver pestaña <strong>Documentos</strong> para detalles.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Documentos -->
+    <div class="tab-content" data-panel="docs" hidden>
+      <div class="doc-actions-bar">
+        <button class="btn btn-primary btn-sm">⬆ Subir documento</button>
+        <a href="solicitar-tarea-modal.html" class="btn btn-outline btn-sm">+ Solicitar documento</a>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr><th>Documento</th><th>Categoría</th><th>Estado</th><th>Subido por</th><th>Fecha</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Consentimiento de tratamiento de datos</strong></td>
+              <td><span class="badge badge-lavanda">DiversoLab</span></td>
+              <td>
+                <select class="doc-status-select" style="color:var(--color-violeta);background:color-mix(in srgb, var(--color-aqua) 60%, white);">
+                  <option selected>Aprobado</option><option>En revisión</option><option>Rechazado</option>
+                </select>
+              </td>
+              <td>María Alejandra</td>
+              <td>02 abr</td>
+              <td><button class="icon-btn">👁</button></td>
+            </tr>
+            <tr>
+              <td><strong>Cédula (frente)</strong></td>
+              <td><span class="badge badge-outline">KYC</span></td>
+              <td>
+                <select class="doc-status-select" style="color:var(--color-violeta);background:color-mix(in srgb, var(--color-coral) 30%, white);">
+                  <option>Aprobado</option><option selected>En revisión</option><option>Rechazado</option>
+                </select>
+              </td>
+              <td>María Alejandra</td>
+              <td>22 abr</td>
+              <td><button class="icon-btn">👁</button></td>
+            </tr>
+            <tr>
+              <td><strong>Cédula (reverso)</strong></td>
+              <td><span class="badge badge-outline">KYC</span></td>
+              <td><span class="badge badge-pendiente">Pendiente</span></td>
+              <td>—</td><td>—</td>
+              <td><a href="solicitar-tarea-modal.html" class="btn btn-ghost btn-sm">Solicitar</a></td>
+            </tr>
+            <tr>
+              <td><strong>Certificación bancaria</strong></td>
+              <td><span class="badge badge-outline">Financiero</span></td>
+              <td><span class="badge badge-pendiente">Pendiente</span></td>
+              <td>—</td><td>—</td>
+              <td><a href="solicitar-tarea-modal.html" class="btn btn-ghost btn-sm">Solicitar</a></td>
+            </tr>
+            <tr>
+              <td><strong>Formulario de ubicación</strong></td>
+              <td><span class="badge badge-lavanda">DiversoLab</span></td>
+              <td><span class="badge badge-aprobado">Aprobado</span></td>
+              <td>María Alejandra</td>
+              <td>14 abr</td>
+              <td><button class="icon-btn">👁</button></td>
+            </tr>
+            <tr>
+              <td><strong>Certificado de discapacidad</strong></td>
+              <td><span class="badge badge-outline">Administrativo</span></td>
+              <td><span class="badge badge-pendiente">Pendiente</span></td>
+              <td>—</td><td>—</td>
+              <td><a href="solicitar-tarea-modal.html" class="btn btn-ghost btn-sm">Solicitar</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB: Tareas -->
+    <div class="tab-content" data-panel="tareas" hidden>
+      <div class="row between center" style="margin-bottom: var(--space-3);">
+        <h3 style="font-size: var(--text-lg);">Tareas asignadas</h3>
+        <a href="solicitar-tarea-modal.html" class="btn btn-primary btn-sm">+ Nueva tarea</a>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item alert">
+          <div class="timeline-time">Vence en 2 días · solicitada hace 5 días</div>
+          <div class="timeline-text"><strong>Subir cédula (frente y reverso)</strong></div>
+          <div style="margin-top: 4px;"><span class="badge badge-progreso">En curso</span> <span class="badge badge-urgente">Urgente</span></div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time">Vence el 15 may · solicitada hace 1 semana</div>
+          <div class="timeline-text"><strong>Firmar consentimiento de participación</strong></div>
+          <div style="margin-top: 4px;"><span class="badge badge-pendiente">Pendiente</span></div>
+        </div>
+        <div class="timeline-item done">
+          <div class="timeline-time">Completada hace 2 semanas</div>
+          <div class="timeline-text"><strong>Completar formulario de ubicación</strong></div>
+          <div style="margin-top: 4px;"><span class="badge badge-aprobado">Completada</span></div>
+        </div>
+        <div class="timeline-item done">
+          <div class="timeline-time">Completada hace 3 semanas</div>
+          <div class="timeline-text"><strong>Aceptación tratamiento de datos</strong></div>
+          <div style="margin-top: 4px;"><span class="badge badge-aprobado">Completada</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Historial -->
+    <div class="tab-content" data-panel="hist" hidden>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-time">hace 2 horas</div>
+          <div class="timeline-text">María subió <strong>cédula (frente)</strong> · pendiente de revisión.</div>
+        </div>
+        <div class="timeline-item done">
+          <div class="timeline-time">hace 2 días</div>
+          <div class="timeline-text"><strong>María completó el formulario de ubicación</strong>.</div>
+        </div>
+        <div class="timeline-item done">
+          <div class="timeline-time">hace 5 días</div>
+          <div class="timeline-text"><strong>Reporte QoL — Enero 2026</strong> generado por Diana.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time">hace 1 semana</div>
+          <div class="timeline-text">Diana solicitó <strong>carga de cédula</strong>.</div>
+        </div>
+        <div class="timeline-item done">
+          <div class="timeline-time">02 abr 2026</div>
+          <div class="timeline-text">María se registró como <strong>Beneficiario</strong>.</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  (function() {
+    document.querySelectorAll('.tab').forEach(t => {
+      t.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(x => { x.classList.remove('active'); x.setAttribute('aria-selected','false'); });
+        t.classList.add('active'); t.setAttribute('aria-selected','true');
+        document.querySelectorAll('[data-panel]').forEach(p => p.hidden = p.dataset.panel !== t.dataset.tab);
+      });
+    });
+    document.querySelectorAll('.accordion-head').forEach(h => {
+      h.addEventListener('click', () => h.parentElement.classList.toggle('open'));
+      h.tabIndex = 0;
+      h.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); h.parentElement.classList.toggle('open'); }
+      });
+    });
+    document.body.appendChild(window.DL_indexLink());
+  })();
+</script>
+</body>
+</html>

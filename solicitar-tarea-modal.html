@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Solicitar tarea · DiversoLab</title>
+<link rel="stylesheet" href="diversolab.css" />
+<script src="shared.js"></script>
+<style>
+  body { background: rgba(31, 24, 69, 0.55); min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: var(--space-4); }
+  .modal-shell { width: 100%; max-width: 560px; background: white; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); overflow: hidden; animation: slideUp 240ms ease; margin-top: var(--space-6); margin-bottom: var(--space-6); }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .modal-head { display: flex; justify-content: space-between; align-items: center; padding: var(--space-4) var(--space-5); border-bottom: 1px solid color-mix(in srgb, var(--color-lavanda) 60%, white); }
+  .modal-head h1 { font-size: var(--text-xl); }
+  .modal-close { background: transparent; border: none; cursor: pointer; padding: 6px; border-radius: var(--radius-sm); color: var(--color-violeta); }
+  .modal-close:hover { background: color-mix(in srgb, var(--color-lavanda) 50%, white); }
+  .modal-body { padding: var(--space-5); max-height: calc(100vh - 200px); overflow-y: auto; }
+  .modal-foot { display: flex; gap: var(--space-3); padding: var(--space-4) var(--space-5); border-top: 1px solid color-mix(in srgb, var(--color-lavanda) 60%, white); background: color-mix(in srgb, var(--color-lavanda) 10%, white); justify-content: flex-end; }
+  .perfil-pick { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); background: color-mix(in srgb, var(--color-lavanda) 18%, white); border-radius: var(--radius-md); font-family: var(--font-secondary); font-size: var(--text-sm); }
+
+  .type-grid { display: grid; gap: var(--space-2); grid-template-columns: 1fr 1fr; }
+  .type-radio { padding: var(--space-3); border: 2px solid var(--color-lavanda); border-radius: var(--radius-md); cursor: pointer; transition: all var(--transition-fast); display:flex; gap: var(--space-2); align-items: flex-start; background: white; font-family: var(--font-secondary); }
+  .type-radio:hover { border-color: var(--color-violeta); }
+  .type-radio input { margin-top: 3px; flex-shrink: 0; accent-color: var(--color-violeta); }
+  .type-radio.selected { border-color: var(--color-violeta); background: color-mix(in srgb, var(--color-lavanda) 25%, white); }
+  .type-radio .ttl { font-family: var(--font-primary); font-weight: var(--fw-semibold); color: var(--color-violeta); font-size: var(--text-sm); }
+  .type-radio .desc { font-size: var(--text-xs); color: color-mix(in srgb, var(--color-violeta) 65%, white); }
+
+  .urg-toggle { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); background: color-mix(in srgb, var(--color-lavanda) 15%, white); border-radius: var(--radius-md); }
+  .conditional { padding: var(--space-3); background: color-mix(in srgb, var(--color-sol) 18%, white); border-radius: var(--radius-md); border-left: 3px solid var(--color-sol); margin-top: var(--space-3); animation: fadeIn 200ms ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  /* Estado de éxito */
+  .success-state { padding: var(--space-8) var(--space-5); text-align: center; }
+  .success-state .check-illu { width: 72px; height: 72px; margin: 0 auto var(--space-4); border-radius: 50%; background: color-mix(in srgb, var(--color-aqua) 50%, white); display: flex; align-items: center; justify-content: center; color: var(--color-violeta); }
+  .success-state .check-illu svg { width: 36px; height: 36px; }
+</style>
+</head>
+<body>
+
+  <div class="modal-shell" role="dialog" aria-labelledby="modal-title" aria-modal="true" data-screen-label="Modal solicitar">
+
+    <!-- Form state -->
+    <div id="state-form">
+      <div class="modal-head">
+        <h1 id="modal-title">Solicitar tarea</h1>
+        <a href="dashboard-analista.html" class="modal-close" aria-label="Cerrar"><span id="ic-close" style="display:inline-block;width:20px;height:20px;"></span></a>
+      </div>
+
+      <div class="modal-body">
+        <div class="field">
+          <label class="label label-required" for="perfil-sel">Perfil destinatario</label>
+          <select class="select" id="perfil-sel">
+            <option value="maria">👤 María Alejandra Gómez Pérez · Beneficiario</option>
+            <option value="inclu">🤝 Inclusión Total SAS · Aliado</option>
+            <option value="carlos">👷 Carlos Andrés Ramírez · Contractor</option>
+            <option value="andinos">🏢 Suministros Andinos S.A. · Supplier</option>
+          </select>
+          <div class="help-text">Solo aparecen los perfiles que tienes asignados.</div>
+        </div>
+
+        <div class="perfil-pick" id="perfil-preview" style="margin-bottom: var(--space-4);">
+          <span class="avatar avatar-sm avatar-sol" id="perfil-preview-av">MG</span>
+          <div style="flex:1;">
+            <strong style="font-family:var(--font-primary);color:var(--color-violeta);" id="perfil-preview-name">María Alejandra Gómez</strong>
+            <div class="text-sm" style="color:color-mix(in srgb, var(--color-violeta) 65%, white);" id="perfil-preview-doc">CC 1.023.456.789 · 52% completo</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="label label-required">Tipo de tarea</span>
+          <div class="type-grid" role="radiogroup" aria-label="Tipo de tarea" id="type-grid">
+            <label class="type-radio selected">
+              <input type="radio" name="tipo" value="formulario" checked />
+              <span><span class="ttl">📋 Completar formulario</span><span class="desc">Capa 1, 2 o 3</span></span>
+            </label>
+            <label class="type-radio">
+              <input type="radio" name="tipo" value="documento" />
+              <span><span class="ttl">📎 Subir documento</span><span class="desc">Cédula, RUT, etc.</span></span>
+            </label>
+            <label class="type-radio">
+              <input type="radio" name="tipo" value="consentimiento" />
+              <span><span class="ttl">✍ Firmar consentimiento</span><span class="desc">Datos, NDA, otros</span></span>
+            </label>
+            <label class="type-radio">
+              <input type="radio" name="tipo" value="kyc" />
+              <span><span class="ttl">🛡 Declaración KYC</span><span class="desc">AML, PEP, UBO</span></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Condicional: formulario -->
+        <div class="conditional" data-cond="formulario">
+          <label class="label" for="form-sel">¿Qué formulario?</label>
+          <select class="select" id="form-sel">
+            <option>Ubicación (Capa 1)</option>
+            <option>Caracterización PCDi (Capa 3)</option>
+            <option>Caracterización Empresarial DEI (Capa 3)</option>
+            <option>KYC / Compliance (Capa 2)</option>
+          </select>
+        </div>
+
+        <div class="conditional" data-cond="documento" hidden>
+          <div class="field">
+            <label class="label" for="doc-sel">Tipo de documento</label>
+            <select class="select" id="doc-sel">
+              <option>Cédula (frente y reverso)</option>
+              <option>RUT</option>
+              <option>Cámara de Comercio</option>
+              <option>Estados financieros</option>
+              <option>Certificación bancaria</option>
+              <option>Pólizas de seguros</option>
+              <option>Otro</option>
+            </select>
+          </div>
+          <div class="field" style="margin-bottom: 0;">
+            <label class="label" for="doc-desc">Descripción (opcional)</label>
+            <input class="input" id="doc-desc" placeholder="Ej: Estados financieros del año fiscal 2025" />
+          </div>
+        </div>
+
+        <div class="conditional" data-cond="consentimiento" hidden>
+          <label class="label" for="cons-sel">Tipo de consentimiento</label>
+          <select class="select" id="cons-sel">
+            <option>Tratamiento de datos personales</option>
+            <option>Participación en programas</option>
+            <option>NDA / Acuerdo de confidencialidad</option>
+          </select>
+        </div>
+
+        <div class="conditional" data-cond="kyc" hidden>
+          <label class="label" for="kyc-sel">Tipo de declaración</label>
+          <select class="select" id="kyc-sel">
+            <option>AML — Antilavado de activos</option>
+            <option>PEP — Persona Políticamente Expuesta</option>
+            <option>UBO — Beneficiarios finales</option>
+          </select>
+        </div>
+
+        <div class="field" style="margin-top: var(--space-4);">
+          <label class="label label-required" for="due">Fecha límite</label>
+          <input class="input" id="due" type="date" />
+        </div>
+
+        <div class="urg-toggle" style="margin-bottom: var(--space-4);">
+          <span style="flex:1;">
+            <strong style="font-family:var(--font-primary);color:var(--color-violeta);font-size:var(--text-sm);">Prioridad urgente</strong>
+            <div class="text-sm" style="color:color-mix(in srgb, var(--color-violeta) 65%, white);">Notificar al perfil con badge rojo</div>
+          </span>
+          <label class="toggle"><input type="checkbox" id="urg" /><span class="toggle-slider"></span></label>
+        </div>
+
+        <div class="field" style="margin-bottom: 0;">
+          <label class="label" for="msg">Mensaje al perfil (opcional)</label>
+          <textarea class="textarea" id="msg" placeholder="Hola María, necesitamos que cargues tu cédula por ambos lados para avanzar con tu KYC. ¡Gracias!"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-foot">
+        <a href="dashboard-analista.html" class="btn btn-ghost btn-sm">Cancelar</a>
+        <button class="btn btn-primary" id="send">Enviar solicitud</button>
+      </div>
+    </div>
+
+    <!-- Success state -->
+    <div id="state-success" hidden>
+      <div class="success-state">
+        <div class="check-illu" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <h2 style="font-size: var(--text-2xl); margin-bottom: var(--space-2);">¡Solicitud enviada!</h2>
+        <p style="color: color-mix(in srgb, var(--color-violeta) 70%, white);" id="success-msg">
+          La tarea se envió a <strong>María Alejandra</strong>. Recibirá una notificación por correo y la verá en su expediente.
+        </p>
+      </div>
+      <div class="modal-foot" style="justify-content: center;">
+        <a href="dashboard-analista.html" class="btn btn-outline btn-sm">← Dashboard</a>
+        <button class="btn btn-primary btn-sm" id="another">+ Otra tarea</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  (function() {
+    document.getElementById('ic-close').innerHTML = window.DL_icon('close');
+
+    // Type radio
+    const grid = document.getElementById('type-grid');
+    grid.addEventListener('change', () => {
+      grid.querySelectorAll('.type-radio').forEach(r => {
+        r.classList.toggle('selected', r.querySelector('input').checked);
+      });
+      const v = grid.querySelector('input:checked').value;
+      document.querySelectorAll('[data-cond]').forEach(c => c.hidden = c.dataset.cond !== v);
+    });
+
+    // Perfil preview
+    const previewMap = {
+      maria: { av: 'MG', cls: 'avatar-sol', name: 'María Alejandra Gómez', sub: 'CC 1.023.456.789 · 52% completo' },
+      inclu: { av: 'IT', cls: 'avatar-aqua', name: 'Inclusión Total SAS', sub: 'NIT 901.234.567-8 · 85% completo' },
+      carlos: { av: 'CR', cls: 'avatar-coral', name: 'Carlos Andrés Ramírez', sub: 'CC 79.456.123 · 42% completo' },
+      andinos: { av: 'SA', cls: 'avatar-violeta', name: 'Suministros Andinos S.A.', sub: 'NIT 900.876.543-2 · 100% completo' },
+    };
+    document.getElementById('perfil-sel').addEventListener('change', (e) => {
+      const p = previewMap[e.target.value];
+      const av = document.getElementById('perfil-preview-av');
+      av.textContent = p.av;
+      av.className = 'avatar avatar-sm ' + p.cls;
+      document.getElementById('perfil-preview-name').textContent = p.name;
+      document.getElementById('perfil-preview-doc').textContent = p.sub;
+    });
+
+    // Default fecha límite: +5 días
+    const d = new Date(); d.setDate(d.getDate() + 5);
+    document.getElementById('due').value = d.toISOString().slice(0, 10);
+
+    // Submit
+    document.getElementById('send').addEventListener('click', () => {
+      const sel = document.getElementById('perfil-sel');
+      const p = previewMap[sel.value];
+      document.getElementById('success-msg').innerHTML = `La tarea se envió a <strong>${p.name}</strong>. Recibirá una notificación por correo y la verá en su expediente.`;
+      document.getElementById('state-form').hidden = true;
+      document.getElementById('state-success').hidden = false;
+    });
+
+    document.getElementById('another').addEventListener('click', () => {
+      document.getElementById('state-success').hidden = true;
+      document.getElementById('state-form').hidden = false;
+      document.getElementById('msg').value = '';
+    });
+
+    // Esc cierra
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') location.href = 'dashboard-analista.html';
+    });
+  })();
+</script>
+</body>
+</html>

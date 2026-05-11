@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Iniciar sesión · DiversoLab</title>
+<link rel="stylesheet" href="diversolab.css" />
+<script src="shared.js"></script>
+<style>
+  body { background: var(--color-crema); display: flex; flex-direction: column; min-height: 100vh; }
+  .login-wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: var(--space-6) var(--space-4); }
+  .login-card { width: 100%; max-width: 420px; }
+  .login-card .card { padding: var(--space-8) var(--space-6); }
+  .login-hero { text-align: center; margin-bottom: var(--space-6); }
+  .login-hero .logo { justify-content: center; margin-bottom: var(--space-4); font-size: var(--text-2xl); }
+  .login-hero h1 { font-size: var(--text-3xl); margin-bottom: var(--space-2); }
+  .login-hero p { color: color-mix(in srgb, var(--color-violeta) 70%, white); font-size: var(--text-base); }
+  .returning { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); background: color-mix(in srgb, var(--color-aqua) 30%, white); border-radius: var(--radius-md); margin-bottom: var(--space-4); }
+  .returning .avatar { width: 36px; height: 36px; }
+  .returning-text { font-family: var(--font-narrow); font-size: var(--text-sm); color: var(--color-violeta); flex: 1; }
+  .returning-text strong { font-family: var(--font-primary); display: block; }
+  .returning button { background: none; border: none; font-family: var(--font-narrow); font-size: var(--text-xs); color: var(--color-coral); cursor: pointer; text-decoration: underline; }
+  .footer-note { text-align: center; margin-top: var(--space-6); font-family: var(--font-narrow); font-size: var(--text-sm); color: color-mix(in srgb, var(--color-violeta) 70%, white); }
+  .footer-note a { color: var(--color-violeta); font-weight: var(--fw-bold); }
+  .check-illustration { width: 72px; height: 72px; margin: 0 auto var(--space-4); border-radius: 50%; background: color-mix(in srgb, var(--color-aqua) 50%, white); display: flex; align-items: center; justify-content: center; color: var(--color-violeta); animation: pop 400ms ease; }
+  .check-illustration svg { width: 36px; height: 36px; }
+  @keyframes pop { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .sent-detail { font-family: var(--font-narrow); font-size: var(--text-sm); color: color-mix(in srgb, var(--color-violeta) 75%, white); padding: var(--space-3); background: color-mix(in srgb, var(--color-lavanda) 30%, white); border-radius: var(--radius-md); text-align: left; margin-top: var(--space-4); }
+  .sent-detail strong { font-family: var(--font-primary); display: block; color: var(--color-violeta); margin-bottom: 2px; }
+  .brand-stripe { height: 6px; display: flex; }
+  .brand-stripe span { flex: 1; }
+</style>
+</head>
+<body>
+  <div class="brand-stripe" aria-hidden="true">
+    <span class="bg-sol"></span><span class="bg-aqua"></span><span class="bg-coral"></span><span class="bg-lavanda"></span><span class="bg-violeta"></span>
+  </div>
+
+  <main class="login-wrap" data-screen-label="Login">
+    <div class="login-card">
+
+      <div class="login-hero">
+        <a href="index.html" class="logo" aria-label="DiversoLab">
+          <span class="logo-mark" aria-hidden="true">D</span>
+          <span style="display:flex;flex-direction:column;line-height:1;align-items:flex-start;">
+            DiversoLab
+            <small>inclusión con propósito</small>
+          </span>
+        </a>
+      </div>
+
+      <div class="card" id="login-card">
+        <!-- Estado: form -->
+        <div id="state-form">
+          <h1 style="font-size:var(--text-2xl);margin-bottom:var(--space-2);">Iniciar sesión</h1>
+          <p class="text-sm" style="font-family:var(--font-secondary);font-size:var(--text-base);color:color-mix(in srgb, var(--color-violeta) 70%, white);margin-bottom:var(--space-6);">
+            Te enviaremos un enlace seguro a tu correo. <strong>Sin contraseñas.</strong>
+          </p>
+
+          <div class="returning" id="returning-banner" hidden>
+            <span class="avatar avatar-sol" aria-hidden="true">MG</span>
+            <div class="returning-text">
+              <strong>Bienvenida de vuelta, María</strong>
+              ¿Continuar con <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1e737f6c777f307971737b645e7d716c6c7b71307d71">[email&#160;protected]</a>?
+            </div>
+            <button type="button" id="not-me">Cambiar</button>
+          </div>
+
+          <form id="login-form" novalidate>
+            <div class="field">
+              <label for="email" class="label label-required">Correo electrónico</label>
+              <input
+                id="email" name="email" type="email" required
+                class="input" placeholder="tunombre@correo.co"
+                autocomplete="email" inputmode="email" />
+              <div class="help-text">Te enviaremos un enlace mágico de acceso.</div>
+              <div class="error-text" id="email-error" hidden>Por favor ingresa un correo válido.</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block btn-lg">
+              Enviar enlace de acceso
+            </button>
+          </form>
+
+          <hr class="divider" />
+
+          <div class="footer-note">
+            ¿No tienes cuenta? <a href="registro.html">Regístrate aquí</a>
+          </div>
+        </div>
+
+        <!-- Estado: enviado -->
+        <div id="state-sent" hidden style="text-align:center;">
+          <div class="check-illustration" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <h1 style="font-size:var(--text-2xl);margin-bottom:var(--space-2);">Revisa tu correo 📧</h1>
+          <p style="color:color-mix(in srgb, var(--color-violeta) 70%, white);">
+            Te enviamos un enlace de acceso. Haz clic para iniciar sesión.
+          </p>
+
+          <div class="sent-detail">
+            <strong>Enviado a:</strong>
+            <span id="sent-email">—</span>
+          </div>
+
+          <p class="text-sm" style="margin-top:var(--space-4);font-family:var(--font-narrow);color:color-mix(in srgb, var(--color-violeta) 70%, white);">
+            El enlace expira en <strong>15 minutos</strong>. Si no lo recibes, revisa tu carpeta de spam.
+          </p>
+
+          <button type="button" class="btn btn-ghost btn-sm" id="back-form" style="margin-top:var(--space-4);">
+            ← Usar otro correo
+          </button>
+        </div>
+      </div>
+
+      <p class="footer-note">
+        Al continuar aceptas nuestra <a href="#">política de tratamiento de datos</a>.
+      </p>
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    DiversoLab · Bogotá, Colombia · <a href="index.html">Volver a mockups</a>
+  </footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  (function() {
+    const form = document.getElementById('login-form');
+    const stateForm = document.getElementById('state-form');
+    const stateSent = document.getElementById('state-sent');
+    const sentEmail = document.getElementById('sent-email');
+    const emailInput = document.getElementById('email');
+    const emailError = document.getElementById('email-error');
+    const banner = document.getElementById('returning-banner');
+    const notMe = document.getElementById('not-me');
+    const backForm = document.getElementById('back-form');
+
+    // Detección "recurrente" (simulado vía localStorage)
+    const recurring = localStorage.getItem('dl_returning_email');
+    if (recurring) {
+      banner.hidden = false;
+      emailInput.value = recurring;
+    }
+
+    notMe.addEventListener('click', () => {
+      banner.hidden = true;
+      emailInput.value = '';
+      emailInput.focus();
+      localStorage.removeItem('dl_returning_email');
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const v = emailInput.value.trim();
+      const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+      if (!ok) {
+        emailError.hidden = false;
+        emailInput.setAttribute('aria-invalid', 'true');
+        emailInput.focus();
+        return;
+      }
+      emailError.hidden = true;
+      emailInput.removeAttribute('aria-invalid');
+      localStorage.setItem('dl_returning_email', v);
+      sentEmail.textContent = v;
+      stateForm.hidden = true;
+      stateSent.hidden = false;
+    });
+
+    emailInput.addEventListener('input', () => { emailError.hidden = true; });
+
+    backForm.addEventListener('click', () => {
+      stateSent.hidden = true;
+      stateForm.hidden = false;
+      emailInput.focus();
+    });
+  })();
+</script>
+</body>
+</html>

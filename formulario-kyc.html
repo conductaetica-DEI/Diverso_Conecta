@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>KYC / Compliance · DiversoLab</title>
+<link rel="stylesheet" href="diversolab.css" />
+<script src="shared.js"></script>
+<style>
+  body { background: var(--color-crema); }
+  .form-wrap { max-width: 760px; margin: 0 auto; padding: var(--space-4) var(--space-4) var(--space-12); }
+  .form-section { background: white; border-radius: var(--radius-md); padding: var(--space-5); margin-bottom: var(--space-4); border: 1px solid color-mix(in srgb, var(--color-lavanda) 50%, white); }
+  .form-section h2 { font-size: var(--text-lg); margin-bottom: var(--space-1); display: flex; align-items: center; gap: var(--space-2); }
+  .form-section .sect-desc { font-family: var(--font-narrow); font-size: var(--text-sm); color: color-mix(in srgb, var(--color-violeta) 65%, white); margin-bottom: var(--space-4); }
+  .docs-grid { display: grid; gap: var(--space-3); grid-template-columns: 1fr; }
+  @media (min-width: 540px) { .docs-grid { grid-template-columns: 1fr 1fr; } }
+  .ofac-box { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4); background: color-mix(in srgb, var(--color-aqua) 25%, white); border-radius: var(--radius-md); border: 1px solid color-mix(in srgb, var(--color-aqua) 60%, white); }
+  .ofac-box.pending { background: color-mix(in srgb, var(--color-sol) 25%, white); border-color: color-mix(in srgb, var(--color-sol) 60%, white); }
+  .ofac-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--color-aqua); color: var(--color-violeta); display:flex;align-items:center;justify-content:center; flex-shrink: 0; }
+  .ofac-box.pending .ofac-icon { background: var(--color-sol); }
+  .conditional { padding: var(--space-3); background: color-mix(in srgb, var(--color-sol) 18%, white); border-radius: var(--radius-md); border-left: 3px solid var(--color-sol); margin-top: var(--space-3); }
+  .ubo-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+  .ubo-table th { font-family: var(--font-primary); font-weight: var(--fw-semibold); font-size: var(--text-xs); text-align: left; color: var(--color-violeta); padding: var(--space-2); border-bottom: 1px solid var(--color-lavanda); text-transform: uppercase; letter-spacing: 0.04em; }
+  .ubo-table td { padding: var(--space-2); border-bottom: 1px dashed color-mix(in srgb, var(--color-lavanda) 70%, white); }
+  .ubo-table input { padding: var(--space-2); font-size: var(--text-sm); border: 1px solid var(--color-lavanda); border-radius: var(--radius-sm); width: 100%; font-family: inherit; }
+  .ubo-table input:focus { outline: none; border-color: var(--color-violeta); }
+  .ubo-table .pct { width: 80px; }
+  .ubo-table .del { background: none; border: none; color: var(--color-coral); cursor: pointer; padding: 4px; }
+  .save-bar { position: sticky; bottom: 0; background: white; padding: var(--space-3) var(--space-4); border-top: 1px solid color-mix(in srgb, var(--color-lavanda) 60%, white); display: flex; gap: var(--space-3); align-items: center; box-shadow: 0 -2px 12px rgba(63,43,86,0.08); margin: 0 calc(-1 * var(--space-4)); }
+</style>
+</head>
+<body>
+  <div id="demo-bar-mount"></div>
+  <header class="topbar">
+    <a href="mi-expediente.html" class="btn btn-ghost btn-sm">← Mi expediente</a>
+    <a href="index.html" class="logo">
+      <span class="logo-mark" aria-hidden="true">D</span>
+      <span style="display:flex;flex-direction:column;line-height:1;align-items:flex-start;">DiversoLab</span>
+    </a>
+    <span class="avatar avatar-sm" id="user-avatar">MG</span>
+  </header>
+
+  <main class="form-wrap" data-screen-label="Form KYC">
+    <div style="padding: var(--space-4) 0;">
+      <span class="badge badge-lavanda">Capa 2</span>
+      <h1 style="font-size:var(--text-2xl);margin-top:var(--space-2);">Verificación KYC / Compliance</h1>
+      <p style="color:color-mix(in srgb, var(--color-violeta) 70%, white); margin-top:var(--space-1);">
+        Información requerida por normativa AML/SARLAFT.
+      </p>
+    </div>
+
+    <div class="tabs" role="tablist" id="kyc-tabs">
+      <button class="tab active" role="tab" data-tab="natural" aria-selected="true">Persona natural</button>
+      <button class="tab" role="tab" data-tab="juridica" aria-selected="false">Persona jurídica</button>
+    </div>
+
+    <!-- VISTA PERSONA NATURAL -->
+    <div data-tab-panel="natural" style="margin-top: var(--space-4);">
+
+      <div class="form-section">
+        <h2>Declaración AML</h2>
+        <p class="sect-desc">Antilavado de activos. Información requerida por la SuperFinanciera.</p>
+
+        <div class="field">
+          <label class="label label-required" for="actividad">Actividad económica</label>
+          <select class="select" id="actividad">
+            <option value="">Selecciona...</option>
+            <option>Empleado/a asalariado</option>
+            <option>Independiente / contratista</option>
+            <option>Comerciante</option>
+            <option>Estudiante</option>
+            <option>Pensionado</option>
+            <option>Ama de casa</option>
+            <option>Otro</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="label label-required" for="ingresos">Rango de ingresos mensuales</label>
+          <select class="select" id="ingresos">
+            <option value="">Selecciona...</option>
+            <option>Menos de 1 SMMLV</option>
+            <option>Entre 1 y 2 SMMLV</option>
+            <option>Entre 2 y 4 SMMLV</option>
+            <option>Entre 4 y 8 SMMLV</option>
+            <option>Más de 8 SMMLV</option>
+          </select>
+          <div class="help-text">SMMLV: Salario Mínimo Mensual Legal Vigente.</div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="origen">Declaración de origen de fondos</label>
+          <textarea class="textarea" id="origen" placeholder="Describe el origen de tus ingresos (ej: salario, rentas, herencia, etc.)"></textarea>
+        </div>
+
+        <label class="check">
+          <input type="checkbox" id="lic" />
+          <span>Declaro que mis fondos provienen de actividades lícitas y que no están relacionados con lavado de activos, financiación del terrorismo ni actividades ilegales.</span>
+        </label>
+      </div>
+
+      <div class="form-section">
+        <h2>Declaración PEP</h2>
+        <p class="sect-desc">Persona Políticamente Expuesta. Puedes registrar más de una si aplica (por parentesco, sociedad, etc.).</p>
+        <div class="row row-3 between center" style="padding: var(--space-2) 0;">
+          <div>
+            <div class="label" style="margin: 0;">¿Eres PEP o tienes parentesco / vínculo con alguna?</div>
+            <div class="help-text">Marca sí para registrar uno o varios PEP.</div>
+          </div>
+          <label class="toggle"><input type="checkbox" id="pep" /><span class="toggle-slider"></span></label>
+        </div>
+        <div id="pep-cond" hidden>
+          <div id="pep-list"></div>
+          <button type="button" class="btn btn-outline btn-sm" id="add-pep" style="margin-top: var(--space-2);">+ Agregar otro PEP</button>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2>Documentos</h2>
+        <p class="sect-desc">Selecciona el tipo de documento, súbelo y confirma. Los tipos disponibles aún están por definirse — esta es la lista preliminar.</p>
+        <div id="docs-list"></div>
+        <div class="field" style="margin-top: var(--space-3); margin-bottom: var(--space-3);">
+          <label class="label" for="doc-tipo">Tipo de documento</label>
+          <div style="display:flex; gap: var(--space-2); align-items: stretch; flex-wrap: wrap;">
+            <select class="select" id="doc-tipo" style="flex:1; min-width: 200px;">
+              <option value="">Selecciona tipo...</option>
+              <option data-req="1">Documento de identidad — frente</option>
+              <option data-req="1">Documento de identidad — reverso</option>
+              <option data-req="1">Selfie con documento</option>
+              <option data-req="0">Comprobante de residencia (opcional)</option>
+              <option data-req="0">Otro (especificar al subir)</option>
+            </select>
+            <button type="button" class="btn btn-primary btn-sm" id="add-doc">+ Subir documento</button>
+          </div>
+          <div class="help-text">Los marcados como obligatorios deben estar cargados antes de enviar para revisión.</div>
+        </div>
+        <div id="docs-checklist" style="padding: var(--space-3); background: color-mix(in srgb, var(--color-lavanda) 18%, white); border-radius: var(--radius-sm); font-family: var(--font-narrow); font-size: var(--text-xs); color: color-mix(in srgb, var(--color-violeta) 70%, white);"></div>
+      </div>
+
+      <div class="form-section">
+        <h2>Certificación bancaria</h2>
+        <p class="sect-desc">Para procesar pagos y reembolsos.</p>
+        <div class="field-row">
+          <div class="field">
+            <label class="label label-required" for="banco">Banco</label>
+            <select class="select" id="banco">
+              <option>Bancolombia</option><option>Banco de Bogotá</option>
+              <option>Davivienda</option><option>BBVA</option>
+              <option>Banco AV Villas</option><option>Nequi / Daviplata</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="label label-required" for="tipo-cta">Tipo de cuenta</label>
+            <select class="select" id="tipo-cta"><option>Ahorros</option><option>Corriente</option></select>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label label-required" for="num-cta">Número de cuenta</label>
+          <input class="input" id="num-cta" placeholder="0000-0000-0000" inputmode="numeric" />
+        </div>
+        <div class="dropzone" tabindex="0" role="button" aria-label="Cargar certificación">
+          <div class="dz-icon" id="dz4"></div>
+          <div class="dz-title">Certificación bancaria (PDF)</div>
+          <div class="dz-hint">Descárgala desde tu banco · max 10 MB</div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2>Verificación OFAC / SARLAFT</h2>
+        <p class="sect-desc">Verificación automática contra listas de control. Solo lectura.</p>
+        <div class="ofac-box pending">
+          <div class="ofac-icon" aria-hidden="true">⏳</div>
+          <div style="flex:1;">
+            <strong style="font-family:var(--font-primary);color:var(--color-violeta);display:block;">Verificación pendiente</strong>
+            <span class="text-sm" style="font-family:var(--font-narrow);color:color-mix(in srgb, var(--color-violeta) 65%, white);">Se ejecutará automáticamente al enviar este formulario.</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- VISTA PERSONA JURIDICA -->
+    <div data-tab-panel="juridica" hidden style="margin-top: var(--space-4);">
+
+      <div class="form-section">
+        <h2>Declaración AML corporativa</h2>
+        <p class="sect-desc">Origen de fondos y actividad económica de la organización.</p>
+        <div class="field">
+          <label class="label label-required" for="ciiu">Actividad económica principal (CIIU)</label>
+          <select class="select" id="ciiu">
+            <option>7020 - Consultoría de gestión</option>
+            <option>8211 - Servicios administrativos</option>
+            <option>4711 - Comercio al por menor</option>
+            <option>9499 - Otras actividades de asociaciones</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="label" for="origen-corp">Origen de fondos corporativos</label>
+          <textarea class="textarea" id="origen-corp" placeholder="Describe la fuente principal de ingresos de la organización"></textarea>
+        </div>
+        <label class="check">
+          <input type="checkbox" />
+          <span>Declaro, en representación de la organización, que los fondos provienen de actividades lícitas.</span>
+        </label>
+      </div>
+
+      <div class="form-section">
+        <h2>Declaración PEP del representante legal</h2>
+        <div class="row row-3 between center" style="padding: var(--space-2) 0;">
+          <div class="label" style="margin: 0;">¿El representante legal es PEP?</div>
+          <label class="toggle"><input type="checkbox" /><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2>Beneficiarios finales (UBO)</h2>
+        <p class="sect-desc">Personas naturales que poseen más del 25% de la organización.</p>
+
+        <div style="overflow-x:auto;">
+          <table class="ubo-table" id="ubo-table">
+            <thead>
+              <tr><th>Nombre</th><th>Documento</th><th class="pct">%</th><th></th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input value="Andrea Restrepo Ríos" /></td>
+                <td><input value="CC 52.456.789" /></td>
+                <td><input class="pct" value="60" /></td>
+                <td><button class="del" aria-label="Eliminar fila">✕</button></td>
+              </tr>
+              <tr>
+                <td><input value="Felipe Restrepo Ríos" /></td>
+                <td><input value="CC 79.123.456" /></td>
+                <td><input class="pct" value="40" /></td>
+                <td><button class="del" aria-label="Eliminar fila">✕</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <button class="btn btn-outline btn-sm" id="add-ubo" style="margin-top:var(--space-3);">+ Agregar beneficiario</button>
+      </div>
+
+      <div class="form-section">
+        <h2>Documentos corporativos</h2>
+        <div class="docs-grid">
+          <div class="dropzone has-file"><div class="dz-thumb">📄</div><div class="dz-title">RUT.pdf</div><div class="dz-hint">cargado ✓</div></div>
+          <div class="dropzone"><div class="dz-icon" id="dz5"></div><div class="dz-title">Cámara de Comercio</div><div class="dz-hint">No mayor a 30 días</div></div>
+          <div class="dropzone"><div class="dz-icon" id="dz6"></div><div class="dz-title">Cédula del representante legal</div><div class="dz-hint">PDF · JPG</div></div>
+          <div class="dropzone"><div class="dz-icon" id="dz7"></div><div class="dz-title">Estados financieros</div><div class="dz-hint">Último año fiscal</div></div>
+          <div class="dropzone"><div class="dz-icon" id="dz8"></div><div class="dz-title">Certificación bancaria</div><div class="dz-hint">No mayor a 30 días</div></div>
+          <div class="dropzone" id="suppl-only"><div class="dz-icon" id="dz9"></div><div class="dz-title">Pólizas de seguros</div><div class="dz-hint">Solo Supplier</div></div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2>Verificación OFAC / SARLAFT</h2>
+        <div class="ofac-box">
+          <div class="ofac-icon" aria-hidden="true">✓</div>
+          <div style="flex:1;">
+            <strong style="font-family:var(--font-primary);color:var(--color-violeta);display:block;">Aprobado</strong>
+            <span class="text-sm" style="font-family:var(--font-narrow);color:color-mix(in srgb, var(--color-violeta) 65%, white);">Última verificación: 18 abr 2026</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="save-bar">
+      <span style="flex:1;font-family:var(--font-narrow);font-size:var(--text-xs);color:var(--color-success);">● Borrador guardado</span>
+      <button class="btn btn-outline btn-sm">Guardar borrador</button>
+      <button class="btn btn-primary btn-sm">Enviar para revisión</button>
+    </div>
+  </main>
+
+<script>
+  (function() {
+    document.getElementById('demo-bar-mount').appendChild(window.DL_renderDemoBar({
+      onChange: (p) => switchByPerfil(p)
+    }));
+
+    ['dz4','dz5','dz6','dz7','dz8','dz9'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = window.DL_icon('upload');
+    });
+
+    const tabs = document.querySelectorAll('#kyc-tabs .tab');
+    const panels = document.querySelectorAll('[data-tab-panel]');
+    function showTab(name) {
+      tabs.forEach(t => {
+        const active = t.dataset.tab === name;
+        t.classList.toggle('active', active);
+        t.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      panels.forEach(p => p.hidden = p.dataset.tabPanel !== name);
+    }
+    tabs.forEach(t => t.addEventListener('click', () => showTab(t.dataset.tab)));
+
+    function switchByPerfil(p) {
+      const persona = p.persona === 'juridica' ? 'juridica' : 'natural';
+      showTab(persona);
+      document.getElementById('user-avatar').textContent = p.iniciales;
+      document.getElementById('user-avatar').className = 'avatar avatar-sm ' + p.avatar;
+      // Ocultar pólizas si no es supplier
+      const sup = document.getElementById('suppl-only');
+      if (sup) sup.style.display = p.key === 'supplier' ? '' : 'none';
+    }
+    switchByPerfil(window.DL_getPerfilActivo());
+
+    // PEP toggle + lista repetible
+    const pepListEl = document.getElementById('pep-list');
+    function makePepRow(idx) {
+      const wrap = document.createElement('div');
+      wrap.className = 'conditional';
+      wrap.style.position = 'relative';
+      wrap.innerHTML = `
+        <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2);">
+          <strong style="font-family: var(--font-primary); color: var(--color-violeta); font-size: var(--text-sm);">PEP #${idx}</strong>
+          <button type="button" class="btn btn-ghost btn-sm rm-pep" aria-label="Eliminar PEP" style="color: var(--color-coral); padding: 4px 8px;">✕ quitar</button>
+        </div>
+        <div class="field">
+          <label class="label label-required">Cargo desempeñado</label>
+          <input class="input" placeholder="Ej: Concejal, Director de área..." />
+        </div>
+        <div class="field">
+          <label class="label label-required">Entidad</label>
+          <input class="input" placeholder="Ej: Alcaldía de Bogotá" />
+        </div>
+        <div class="field-row">
+          <div class="field"><label class="label">Desde</label><input class="input" type="month" /></div>
+          <div class="field"><label class="label">Hasta</label><input class="input" type="month" /></div>
+        </div>
+        <div class="field" style="margin-bottom: 0;">
+          <label class="label">Vínculo / parentesco (si aplica)</label>
+          <input class="input" placeholder="Ej: Cónyuge, hijo/a, socio/a..." />
+        </div>`;
+      wrap.querySelector('.rm-pep').addEventListener('click', () => {
+        wrap.remove();
+        renumberPep();
+      });
+      return wrap;
+    }
+    function renumberPep() {
+      [...pepListEl.children].forEach((c, i) => {
+        const t = c.querySelector('strong');
+        if (t) t.textContent = `PEP #${i + 1}`;
+      });
+    }
+    document.getElementById('pep').addEventListener('change', (e) => {
+      const cond = document.getElementById('pep-cond');
+      cond.hidden = !e.target.checked;
+      if (e.target.checked && pepListEl.children.length === 0) {
+        pepListEl.appendChild(makePepRow(1));
+      }
+    });
+    document.getElementById('add-pep').addEventListener('click', () => {
+      pepListEl.appendChild(makePepRow(pepListEl.children.length + 1));
+    });
+
+    // Documentos: lista repetible con tipo seleccionado
+    const docsListEl = document.getElementById('docs-list');
+    const checklistEl = document.getElementById('docs-checklist');
+    const REQ_DOCS = ['Documento de identidad — frente','Documento de identidad — reverso','Selfie con documento'];
+    function updateChecklist() {
+      const cargados = [...docsListEl.querySelectorAll('[data-doc-tipo]')].map(d => d.getAttribute('data-doc-tipo'));
+      const items = REQ_DOCS.map(d => {
+        const ok = cargados.includes(d);
+        return `<div style="display:flex; align-items:center; gap: 8px; margin: 2px 0;"><span style="color: ${ok ? 'var(--color-success)' : 'var(--color-coral)'};">${ok ? '✓' : '○'}</span> ${d}</div>`;
+      }).join('');
+      checklistEl.innerHTML = `<strong style="display:block; margin-bottom: 6px; color: var(--color-violeta);">Obligatorios para enviar:</strong>${items}`;
+    }
+    function makeDocRow(tipo) {
+      const card = document.createElement('div');
+      card.className = 'dropzone has-file';
+      card.setAttribute('data-doc-tipo', tipo);
+      card.style.marginBottom = 'var(--space-2)';
+      card.innerHTML = `
+        <div class="dz-thumb" aria-hidden="true">📄</div>
+        <div style="flex:1; text-align: left;">
+          <div class="dz-title">${tipo}</div>
+          <div class="dz-hint">Pendiente de carga · JPG, PNG o PDF</div>
+        </div>
+        <button type="button" class="btn btn-outline btn-sm rm-doc">Subir archivo</button>
+        <button type="button" class="btn btn-ghost btn-sm rm-doc-x" aria-label="Quitar" style="color: var(--color-coral);">✕</button>`;
+      card.style.display = 'flex';
+      card.style.alignItems = 'center';
+      card.style.gap = 'var(--space-3)';
+      card.querySelector('.rm-doc-x').addEventListener('click', () => { card.remove(); updateChecklist(); });
+      return card;
+    }
+    document.getElementById('add-doc').addEventListener('click', () => {
+      const sel = document.getElementById('doc-tipo');
+      const tipo = sel.value;
+      if (!tipo) { sel.focus(); return; }
+      docsListEl.appendChild(makeDocRow(tipo));
+      sel.value = '';
+      updateChecklist();
+    });
+    updateChecklist();
+
+    // UBO add row
+    document.getElementById('add-ubo').addEventListener('click', () => {
+      const tbody = document.querySelector('#ubo-table tbody');
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input placeholder="Nombre completo" /></td>
+        <td><input placeholder="CC / NIT" /></td>
+        <td><input class="pct" placeholder="%" /></td>
+        <td><button class="del" aria-label="Eliminar fila">✕</button></td>`;
+      tbody.appendChild(tr);
+      tr.querySelector('input').focus();
+    });
+
+    document.querySelector('#ubo-table').addEventListener('click', (e) => {
+      if (e.target.classList.contains('del')) e.target.closest('tr').remove();
+    });
+
+    document.body.appendChild(window.DL_indexLink());
+  })();
+</script>
+</body>
+</html>

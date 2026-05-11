@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Manual de Marca · DiversoLab</title>
+<link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@200;300;400;600;700;900&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&family=PT+Sans+Narrow:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --sol:       #fdda64;
+  --aqua:      #a2ddd2;
+  --coral:     #ff8e6f;
+  --lavanda:   #cad2e9;
+  --violeta:   #3f2b56;
+  --crema:     #fffaef;
+  --medianoche:#1f1845;
+  --violeta-dark: #2e1f40;
+  --teal-light:#e8f8f6;
+  --text:      #3f2b56;
+  --gray:      #666;
+  --white:     #ffffff;
+  --radius:    12px;
+  --shadow:    0 2px 12px rgba(63,43,86,0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'PT Sans', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--crema);
+}
+
+/* ── NAV ─────────────────────────────── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--violeta);
+  padding: 12px 24px;
+  display: flex; align-items: center; gap: 16px;
+  flex-wrap: wrap;
+  box-shadow: 0 2px 16px rgba(31,24,69,0.25);
+}
+nav .brand {
+  font-family: 'Titillium Web', sans-serif;
+  font-weight: 900; font-size: 20px;
+  color: var(--sol); letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+nav .brand span:nth-child(1) { color: var(--sol); }
+nav .brand span:nth-child(2) { color: var(--aqua); }
+nav .brand span:nth-child(3) { color: var(--lavanda); }
+nav .brand span:nth-child(4) { color: var(--coral); }
+nav .nav-links {
+  display: flex; gap: 6px; flex-wrap: wrap;
+}
+nav a {
+  color: var(--sol); text-decoration: none;
+  font-family: 'Titillium Web', sans-serif;
+  font-weight: 600; font-size: 13px;
+  padding: 5px 12px; border-radius: 20px;
+  border: 1.5px solid rgba(253,218,100,0.3);
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+nav a:hover { background: rgba(253,218,100,0.15); }
+
+/* ── HERO ────────────────────────────── */
+.hero {
+  background: linear-gradient(135deg, var(--violeta) 0%, var(--medianoche) 100%);
+  padding: 80px 24px 60px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 20% 80%, rgba(162,221,210,0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(253,218,100,0.12) 0%, transparent 50%),
+    radial-gradient(circle at 60% 60%, rgba(255,142,111,0.08) 0%, transparent 40%);
+}
+.hero h1 {
+  font-family: 'Titillium Web', sans-serif;
+  font-weight: 900; font-size: clamp(36px, 6vw, 64px);
+  color: var(--white); letter-spacing: 0.04em;
+  position: relative;
+}
+.hero h1 .di  { color: var(--sol); }
+.hero h1 .ver { color: var(--aqua); }
+.hero h1 .so  { color: var(--lavanda); }
+.hero h1 .lab { color: var(--coral); }
+.hero .subtitle {
+  font-family: 'Titillium Web', sans-serif;
+  font-weight: 600; font-size: 18px;
+  color: var(--sol); opacity: 0.85;
+  margin-top: 12px; position: relative;
+}
+.hero .tagline {
+  font-size: 15px; color: rgba(255,255,255,0.6);
+  margin-top: 8px; position: relative;
+  font-style: italic;
+}
+
+/* ── SECTIONS ────────────────────────── */
+section {
+  max-width: 960px; margin: 0 auto;
+  padding: 60px 24px 40px;
+}
+section + section { border-top: 1px solid rgba(63,43,86,0.08); }
+
+.section-label {
+  font-family: 'Titillium Web', sans-serif;
+  font-weight: 900; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.15em;
+  color: var(--coral); margin-bottom: 4px;
+}
+h2 {
+  font-family: 'Titillium Web', sans-serif;
+  font-weight: 900; font-size: 32px;
+  color: var(--violeta); margin-bottom: 16px;
+  line-height: 1.2;
+}
+h3 {
+  font-family: 'Titillium Web', sans-serif;
+  font-weight: 700; font-size: 20px;
+  color: var(--violeta); margin: 24px 0 10px;
+}
+p { margin-bottom: 14px; color: #4a3a5e; }
+
+/* ── CARDS ───────────────────────────── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px; margin-top: 20px;
+}
+.card {
+  background: var(--white);
+  border: 1px solid rgba(63,43,86,0.08);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 24px rgba(63,43,86,0.12);
+}
+
+/* ── PALETA ──────────────────────────── */
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 14px; margin-top: 16px;
+}
+.color-card {
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  background: var(--white);
+  transition: transform 0.2s;
+}
+.color-card:hover { transform: translateY(-3px); }
+.color-swatch {
+  height: 100px;
+  display: flex; align-items: flex-end; justify-content: flex-start;
+  padding: 10px 14px;
+}
+.color-swatch .hex {
+  font-family: 'Titillium Web', sans-serif;
+  font-weight: 700; font-size: 14px;
+  background: rgba(255,255,255,0.85);
+  padding: 2px 8px; border-radius: 6px;
+  color: var(--violeta);
+}
+.color-info {
+  padding: 12px 14px;
+}
+.color-info .name {
+  font-family: 'Titillium Web', sans-serif;
+  font-weight: 900; font-size: 14px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--violeta); margin-bottom: 4px;
+}
+.color-info .detail {
+  font-size: 12px; color: var(--gray); line-height: 1.5;
+}
+
+/* ── TIPOGRAFÍA ──────────────────────── */
+.font-specimen {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+}
+.font-specimen .font-name {
+  font-size: 13px; color: var(--coral);
+  font-family: 'Titillium Web', sans-serif;
+  font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; margin-bottom: 8px;
+}
+.font-specimen .sample-large {
+  font-size: clamp(28px, 4vw, 42px);
+  line-height: 1.2; margin-bottom: 8px;
+  color: var(--violeta);
+}
+.font-specimen .sample-alphabet {
+  font-size: 15px; color: #6b5a7e;
+  word-break: break-all;
+}
+.font-specimen .weights {
+  display: flex; flex-wrap: wrap; gap: 12px; margin-top: 14px;
+}
+.font-specimen .weight-tag {
+  font-size: 12px; padding: 4px 10px;
+  border-radius: 6px; background: var(--crema);
+  color: var(--violeta);
+  font-family: 'Titillium Web', sans-serif;
+}
+
+/* ── CONCEPTOS ───────────────────────── */
+.concepts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px; margin-top: 16px;
+}
+.concept-card {
+  background: var(--white);
+  border-left: 4px solid var(--sol);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 16px 18px;
+  box-shadow: var(--shadow);
+}
+.concept-card:nth-child(2) { border-left-color: var(--aqua); }
+.concept-card:nth-child(3) { border-left-color: var(--coral); }
+.concept-card:nth-child(4) { border-left-color: var(--lavanda); }
+.concept-card:nth-child(5) { border-left-color: var(--violeta); }
+.concept-card:nth-child(6) { border-left-color: var(--sol); }
+.concept-card h4 {
+  font-family: 'Titillium Web', sans-serif;
+  font-weight: 900; font-size: 16px;
+  color: var(--violeta); margin-bottom: 6px;
+}
+.concept-card ul {
+  list-style: none; padding: 0;
+  font-size: 14px; color: #6b5a7e;
+}
+.concept-card li::before {
+  content: '·'; margin-right: 6px;
+  font-weight: 700; color: var(--coral);
+}
+
+/* ── ISOLOGO ─────────────────────────── */
+.logo-showcase {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px; margin-top: 16px;
+}
+.logo-box {
+  border-radius: var(--radius);
+  padding: 32px 24px;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 160px;
+  font-family: 'Titillium Web', sans-serif;
+  font-weight: 900; font-size: 32px;
+  line-height: 1.1;
+  box-shadow: var(--shadow);
+  position: relative;
+}
+.logo-box .block {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 6px;
+  margin: 2px;
+}
+.logo-text {
+  display: flex; flex-direction: column;
+  align-items: flex-start; gap: 2px;
+}
+.logo-text .row { display: flex; gap: 4px; }
+
+/* ── REGLAS ──────────────────────────── */
+.rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px; margin-top: 16px;
+}
+.rule-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  border-top: 3px solid var(--aqua);
+}
+.rule-card h4 {
+  font-family: 'Titillium Web', sans-serif;
+  font-weight: 700; font-size: 15px;
+  color: var(--violeta); margin-bottom: 8px;
+}
+.rule-card p { font-size: 14px; margin: 0; }
+
+/* ── TOKENS TABLE ────────────────────── */
+.tokens-table {
+  width: 100%; border-collapse: collapse;
+  margin-top: 16px; font-size: 14px;
+}
+.tokens-table th {
+  background: var(--violeta); color: var(--sol);
+  font-family: 'Titillium Web', sans-serif;
+  font-weight: 700; text-align: left;
+  padding: 10px 14px; font-size: 12px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.tokens-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(63,43,86,0.06);
+}
+.tokens-table tr:hover { background: var(--teal-light); }
+.tokens-table code {
+  background: rgba(63,43,86,0.06);
+  padding: 2px 6px; border-radius: 4px;
+  font-size: 13px;
+}
+
+/* ── FOOTER ──────────────────────────── */
+footer {
+  background: var(--violeta);
+  color: rgba(255,255,255,0.5);
+  text-align: center;
+  padding: 32px 24px;
+  font-size: 13px;
+  margin-top: 40px;
+}
+footer strong { color: var(--sol); }
+
+/* ── RESPONSIVE ──────────────────────── */
+@media (max-width: 600px) {
+  nav { padding: 10px 16px; }
+  section { padding: 40px 16px 30px; }
+  h2 { font-size: 26px; }
+  .color-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="brand">
+    <span>Diverso</span><span>Lab</span>
+  </div>
+  <div class="nav-links">
+    <a href="#concepto">Concepto</a>
+    <a href="#identificador">Identificador</a>
+    <a href="#color">Color</a>
+    <a href="#tipografia">Tipografía</a>
+    <a href="#grafia">Grafía</a>
+    <a href="#tokens">Tokens CSS</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>
+    <span class="di">DI</span><span class="ver">VER</span><span class="so">SO</span><span class="lab">LAB</span>
+  </h1>
+  <div class="subtitle">Manual de Marca</div>
+  <div class="tagline">Transformación desde el potencial humano</div>
+</div>
+
+<!-- ═══════════════ CONCEPTO ═══════════════ -->
+<section id="concepto">
+  <div class="section-label">01</div>
+  <h2>Concepto</h2>
+
+  <h3>Síntesis</h3>
+  <p>Es un <strong>laboratorio de reconocimiento y potencialización del ser humano</strong> que ha sido discriminado, para transformarse y transformar su organización.</p>
+  <p><strong>Una empresa de servicio, no una fundación.</strong></p>
+  <p style="font-style:italic; color:var(--gray); font-size:14px;">Balance visual entre riguroso y transformador, cercana pero seria.</p>
+
+  <h3>Conceptos Clave</h3>
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <h4>Creatividad</h4>
+      <ul><li>Pensamiento divergente</li><li>Curiosidad</li><li>Innovación</li></ul>
+    </div>
+    <div class="concept-card">
+      <h4>Coherencia</h4>
+      <ul><li>Conciencia</li><li>Coherencia entre lo que se hace y lo que se cree</li></ul>
+    </div>
+    <div class="concept-card">
+      <h4>Rigurosidad</h4>
+      <ul><li>Criterio</li><li>Estudios</li><li>Seriedad</li></ul>
+    </div>
+    <div class="concept-card">
+      <h4>Empatía</h4>
+      <ul><li>Comprensión</li><li>Solidaridad</li><li>Entendimiento</li><li>Sensibilidad</li><li>Amabilidad</li></ul>
+    </div>
+    <div class="concept-card">
+      <h4>Sostenibilidad</h4>
+      <ul><li>Humanización laboral</li><li>Visión social y humana</li><li>Economía solidaria, circular o incluyente</li></ul>
+    </div>
+    <div class="concept-card">
+      <h4>Diversidad</h4>
+      <ul><li>Plural</li><li>Abierta</li><li>Diferente</li></ul>
+    </div>
+  </div>
+
+  <h3>Moodboard</h3>
+  <p>La identidad visual se construye sobre 5 ejes: <strong>diversidad</strong>, <strong>transformación</strong>, <strong>laboratorio</strong>, <strong>confiable</strong> e <strong>interesante</strong>.</p>
+</section>
+
+<!-- ═══════════════ IDENTIFICADOR ═══════════════ -->
+<section id="identificador">
+  <div class="section-label">02</div>
+  <h2>Identificador</h2>
+
+  <h3>Isologo</h3>
+  <p>El identificador principal es un <strong>isologo</strong>: un elemento que representa a la marca enlazando tanto gráfico como texto de forma indivisible. El logo <strong>no presenta versiones</strong> que representen la marca con "solo texto" o "solo imagen".</p>
+  <p>El isologo se compone de 4 bloques 3D (cubos tipo "bloques de construcción") con las sílabas <strong>DI · VER · SO · LAB</strong>, cada uno en un color de la paleta principal.</p>
+
+  <!-- Logo simulation -->
+  <div class="logo-showcase">
+    <div class="logo-box" style="background:var(--crema);">
+      <div class="logo-text">
+        <div class="row"><span class="block" style="background:var(--sol); color:var(--violeta);">DI</span></div>
+        <div class="row"><span class="block" style="background:var(--aqua); color:var(--violeta);">VER</span></div>
+        <div class="row">
+          <span class="block" style="background:var(--lavanda); color:var(--violeta);">SO</span>
+          <span class="block" style="background:var(--coral); color:var(--violeta);">LAB</span>
+        </div>
+      </div>
+    </div>
+    <div class="logo-box" style="background:var(--violeta);">
+      <div class="logo-text">
+        <div class="row"><span class="block" style="background:var(--sol); color:var(--violeta);">DI</span></div>
+        <div class="row"><span class="block" style="background:var(--aqua); color:var(--violeta);">VER</span></div>
+        <div class="row">
+          <span class="block" style="background:var(--lavanda); color:var(--violeta);">SO</span>
+          <span class="block" style="background:var(--coral); color:var(--violeta);">LAB</span>
+        </div>
+      </div>
+    </div>
+    <div class="logo-box" style="background:var(--medianoche);">
+      <div class="logo-text">
+        <div class="row"><span class="block" style="background:var(--sol); color:var(--medianoche);">DI</span></div>
+        <div class="row"><span class="block" style="background:var(--aqua); color:var(--medianoche);">VER</span></div>
+        <div class="row">
+          <span class="block" style="background:var(--lavanda); color:var(--medianoche);">SO</span>
+          <span class="block" style="background:var(--coral); color:var(--medianoche);">LAB</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Variaciones</h3>
+  <p>Por la naturaleza de la marca (diversidad y exploración) se definieron logotipos alternos donde se cambia la <strong>posición y el color</strong> de los bloques, reforzando el concepto de pluralidad.</p>
+
+  <div class="rules-grid">
+    <div class="rule-card">
+      <h4>Contrastes</h4>
+      <p>El logo tiene versión a color (principal), versión en <strong>negro sobre claro</strong> y versión en <strong>blanco sobre oscuro</strong>.</p>
+    </div>
+    <div class="rule-card">
+      <h4>Sobre paleta principal</h4>
+      <p>El isologo a color puede usarse sobre cualquier fondo de la paleta principal (coral, sol, lavanda, aqua, violeta, medianoche).</p>
+    </div>
+    <div class="rule-card">
+      <h4>Monótonos</h4>
+      <p>Existen versiones monótonas en cada color de la paleta, tanto sobre fondos claros como sobre fondo violeta/medianoche.</p>
+    </div>
+    <div class="rule-card">
+      <h4>Sobre imagen</h4>
+      <p>Se puede usar sobre fotografía en blanco y negro, a color, o texturas. Aplica para todas las versiones del logotipo.</p>
+    </div>
+  </div>
+
+  <h3>Planimetría y Área de Respeto</h3>
+  <p>Las medidas de planimetría determinan la base sobre la cual se construye el identificador y establece la relación entre las partes. El <strong>área de respeto</strong> (medida "x") determina el margen mínimo libre alrededor del isologo en todas las direcciones, dentro del cual no debe inscribirse ningún elemento ajeno.</p>
+</section>
+
+<!-- ═══════════════ COLOR ═══════════════ -->
+<section id="color">
+  <div class="section-label">03</div>
+  <h2>Color</h2>
+
+  <h3>Paleta Principal</h3>
+  <p>Estos son los colores oficiales. Su uso en la generación de piezas se debe inspirar en el uso de estos mismos colores en el logotipo de DiversoLab.</p>
+
+  <div class="color-grid">
+    <!-- SOL -->
+    <div class="color-card">
+      <div class="color-swatch" style="background:#fdda64;">
+        <span class="hex">#fdda64</span>
+      </div>
+      <div class="color-info">
+        <div class="name">Sol</div>
+        <div class="detail">
+          PANTONE 120c<br>
+          RGB 253, 218, 100<br>
+          CMYK 1% 12% 72% 0%
+        </div>
+      </div>
+    </div>
+    <!-- AQUA -->
+    <div class="color-card">
+      <div class="color-swatch" style="background:#a2ddd2;">
+        <span class="hex">#a2ddd2</span>
+      </div>
+      <div class="color-info">
+        <div class="name">Aqua</div>
+        <div class="detail">
+          PANTONE 572c<br>
+          RGB 162, 221, 210<br>
+          CMYK 35% 0% 21% 0%
+        </div>
+      </div>
+    </div>
+    <!-- CORAL -->
+    <div class="color-card">
+      <div class="color-swatch" style="background:#ff8e6f;">
+        <span class="hex">#ff8e6f</span>
+      </div>
+      <div class="color-info">
+        <div class="name">Coral</div>
+        <div class="detail">
+          PANTONE 1635c<br>
+          RGB 255, 142, 111<br>
+          CMYK 0% 56% 56% 0%
+        </div>
+      </div>
+    </div>
+    <!-- LAVANDA -->
+    <div class="color-card">
+      <div class="color-swatch" style="background:#cad2e9;">
+        <span class="hex">#cad2e9</span>
+      </div>
+      <div class="color-info">
+        <div class="name">Lavanda</div>
+        <div class="detail">
+          PANTONE 2706c<br>
+          RGB 202, 210, 233<br>
+          CMYK 18% 13% 0% 0%
+        </div>
+      </div>
+    </div>
+    <!-- VIOLETA -->
+    <div class="color-card">
+      <div class="color-swatch" style="background:#3f2b56;">
+        <span class="hex" style="color:#fff; background:rgba(0,0,0,0.3);">#3f2b56</span>
+      </div>
+      <div class="color-info">
+        <div class="name">Violeta</div>
+        <div class="detail">
+          PANTONE 669c<br>
+          RGB 63, 43, 86<br>
+          CMYK 83% 91% 37% 31%
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Paleta Secundaria</h3>
+  <p>Estos colores sirven principalmente como fondos donde se descarga mucha información o para momentos de la identidad que requieren ser más conservadores o menos "coloridos". El color crema puede ser utilizado en otros porcentajes para apoyar aplicaciones como página web o diagramación editorial.</p>
+
+  <div class="color-grid">
+    <!-- CREMA -->
+    <div class="color-card">
+      <div class="color-swatch" style="background:#fffaef; border: 1px solid #e8e4d8;">
+        <span class="hex">#fffaef</span>
+      </div>
+      <div class="color-info">
+        <div class="name">Crema (Sol al 10%)</div>
+        <div class="detail">
+          PANTONE 120c al 10%<br>
+          RGB 255, 250, 239<br>
+          CMYK 0% 1% 5% 0%
+        </div>
+      </div>
+    </div>
+    <!-- MEDIA NOCHE -->
+    <div class="color-card">
+      <div class="color-swatch" style="background:#1f1845;">
+        <span class="hex" style="color:#fff; background:rgba(0,0,0,0.3);">#1f1845</span>
+      </div>
+      <div class="color-info">
+        <div class="name">Media Noche</div>
+        <div class="detail">
+          PANTONE 2765c<br>
+          RGB 31, 24, 69<br>
+          CMYK 97% 99% 38% 45%
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Texturas</h3>
+  <p>Se utilizan imágenes de uso gratuito (Licencia Unsplash) seleccionadas para DiversoLab: textura de papel arrugado (Marjan Blan), papel rasgado (David Maier) y papel argollado (Marcus Urbenz). Estas imágenes se deben editar con la paleta de color de DiversoLab, superponiéndolas con efectos de capa como "multiplicar" o empleándolas como "máscara de recorte".</p>
+</section>
+
+<!-- ═══════════════ TIPOGRAFÍA ═══════════════ -->
+<section id="tipografia">
+  <div class="section-label">04</div>
+  <h2>Tipografía</h2>
+  <p>Tipografías licenciadas bajo <strong>Open Font License</strong>, disponibles para descarga en <strong>Google Fonts</strong>.</p>
+
+  <!-- Titillium Web -->
+  <div class="font-specimen">
+    <div class="font-name">Titillium Web · Principal / Display</div>
+    <div class="sample-large" style="font-family:'Titillium Web',sans-serif; font-weight:900;">
+      Titillium Web Black
+    </div>
+    <div class="sample-alphabet" style="font-family:'Titillium Web',sans-serif; font-weight:900;">
+      ABCDEFGHIJKLMNOPQRSTVWXYZ<br>
+      abcdefghijklmnopqrstuvwxyz<br>
+      1234567890()!"·$?&amp;/*^¨:;
+    </div>
+    <div class="weights">
+      <span class="weight-tag" style="font-family:'Titillium Web'; font-weight:200;">Extra Light (200)</span>
+      <span class="weight-tag" style="font-family:'Titillium Web'; font-weight:300;">Light (300)</span>
+      <span class="weight-tag" style="font-family:'Titillium Web'; font-weight:400;">Regular (400)</span>
+      <span class="weight-tag" style="font-family:'Titillium Web'; font-weight:600;">SemiBold (600)</span>
+      <span class="weight-tag" style="font-family:'Titillium Web'; font-weight:700;">Bold (700)</span>
+      <span class="weight-tag" style="font-family:'Titillium Web'; font-weight:900;">Black (900)</span>
+    </div>
+    <p style="font-size:13px; color:var(--gray); margin-top:12px; margin-bottom:0;">
+      <strong>Uso:</strong> Logotipo, títulos, subtítulos, destacados en piezas gráficas.
+    </p>
+  </div>
+
+  <!-- PT Sans -->
+  <div class="font-specimen">
+    <div class="font-name">PT Sans · Cuerpo de texto</div>
+    <div class="sample-large" style="font-family:'PT Sans',sans-serif; font-weight:400;">
+      PT Sans Regular
+    </div>
+    <div class="sample-alphabet" style="font-family:'PT Sans',sans-serif;">
+      ABCDEFGHIJKLMNOPQRSTVWXYZ<br>
+      abcdefghijklmnopqrstuvwxyz<br>
+      1234567890()!"·$?&amp;/*^¨:;
+    </div>
+    <div class="weights">
+      <span class="weight-tag" style="font-family:'PT Sans'; font-weight:400;">Regular</span>
+      <span class="weight-tag" style="font-family:'PT Sans'; font-style:italic;">Italic</span>
+      <span class="weight-tag" style="font-family:'PT Sans'; font-weight:700;">Bold</span>
+      <span class="weight-tag" style="font-family:'PT Sans'; font-weight:700; font-style:italic;">Bold Italic</span>
+    </div>
+    <p style="font-size:13px; color:var(--gray); margin-top:12px; margin-bottom:0;">
+      <strong>Uso:</strong> Subtítulos, destacados, cuerpo de texto en piezas gráficas.
+    </p>
+  </div>
+
+  <!-- PT Sans Narrow -->
+  <div class="font-specimen">
+    <div class="font-name">PT Sans Narrow · Complementaria</div>
+    <div class="sample-large" style="font-family:'PT Sans Narrow',sans-serif; font-weight:400;">
+      PT Sans Narrow
+    </div>
+    <div class="sample-alphabet" style="font-family:'PT Sans Narrow',sans-serif;">
+      ABCDEFGHIJKLMNOPQRSTVWXYZ<br>
+      abcdefghijklmnopqrstuvwxyz<br>
+      1234567890()!"·$?&amp;/*^¨:;
+    </div>
+    <div class="weights">
+      <span class="weight-tag" style="font-family:'PT Sans Narrow'; font-weight:400;">Narrow Regular</span>
+      <span class="weight-tag" style="font-family:'PT Sans Narrow'; font-weight:700;">Narrow Bold</span>
+    </div>
+    <p style="font-size:13px; color:var(--gray); margin-top:12px; margin-bottom:0;">
+      <strong>Uso:</strong> Subtítulos, destacados, datos condensados.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════ GRAFÍA COMPLEMENTARIA ═══════════════ -->
+<section id="grafia">
+  <div class="section-label">05</div>
+  <h2>Grafía Complementaria</h2>
+
+  <div class="rules-grid">
+    <div class="rule-card">
+      <h4>Fotografía</h4>
+      <p>Las fotografías se insertan dentro de los bloques 3D de la identidad (forma de cubo isométrico), alternando con bloques de color sólido. También se pueden usar como fondo con el logo superpuesto.</p>
+    </div>
+    <div class="rule-card">
+      <h4>Formas Individuales</h4>
+      <p>Un vocabulario visual de ilustraciones hechas a mano: soles, triángulos, rostros, estrellas poligonales, corazones, trazos libres, figuras humanas. Todas en la paleta de color de la marca con trazo orgánico e imperfecto.</p>
+    </div>
+    <div class="rule-card">
+      <h4>Formas en Composición</h4>
+      <p>Las formas individuales se combinan en collages complejos junto con el isologo, texturas de papel, fotografías y trazos a mano, creando un universo visual rico y diverso (estilo collage/mixed media).</p>
+    </div>
+    <div class="rule-card">
+      <h4>Texturas</h4>
+      <p>Papel arrugado, papel rasgado, papel argollado. Se superponen con efectos de capa (multiplicar) o como máscaras de recorte, editadas con la paleta de DiversoLab.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ TOKENS CSS ═══════════════ -->
+<section id="tokens">
+  <div class="section-label">06</div>
+  <h2>Tokens CSS para Desarrollo</h2>
+  <p>Variables CSS listas para usar en proyectos digitales de DiversoLab, derivadas del manual de marca oficial.</p>
+
+  <div style="overflow-x:auto;">
+    <table class="tokens-table">
+      <thead>
+        <tr>
+          <th>Variable</th>
+          <th>Valor</th>
+          <th>Uso</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><code>--sol</code></td><td><code>#fdda64</code></td><td>Color primario, botones, acentos, bloque "DI"</td></tr>
+        <tr><td><code>--aqua</code></td><td><code>#a2ddd2</code></td><td>Secundario, bloque "VER", botones alt</td></tr>
+        <tr><td><code>--coral</code></td><td><code>#ff8e6f</code></td><td>Acento cálido, bloque "LAB", alertas</td></tr>
+        <tr><td><code>--lavanda</code></td><td><code>#cad2e9</code></td><td>Neutro frío, bloque "SO", hover states</td></tr>
+        <tr><td><code>--violeta</code></td><td><code>#3f2b56</code></td><td>Texto principal, headers, fondos oscuros</td></tr>
+        <tr><td><code>--violeta-dark</code></td><td><code>#2e1f40</code></td><td>Hover de botones oscuros</td></tr>
+        <tr><td><code>--crema</code></td><td><code>#fffaef</code></td><td>Fondo principal (Sol al 10%)</td></tr>
+        <tr><td><code>--medianoche</code></td><td><code>#1f1845</code></td><td>Fondo ultra oscuro</td></tr>
+        <tr><td><code>--teal-light</code></td><td><code>#e8f8f6</code></td><td>Hover suave, fondos secundarios</td></tr>
+        <tr><td colspan="3" style="font-weight:700; color:var(--violeta); background:rgba(253,218,100,0.1);">Tipografía</td></tr>
+        <tr><td><code>--font-display</code></td><td><code>'Titillium Web'</code></td><td>Títulos, logotipo, destacados</td></tr>
+        <tr><td><code>--font-body</code></td><td><code>'PT Sans'</code></td><td>Texto de cuerpo, subtítulos</td></tr>
+        <tr><td><code>--font-narrow</code></td><td><code>'PT Sans Narrow'</code></td><td>Datos condensados, tablas</td></tr>
+        <tr><td colspan="3" style="font-weight:700; color:var(--violeta); background:rgba(253,218,100,0.1);">Espaciado</td></tr>
+        <tr><td><code>--radius</code></td><td><code>12px</code></td><td>Border radius estándar</td></tr>
+        <tr><td><code>--shadow</code></td><td><code>0 2px 12px rgba(63,43,86,0.08)</code></td><td>Sombra sutil para tarjetas</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <strong>DiversoLab</strong> · Manual de Marca · Consolidado desde el documento oficial<br>
+  Transformación desde el potencial humano
+</footer>
+
+</body>
+</html>

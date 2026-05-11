@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Formulario de ubicación · DiversoLab</title>
+<link rel="stylesheet" href="diversolab.css" />
+<script src="shared.js"></script>
+<style>
+  body { background: var(--color-crema); }
+  .form-wrap { max-width: 720px; margin: 0 auto; padding: var(--space-4) var(--space-4) var(--space-12); }
+  .form-header { padding: var(--space-4) 0; }
+  .prefill-box { background: color-mix(in srgb, var(--color-aqua) 25%, white); border: 1px solid color-mix(in srgb, var(--color-aqua) 60%, white); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); display:flex; gap: var(--space-3); align-items:center; margin-bottom: var(--space-4); }
+  .prefill-box .lbl { font-family: var(--font-narrow); font-size: var(--text-xs); color: color-mix(in srgb, var(--color-violeta) 65%, white); text-transform: uppercase; letter-spacing: 0.06em; }
+  .prefill-box strong { font-family: var(--font-primary); color: var(--color-violeta); }
+  .form-section { background: white; border-radius: var(--radius-md); padding: var(--space-5); margin-bottom: var(--space-4); border: 1px solid color-mix(in srgb, var(--color-lavanda) 50%, white); }
+  .form-section h2 { font-size: var(--text-lg); margin-bottom: var(--space-4); display: flex; align-items: center; gap: var(--space-2); }
+  .form-section h2 .num { width: 24px; height: 24px; border-radius: 50%; background: var(--color-violeta); color: var(--color-sol); font-size: var(--text-xs); display:inline-flex; align-items:center; justify-content:center; font-weight: var(--fw-bold); }
+  .label-with-info { display: flex; align-items: center; gap: var(--space-2); }
+  .radio-row { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+  .save-bar { position: sticky; bottom: 0; background: white; padding: var(--space-3) var(--space-4); border-top: 1px solid color-mix(in srgb, var(--color-lavanda) 60%, white); display: flex; gap: var(--space-3); align-items: center; box-shadow: 0 -2px 12px rgba(63,43,86,0.08); margin: 0 calc(-1 * var(--space-4)); border-radius: 0; }
+  .save-status { font-family: var(--font-narrow); font-size: var(--text-xs); color: var(--color-success); display: flex; align-items: center; gap: var(--space-1); flex: 1; }
+  .save-bar .btn { flex-shrink: 0; }
+  .multi-tags { display: flex; gap: var(--space-2); flex-wrap: wrap; padding: var(--space-2); border: 2px solid var(--color-lavanda); border-radius: var(--radius-md); background: white; min-height: 48px; align-items: center; cursor: text; }
+  .multi-tags .tag { background: var(--color-lavanda); color: var(--color-violeta); padding: 2px 8px 2px 10px; border-radius: var(--radius-full); font-family: var(--font-primary); font-weight: var(--fw-semibold); font-size: var(--text-xs); display: inline-flex; align-items: center; gap: 4px; }
+  .multi-tags .tag button { background: none; border: none; color: var(--color-violeta); cursor: pointer; padding: 0 2px; font-size: 14px; line-height: 1; }
+  .multi-tags input { border: none; outline: none; flex: 1; min-width: 80px; font-family: inherit; font-size: var(--text-sm); }
+  .conditional { padding: var(--space-3); background: color-mix(in srgb, var(--color-sol) 18%, white); border-radius: var(--radius-md); border-left: 3px solid var(--color-sol); margin-top: var(--space-3); }
+  .upload-mini { display:flex; align-items:center; gap: var(--space-3); padding: var(--space-3); border: 2px dashed var(--color-lavanda); border-radius: var(--radius-md); margin-top: var(--space-3); cursor: pointer; }
+  .upload-mini:hover { border-color: var(--color-violeta); background: color-mix(in srgb, var(--color-lavanda) 15%, white); }
+</style>
+</head>
+<body>
+  <div id="demo-bar-mount"></div>
+  <header class="topbar">
+    <a href="mi-expediente.html" class="btn btn-ghost btn-sm">← Mi expediente</a>
+    <a href="index.html" class="logo">
+      <span class="logo-mark" aria-hidden="true">D</span>
+      <span style="display:flex;flex-direction:column;line-height:1;align-items:flex-start;">DiversoLab</span>
+    </a>
+    <span class="avatar avatar-sm avatar-sol" id="user-avatar">MG</span>
+  </header>
+
+  <main class="form-wrap" data-screen-label="Form ubicacion">
+    <div class="form-header">
+      <span class="badge badge-lavanda">Capa 1</span>
+      <h1 style="font-size:var(--text-2xl);margin-top:var(--space-2);">Formulario de ubicación</h1>
+      <p style="color:color-mix(in srgb, var(--color-violeta) 70%, white);margin-top:var(--space-1);">
+        Cuéntanos dónde naciste, dónde vives ahora y tu situación actual.
+      </p>
+    </div>
+
+    <div class="prefill-box">
+      <span aria-hidden="true">✓</span>
+      <div style="flex:1;">
+        <div class="lbl">Cargado de tu registro</div>
+        <strong id="prefill-name">María Alejandra Gómez Pérez</strong>
+        <span style="font-family:var(--font-narrow);color:color-mix(in srgb, var(--color-violeta) 65%, white);"> · <span id="prefill-doc">CC 1.023.456.789</span></span>
+      </div>
+    </div>
+
+    <form id="form-ubic" novalidate>
+
+      <!-- Origen -->
+      <div class="form-section">
+        <h2><span class="num">1</span> Origen</h2>
+
+        <div class="field">
+          <div class="label-with-info">
+            <label class="label label-required" for="pais-nac">País de nacimiento</label>
+            <button type="button" class="info-icon" data-tip="Selecciona el país donde naciste según tu documento de identidad." aria-label="Información">i</button>
+          </div>
+          <select class="select" id="pais-nac">
+            <option value="CO" selected>🇨🇴 Colombia</option>
+            <option value="VE">🇻🇪 Venezuela</option>
+            <option value="EC">🇪🇨 Ecuador</option>
+            <option value="PE">🇵🇪 Perú</option>
+            <option value="AR">🇦🇷 Argentina</option>
+            <option value="OT">Otro país</option>
+          </select>
+        </div>
+
+        <div class="field" id="depto-field">
+          <label class="label label-required" for="depto">Departamento de nacimiento</label>
+          <select class="select" id="depto">
+            <option value="">Selecciona...</option>
+            <option>Antioquia</option><option>Atlántico</option><option selected>Bogotá D.C.</option>
+            <option>Bolívar</option><option>Boyacá</option><option>Caldas</option>
+            <option>Cundinamarca</option><option>Magdalena</option><option>Meta</option>
+            <option>Nariño</option><option>Norte de Santander</option><option>Santander</option>
+            <option>Tolima</option><option>Valle del Cauca</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <div class="label-with-info">
+            <label class="label" for="nacionalidad">Nacionalidad(es)</label>
+            <button type="button" class="info-icon" data-tip="Si tienes doble nacionalidad, selecciona ambas. Escribe y presiona Enter para agregar." aria-label="Información">i</button>
+          </div>
+          <div class="multi-tags" id="nac-tags">
+            <span class="tag">Colombiana <button type="button" aria-label="Quitar">×</button></span>
+            <input type="text" placeholder="Agregar otra..." id="nac-input" aria-label="Agregar nacionalidad" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Migratorio -->
+      <div class="form-section">
+        <h2><span class="num">2</span> Situación migratoria</h2>
+        <div class="field">
+          <label class="label" for="mig">Estado migratorio</label>
+          <select class="select" id="mig">
+            <option value="na" selected>No aplica (soy colombiana)</option>
+            <option value="regular">Regular</option>
+            <option value="irregular">Irregular</option>
+            <option value="refugiado">Refugiado/a</option>
+            <option value="apatrida">Apátrida</option>
+          </select>
+        </div>
+        <div class="conditional" id="mig-cond" hidden>
+          <div class="field-row">
+            <div class="field" style="margin-bottom:0;">
+              <label class="label" for="mig-doc">Documento migratorio</label>
+              <input class="input" id="mig-doc" placeholder="Ej: PEP, PPT, Visa..." />
+            </div>
+            <div class="field" style="margin-bottom:0;">
+              <label class="label" for="mig-fecha">Fecha de emisión</label>
+              <input class="input" id="mig-fecha" type="date" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Residencia -->
+      <div class="form-section">
+        <h2><span class="num">3</span> Residencia actual</h2>
+        <div class="field-row">
+          <div class="field">
+            <label class="label label-required" for="r-pais">País</label>
+            <select class="select" id="r-pais">
+              <option selected>🇨🇴 Colombia</option>
+              <option>🇻🇪 Venezuela</option><option>🇪🇨 Ecuador</option><option>Otro</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="label label-required" for="r-ciudad">Ciudad</label>
+            <select class="select" id="r-ciudad">
+              <option>Bogotá</option><option>Medellín</option><option>Cali</option>
+              <option>Barranquilla</option><option>Cartagena</option><option>Bucaramanga</option>
+              <option>Pereira</option><option>Ibagué</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="r-localidad">Localidad / Municipio</label>
+          <input class="input" id="r-localidad" placeholder="Ej: Suba, Engativá, Kennedy..." value="Kennedy" />
+        </div>
+        <div class="field">
+          <div class="label-with-info">
+            <span class="label">Zona</span>
+            <button type="button" class="info-icon" data-tip="Urbana: cabecera municipal. Rural: vereda o corregimiento. Rural dispersa: zonas alejadas sin núcleo poblacional." aria-label="Información">i</button>
+          </div>
+          <div class="radio-row" role="radiogroup" aria-label="Zona">
+            <label class="radio"><input type="radio" name="zona" value="urbana" checked /><span>Urbana</span></label>
+            <label class="radio"><input type="radio" name="zona" value="rural" /><span>Rural</span></label>
+            <label class="radio"><input type="radio" name="zona" value="rural-dispersa" /><span>Rural dispersa</span></label>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <div class="label-with-info">
+              <label class="label" for="estrato">Estrato socioeconómico</label>
+              <button type="button" class="info-icon" data-tip="El estrato aparece en tu factura de servicios públicos." aria-label="Información">i</button>
+            </div>
+            <select class="select" id="estrato">
+              <option value="">Selecciona...</option>
+              <option>1</option><option selected>2</option><option>3</option>
+              <option>4</option><option>5</option><option>6</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="label" for="tiempo">Tiempo de residencia</label>
+            <select class="select" id="tiempo">
+              <option>Menos de 1 año</option>
+              <option selected>1 a 5 años</option>
+              <option>6 a 10 años</option>
+              <option>Más de 10 años</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Situación especial -->
+      <div class="form-section">
+        <h2><span class="num">4</span> Situación especial</h2>
+
+        <div class="field">
+          <div class="label-with-info">
+            <span class="label">¿Has sido víctima de desplazamiento forzado?</span>
+            <button type="button" class="info-icon" data-tip="Si has sido obligada a abandonar tu lugar de residencia por conflicto armado, marca sí." aria-label="Información">i</button>
+          </div>
+          <div class="radio-row" role="radiogroup" aria-label="Desplazamiento">
+            <label class="radio"><input type="radio" name="desp" value="si" /><span>Sí</span></label>
+            <label class="radio"><input type="radio" name="desp" value="no" checked /><span>No</span></label>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="label-with-info">
+            <span class="label">¿Cuentas con registro de discapacidad?</span>
+            <button type="button" class="info-icon" data-tip="Registro Localización y Caracterización de Personas con Discapacidad (RLCPD), expedido por SISPRO." aria-label="Información">i</button>
+          </div>
+          <div class="radio-row" role="radiogroup" aria-label="Registro discapacidad">
+            <label class="radio"><input type="radio" name="disc" value="si" id="disc-si" /><span>Sí, tengo certificado</span></label>
+            <label class="radio"><input type="radio" name="disc" value="no" checked /><span>No</span></label>
+            <label class="radio"><input type="radio" name="disc" value="proceso" /><span>En proceso</span></label>
+          </div>
+          <div class="conditional" id="disc-cond" hidden>
+            <label class="label" for="disc-up">Carga el certificado RLCPD</label>
+            <div class="upload-mini" tabindex="0" role="button" aria-label="Cargar certificado de discapacidad">
+              <span style="width:32px;height:32px;color:var(--color-violeta);" id="ic-up"></span>
+              <div>
+                <div style="font-family:var(--font-primary);font-weight:var(--fw-semibold);color:var(--color-violeta);font-size:var(--text-sm);">Subir certificado</div>
+                <div class="text-sm" style="font-family:var(--font-narrow);color:color-mix(in srgb, var(--color-violeta) 60%, white);">PDF · JPG · máx 10 MB</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="save-bar">
+        <span class="save-status" id="save-status"><span aria-hidden="true">●</span> Borrador guardado hace 2 min</span>
+        <button type="button" class="btn btn-outline btn-sm">Guardar borrador</button>
+        <button type="submit" class="btn btn-primary btn-sm">Enviar</button>
+      </div>
+    </form>
+  </main>
+
+<script>
+  (function() {
+    document.getElementById('demo-bar-mount').appendChild(window.DL_renderDemoBar());
+    const p = window.DL_getPerfilActivo();
+    document.getElementById('prefill-name').textContent = p.nombre;
+    document.getElementById('prefill-doc').textContent = `${p.documento.tipo} ${p.documento.numero}`;
+    document.getElementById('user-avatar').textContent = p.iniciales;
+    document.getElementById('user-avatar').className = 'avatar avatar-sm ' + p.avatar;
+    document.getElementById('ic-up').innerHTML = window.DL_icon('upload');
+
+    // País -> mostrar/ocultar departamento
+    const paisNac = document.getElementById('pais-nac');
+    const deptoField = document.getElementById('depto-field');
+    paisNac.addEventListener('change', () => {
+      deptoField.hidden = paisNac.value !== 'CO';
+    });
+
+    // Migratorio condicional
+    const mig = document.getElementById('mig');
+    const migCond = document.getElementById('mig-cond');
+    mig.addEventListener('change', () => {
+      migCond.hidden = (mig.value === 'na' || mig.value === '');
+    });
+
+    // Discapacidad condicional
+    document.querySelectorAll('input[name="disc"]').forEach(r => {
+      r.addEventListener('change', () => {
+        document.getElementById('disc-cond').hidden = r.value !== 'si' || !r.checked;
+        if (document.getElementById('disc-si').checked) {
+          document.getElementById('disc-cond').hidden = false;
+        }
+      });
+    });
+
+    // Multi-tags nacionalidad
+    const tagsBox = document.getElementById('nac-tags');
+    const tagInput = document.getElementById('nac-input');
+    tagInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && tagInput.value.trim()) {
+        e.preventDefault();
+        const span = document.createElement('span');
+        span.className = 'tag';
+        span.innerHTML = `${tagInput.value.trim()} <button type="button" aria-label="Quitar">×</button>`;
+        tagsBox.insertBefore(span, tagInput);
+        tagInput.value = '';
+      }
+    });
+    tagsBox.addEventListener('click', (e) => {
+      if (e.target.tagName === 'BUTTON' && e.target.closest('.tag')) {
+        e.target.closest('.tag').remove();
+      }
+      if (e.target === tagsBox) tagInput.focus();
+    });
+
+    // Auto-save fake
+    let saveTimer;
+    document.getElementById('form-ubic').addEventListener('input', () => {
+      clearTimeout(saveTimer);
+      const status = document.getElementById('save-status');
+      status.style.color = 'var(--color-warning)';
+      status.innerHTML = '<span aria-hidden="true">●</span> Guardando...';
+      saveTimer = setTimeout(() => {
+        status.style.color = 'var(--color-success)';
+        status.innerHTML = '<span aria-hidden="true">●</span> Borrador guardado hace un momento';
+      }, 800);
+    });
+
+    document.getElementById('form-ubic').addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('Demo: formulario enviado. Tu analista será notificado.');
+    });
+
+    document.body.appendChild(window.DL_indexLink());
+  })();
+</script>
+</body>
+</html>

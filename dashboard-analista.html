@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard analista · DiversoLab</title>
+<link rel="stylesheet" href="diversolab.css" />
+<script src="shared.js"></script>
+<style>
+  body { background: var(--color-crema); }
+  .da-layout { display: grid; grid-template-columns: 1fr; min-height: calc(100vh - 56px); }
+  @media (min-width: 880px) { .da-layout { grid-template-columns: 240px 1fr; } }
+  .da-side { display: none; }
+  @media (min-width: 880px) { .da-side { display: flex; } }
+  .da-main { padding: var(--space-4); padding-bottom: var(--space-12); }
+  @media (min-width: 880px) { .da-main { padding: var(--space-6); } }
+  .da-header { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-3); margin-bottom: var(--space-4); flex-wrap: wrap; }
+  .da-header h1 { font-size: var(--text-2xl); margin-bottom: var(--space-1); }
+  .kpis { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-bottom: var(--space-6); }
+  @media (min-width: 640px) { .kpis { grid-template-columns: repeat(4, 1fr); } }
+  .toolbar { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; margin-bottom: var(--space-4); }
+  .search-input { position: relative; flex: 1; min-width: 200px; }
+  .search-input input { padding-left: 36px; }
+  .search-input svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: var(--color-violeta); }
+  .table-wrap { background: white; border-radius: var(--radius-md); border: 1px solid color-mix(in srgb, var(--color-lavanda) 50%, white); overflow-x: auto; }
+  .table th { cursor: pointer; user-select: none; }
+  .table th .sort { font-size: 10px; opacity: 0.4; margin-left: 4px; }
+  .row-actions { display: flex; gap: var(--space-1); }
+  .icon-btn { width: 30px; height: 30px; border-radius: var(--radius-sm); background: transparent; border: none; color: var(--color-violeta); cursor: pointer; display:inline-flex;align-items:center;justify-content:center; }
+  .icon-btn:hover { background: color-mix(in srgb, var(--color-lavanda) 50%, white); }
+  .icon-btn svg { width: 16px; height: 16px; }
+  .completitud-cell { display: flex; align-items: center; gap: var(--space-2); min-width: 130px; }
+  .completitud-cell .progress-seg { flex: 1; height: 6px; }
+  .completitud-cell span.pct { font-family: var(--font-primary); font-weight: var(--fw-semibold); font-size: var(--text-xs); color: var(--color-violeta); min-width: 32px; text-align: right; }
+  .recent-tasks { display: flex; flex-direction: column; gap: var(--space-2); }
+  .recent-task { display: flex; gap: var(--space-3); align-items: center; padding: var(--space-3); background: white; border: 1px solid color-mix(in srgb, var(--color-lavanda) 50%, white); border-radius: var(--radius-md); }
+  .recent-task .info { flex: 1; min-width: 0; }
+  .recent-task .info .title { font-family: var(--font-primary); font-weight: var(--fw-semibold); color: var(--color-violeta); font-size: var(--text-sm); }
+  .recent-task .info .sub { font-family: var(--font-narrow); font-size: var(--text-xs); color: color-mix(in srgb, var(--color-violeta) 65%, white); }
+  .mobile-row { display: flex; flex-direction: column; gap: var(--space-3); }
+  .mobile-card { padding: var(--space-3); }
+  @media (min-width: 880px) { .mobile-row { display: none; } }
+  .desktop-table { display: none; }
+  @media (min-width: 880px) { .desktop-table { display: block; } }
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="row row-3 center">
+      <button class="btn btn-ghost btn-sm" id="menu-btn" aria-label="Menú" style="padding: 6px;"><span id="ic-menu"></span></button>
+      <a href="index.html" class="logo">
+        <span class="logo-mark" aria-hidden="true">D</span>
+        <span style="display:flex;flex-direction:column;line-height:1;align-items:flex-start;">DiversoLab<small>analista</small></span>
+      </a>
+    </div>
+    <div class="row row-3 center">
+      <button class="btn btn-ghost btn-sm" aria-label="3 notificaciones sin leer" style="padding: 8px; position: relative;">
+        <span style="display:inline-flex; width: 18px; height: 18px;" id="ic-bell"></span>
+        <span style="position:absolute;top:4px;right:4px;width:14px;height:14px;background:var(--color-coral);color:white;font-family:var(--font-primary);font-size:9px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;">3</span>
+      </button>
+      <span class="avatar avatar-sm avatar-violeta">DL</span>
+      <div style="display:none; flex-direction:column; line-height: 1.1;" id="user-info">
+        <strong style="font-family:var(--font-primary);font-size:var(--text-sm);color:var(--color-violeta);">Diana López</strong>
+        <span class="badge badge-violeta" style="font-size: 9px; padding: 0 6px; align-self:flex-start;">Analista</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="da-layout">
+
+    <aside class="sidenav da-side">
+      <a class="nav-item active" href="#"><span id="ic-home"></span> Mis Expedientes</a>
+      <a class="nav-item" href="#"><span id="ic-clip"></span> Tareas</a>
+      <a class="nav-item" href="solicitar-tarea-modal.html"><span id="ic-plus"></span> Solicitar Tarea</a>
+      <a class="nav-item" href="#"><span id="ic-cog"></span> Configuración</a>
+      <div style="margin-top:auto;padding:var(--space-4) 0;">
+        <hr style="border:none;border-top:1px solid color-mix(in srgb, var(--color-violeta) 60%, white);opacity:0.3;margin-bottom:var(--space-3);" />
+        <a class="nav-item" href="login.html" style="opacity:0.85;">Cerrar sesión</a>
+      </div>
+    </aside>
+
+    <main class="da-main" data-screen-label="Dashboard analista">
+      <div class="da-header">
+        <div>
+          <h1>Buenos días, Diana 👋</h1>
+          <p style="color:color-mix(in srgb, var(--color-violeta) 70%, white);">Aquí está lo que necesita tu atención hoy.</p>
+        </div>
+        <a href="solicitar-tarea-modal.html" class="btn btn-primary"><span id="ic-plus2" style="display:inline-flex;width:18px;height:18px;"></span> Solicitar tarea</a>
+      </div>
+
+      <!-- KPIs -->
+      <div class="kpis">
+        <div class="kpi">
+          <div class="kpi-value">12</div>
+          <div class="kpi-label">Perfiles asignados</div>
+          <div class="kpi-trend up">+2 este mes</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-value">8</div>
+          <div class="kpi-label">Expedientes completos</div>
+          <div class="kpi-trend up">67% del total</div>
+        </div>
+        <div class="kpi" style="border-left: 3px solid var(--color-coral);">
+          <div class="kpi-value">7</div>
+          <div class="kpi-label">Documentos pendientes</div>
+          <div class="kpi-trend down">3 vencen esta semana</div>
+        </div>
+        <div class="kpi" style="border-left: 3px solid var(--color-sol);">
+          <div class="kpi-value">5</div>
+          <div class="kpi-label">Tareas activas</div>
+          <div class="kpi-trend">2 urgentes</div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <h2 style="font-size:var(--text-xl); margin-bottom: var(--space-3);">Mis expedientes</h2>
+      <div class="toolbar">
+        <div class="search-input">
+          <span id="ic-search"></span>
+          <input class="input" placeholder="Buscar por nombre o documento..." />
+        </div>
+        <select class="select" style="width: auto; min-width: 130px;">
+          <option>Todos los tipos</option>
+          <option>👤 Beneficiario</option>
+          <option>🤝 Aliado</option>
+          <option>👷 Contractor</option>
+          <option>🏢 Supplier</option>
+        </select>
+        <select class="select" style="width: auto; min-width: 130px;">
+          <option>Todos los estados</option>
+          <option>Activo</option>
+          <option>En revisión</option>
+          <option>Pausado</option>
+        </select>
+      </div>
+
+      <!-- Tabla desktop -->
+      <div class="table-wrap desktop-table">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Nombre <span class="sort">▲▼</span></th>
+              <th>Tipo</th>
+              <th>Estado</th>
+              <th>Completitud</th>
+              <th>Docs<br/>pend.</th>
+              <th>Última actividad</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="exp-tbody">
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:var(--space-3);">
+                  <span class="avatar avatar-sm avatar-sol">MG</span>
+                  <div>
+                    <strong style="font-family:var(--font-primary);">María Alejandra Gómez</strong>
+                    <div class="text-sm" style="color:color-mix(in srgb, var(--color-violeta) 65%, white);">CC 1.023.456.789</div>
+                  </div>
+                </div>
+              </td>
+              <td><span class="perfil-chip perfil-beneficiario">👤 Beneficiario</span></td>
+              <td><span class="badge badge-progreso">Activo</span></td>
+              <td>
+                <div class="completitud-cell">
+                  <div class="progress-seg" aria-label="Capas 0-4"><span class="done"></span><span class="done"></span><span class="partial"></span><span class="alert"></span><span class="partial"></span></div>
+                  <span class="pct">52%</span>
+                </div>
+              </td>
+              <td><strong style="color:var(--color-coral);">3</strong></td>
+              <td><span class="text-sm">hace 2 horas</span></td>
+              <td>
+                <div class="row-actions">
+                  <a href="detalle-expediente-analista.html" class="icon-btn" aria-label="Ver"><span id="ic-eye1"></span></a>
+                  <a href="solicitar-tarea-modal.html" class="icon-btn" aria-label="Solicitar tarea"><span id="ic-clip1"></span></a>
+                  <button class="icon-btn" aria-label="Subir documento"><span id="ic-up1"></span></button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:var(--space-3);">
+                  <span class="avatar avatar-sm avatar-aqua">IT</span>
+                  <div>
+                    <strong style="font-family:var(--font-primary);">Inclusión Total SAS</strong>
+                    <div class="text-sm" style="color:color-mix(in srgb, var(--color-violeta) 65%, white);">NIT 901.234.567-8</div>
+                  </div>
+                </div>
+              </td>
+              <td><span class="perfil-chip perfil-aliado">🤝 Aliado</span></td>
+              <td><span class="badge badge-aprobado">Activo</span></td>
+              <td>
+                <div class="completitud-cell">
+                  <div class="progress-seg"><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span class="partial"></span></div>
+                  <span class="pct">85%</span>
+                </div>
+              </td>
+              <td>1</td>
+              <td><span class="text-sm">ayer</span></td>
+              <td>
+                <div class="row-actions">
+                  <a href="detalle-expediente-analista.html" class="icon-btn" aria-label="Ver"><span id="ic-eye2"></span></a>
+                  <a href="solicitar-tarea-modal.html" class="icon-btn" aria-label="Solicitar tarea"><span id="ic-clip2"></span></a>
+                  <button class="icon-btn"><span id="ic-up2"></span></button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:var(--space-3);">
+                  <span class="avatar avatar-sm avatar-coral">CR</span>
+                  <div>
+                    <strong style="font-family:var(--font-primary);">Carlos Andrés Ramírez</strong>
+                    <div class="text-sm" style="color:color-mix(in srgb, var(--color-violeta) 65%, white);">CC 79.456.123</div>
+                  </div>
+                </div>
+              </td>
+              <td><span class="perfil-chip perfil-contractor">👷 Contractor</span></td>
+              <td><span class="badge badge-revision">En revisión</span></td>
+              <td>
+                <div class="completitud-cell">
+                  <div class="progress-seg"><span class="done"></span><span class="done"></span><span class="partial"></span><span></span><span></span></div>
+                  <span class="pct">42%</span>
+                </div>
+              </td>
+              <td><strong style="color:var(--color-coral);">2</strong></td>
+              <td><span class="text-sm">hace 3 días</span></td>
+              <td>
+                <div class="row-actions">
+                  <a href="detalle-expediente-analista.html" class="icon-btn" aria-label="Ver"><span id="ic-eye3"></span></a>
+                  <a href="solicitar-tarea-modal.html" class="icon-btn" aria-label="Solicitar tarea"><span id="ic-clip3"></span></a>
+                  <button class="icon-btn"><span id="ic-up3"></span></button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:var(--space-3);">
+                  <span class="avatar avatar-sm avatar-violeta">SA</span>
+                  <div>
+                    <strong style="font-family:var(--font-primary);">Suministros Andinos S.A.</strong>
+                    <div class="text-sm" style="color:color-mix(in srgb, var(--color-violeta) 65%, white);">NIT 900.876.543-2</div>
+                  </div>
+                </div>
+              </td>
+              <td><span class="perfil-chip perfil-supplier">🏢 Supplier</span></td>
+              <td><span class="badge badge-aprobado">Activo</span></td>
+              <td>
+                <div class="completitud-cell">
+                  <div class="progress-seg"><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span></div>
+                  <span class="pct">100%</span>
+                </div>
+              </td>
+              <td>0</td>
+              <td><span class="text-sm">hace 1 semana</span></td>
+              <td>
+                <div class="row-actions">
+                  <a href="detalle-expediente-analista.html" class="icon-btn" aria-label="Ver"><span id="ic-eye4"></span></a>
+                  <a href="solicitar-tarea-modal.html" class="icon-btn"><span id="ic-clip4"></span></a>
+                  <button class="icon-btn"><span id="ic-up4"></span></button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile cards -->
+      <div class="mobile-row">
+        <div class="card mobile-card">
+          <div class="row between center" style="margin-bottom:var(--space-2);">
+            <div class="row row-3 center">
+              <span class="avatar avatar-sm avatar-sol">MG</span>
+              <strong style="font-family:var(--font-primary);font-size:var(--text-sm);">María Alejandra Gómez</strong>
+            </div>
+            <span class="perfil-chip perfil-beneficiario">👤</span>
+          </div>
+          <div class="text-sm" style="color:color-mix(in srgb, var(--color-violeta) 65%, white);margin-bottom:var(--space-3);">CC 1.023.456.789 · hace 2h</div>
+          <div class="completitud-cell"><div class="progress-seg"><span class="done"></span><span class="done"></span><span class="partial"></span><span class="alert"></span><span class="partial"></span></div><span class="pct">52%</span></div>
+          <div class="row between center" style="margin-top:var(--space-3);">
+            <span class="text-sm"><strong style="color:var(--color-coral);">3</strong> docs pendientes</span>
+            <a href="detalle-expediente-analista.html" class="btn btn-outline btn-sm">Ver →</a>
+          </div>
+        </div>
+        <div class="card mobile-card">
+          <div class="row between center" style="margin-bottom:var(--space-2);">
+            <div class="row row-3 center">
+              <span class="avatar avatar-sm avatar-aqua">IT</span>
+              <strong style="font-family:var(--font-primary);font-size:var(--text-sm);">Inclusión Total SAS</strong>
+            </div>
+            <span class="perfil-chip perfil-aliado">🤝</span>
+          </div>
+          <div class="text-sm" style="color:color-mix(in srgb, var(--color-violeta) 65%, white);margin-bottom:var(--space-3);">NIT 901.234.567-8 · ayer</div>
+          <div class="completitud-cell"><div class="progress-seg"><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span class="partial"></span></div><span class="pct">85%</span></div>
+          <div class="row between center" style="margin-top:var(--space-3);">
+            <span class="text-sm"><strong>1</strong> doc pendiente</span>
+            <a href="detalle-expediente-analista.html" class="btn btn-outline btn-sm">Ver →</a>
+          </div>
+        </div>
+        <div class="card mobile-card">
+          <div class="row between center" style="margin-bottom:var(--space-2);">
+            <div class="row row-3 center">
+              <span class="avatar avatar-sm avatar-coral">CR</span>
+              <strong style="font-family:var(--font-primary);font-size:var(--text-sm);">Carlos A. Ramírez</strong>
+            </div>
+            <span class="perfil-chip perfil-contractor">👷</span>
+          </div>
+          <div class="text-sm" style="color:color-mix(in srgb, var(--color-violeta) 65%, white);margin-bottom:var(--space-3);">CC 79.456.123 · hace 3 días</div>
+          <div class="completitud-cell"><div class="progress-seg"><span class="done"></span><span class="done"></span><span class="partial"></span><span></span><span></span></div><span class="pct">42%</span></div>
+          <div class="row between center" style="margin-top:var(--space-3);">
+            <span class="text-sm"><strong style="color:var(--color-coral);">2</strong> docs pendientes</span>
+            <a href="detalle-expediente-analista.html" class="btn btn-outline btn-sm">Ver →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tareas recientes -->
+      <h2 style="font-size:var(--text-xl); margin: var(--space-8) 0 var(--space-3);">Tareas recientes</h2>
+      <div class="recent-tasks">
+        <div class="recent-task">
+          <span class="icon-wrap icon-wrap-coral" id="ic-rt1"></span>
+          <div class="info">
+            <div class="title">Subir cédula (frente y reverso) — María Alejandra</div>
+            <div class="sub">Solicitada hace 5 días · vence en 2 días</div>
+          </div>
+          <span class="badge badge-progreso">En curso</span>
+        </div>
+        <div class="recent-task">
+          <span class="icon-wrap icon-wrap-aqua" id="ic-rt2"></span>
+          <div class="info">
+            <div class="title">Firmar consentimiento — Carlos Ramírez</div>
+            <div class="sub">Solicitada hace 1 semana · vence mañana</div>
+          </div>
+          <span class="badge badge-urgente">Urgente</span>
+        </div>
+        <div class="recent-task">
+          <span class="icon-wrap icon-wrap-sol" id="ic-rt3"></span>
+          <div class="info">
+            <div class="title">Completar caracterización DEI — Inclusión Total</div>
+            <div class="sub">Solicitada ayer · vence el 20 may</div>
+          </div>
+          <span class="badge badge-pendiente">Pendiente</span>
+        </div>
+        <div class="recent-task">
+          <span class="icon-wrap" id="ic-rt4"></span>
+          <div class="info">
+            <div class="title">Estados financieros 2025 — Suministros Andinos</div>
+            <div class="sub">Completada hace 2 horas</div>
+          </div>
+          <span class="badge badge-aprobado">Listo</span>
+        </div>
+        <div class="recent-task">
+          <span class="icon-wrap icon-wrap-coral" id="ic-rt5"></span>
+          <div class="info">
+            <div class="title">Carga RUT — Suministros Andinos</div>
+            <div class="sub">Completada hace 3 días</div>
+          </div>
+          <span class="badge badge-aprobado">Listo</span>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+<script>
+  (function() {
+    document.getElementById('ic-bell').innerHTML = window.DL_icon('bell');
+    document.getElementById('ic-menu').innerHTML = window.DL_icon('menu');
+    document.getElementById('ic-home').innerHTML = window.DL_icon('folder');
+    document.getElementById('ic-clip').innerHTML = window.DL_icon('clipboard');
+    document.getElementById('ic-plus').innerHTML = window.DL_icon('plus');
+    document.getElementById('ic-cog').innerHTML = window.DL_icon('cog');
+    document.getElementById('ic-search').innerHTML = window.DL_icon('search');
+    document.getElementById('ic-plus2').innerHTML = window.DL_icon('plus');
+
+    ['ic-eye1','ic-eye2','ic-eye3','ic-eye4'].forEach(id => document.getElementById(id).innerHTML = window.DL_icon('eye'));
+    ['ic-clip1','ic-clip2','ic-clip3','ic-clip4'].forEach(id => document.getElementById(id).innerHTML = window.DL_icon('clipboard'));
+    ['ic-up1','ic-up2','ic-up3','ic-up4'].forEach(id => document.getElementById(id).innerHTML = window.DL_icon('upload'));
+
+    document.getElementById('ic-rt1').innerHTML = window.DL_icon('upload');
+    document.getElementById('ic-rt2').innerHTML = window.DL_icon('pen');
+    document.getElementById('ic-rt3').innerHTML = window.DL_icon('doc');
+    document.getElementById('ic-rt4').innerHTML = window.DL_icon('check');
+    document.getElementById('ic-rt5').innerHTML = window.DL_icon('check');
+
+    if (window.innerWidth >= 880) document.getElementById('user-info').style.display = 'flex';
+
+    document.body.appendChild(window.DL_indexLink());
+  })();
+</script>
+</body>
+</html>
