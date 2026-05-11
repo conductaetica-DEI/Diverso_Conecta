@@ -11,7 +11,7 @@ Matriz de requisitos de código. Todo código generado debe cumplir estos están
 - SELECT solo las columnas necesarias. NUNCA `SELECT *` en producción.
 - LIMIT en todos los listados (default 50).
 - Paginación con cursor (no OFFSET) para listas grandes.
-- Usar PostgREST joins (`?select=*,profiles(nombre_completo)`) en vez de N+1 queries.
+- Usar PostgREST joins (`?select=*,profiles(nombre,apellido)`) en vez de N+1 queries.
 - Consolidar llamadas: si una página necesita 3 datos, hacer 1 llamada combinada.
 - Índices en campos de filtrado frecuente (ya definidos en ARCHITECTURE.md).
 

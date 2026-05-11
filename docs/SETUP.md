@@ -45,8 +45,8 @@ Ejecutar en SQL Editor:
 
 ```sql
 -- Crear el primer miembro (super admin)
-INSERT INTO profiles (profile_type, nombre_completo, tipo_documento, numero_documento, email_principal, estado_perfil)
-VALUES ('miembro', 'NOMBRE_DEL_ADMIN', 'CC', 'NUMERO_DOCUMENTO', 'admin@diversolab.org', 'activo')
+INSERT INTO profiles (profile_type, nombre, apellido, tipo_documento, numero_documento, email_principal, estado_perfil)
+VALUES ('miembro', 'NOMBRE', 'APELLIDO', 'CC', 'NUMERO_DOCUMENTO', 'admin@diversolab.org', 'activo')
 RETURNING id;
 
 -- Copiar el UUID retornado y usarlo abajo
