@@ -61,7 +61,7 @@ function generar_html_otp(codigo, nombre, contexto) {
     '</td></tr>' +
 
     '<tr><td style="padding:16px 32px;border-top:1px solid #cad2e9;text-align:center;">' +
-    '<p style="margin:0;color:#3f2b56;font-size:12px;opacity:0.5;">DiversoLab — Inclusión social de personas con discapacidad intelectual</p>' +
+    '<p style="margin:0;color:#3f2b56;font-size:12px;opacity:0.5;">DiversoLab — Transformación desde el Potencial Humano Diverso</p>' +
     '</td></tr>' +
 
     '</table></td></tr></table>' +

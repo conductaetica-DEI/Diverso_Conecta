@@ -2,7 +2,7 @@
 
 ## Proyecto
 
-Plataforma de gestión de expedientes digitales para DiversoLab — organización colombiana de inclusión social de PCDi. Frontend en GitHub Pages (HTML/CSS/JS estático). Backend en Supabase (PostgreSQL + Auth + RLS) + Google Apps Script (OTP, Firma, Drive).
+Plataforma de gestión de expedientes digitales para DiversoLab — Transformación desde el Potencial Humano Diverso. Frontend en GitHub Pages (HTML/CSS/JS estático). Backend en Supabase (PostgreSQL + Auth + RLS) + Google Apps Script (OTP, Firma, Drive).
 
 ---
 
