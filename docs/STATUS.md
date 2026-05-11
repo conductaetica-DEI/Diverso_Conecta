@@ -98,7 +98,7 @@ Cero colores hardcodeados en componentes. Variantes generadas con color-mix(in s
 | js/config.js | CONFIG con SUPABASE_URL, SUPABASE_ANON_KEY (real), 3 URLs GAS (reales) |
 | js/supabase-client.js | iniciar_supabase, obtener_sesion, verificar_sesion, supabase_fetch (retry 401 + refresh), cerrar_sesion |
 | js/gas-client.js | gas_fetch (adjunta JWT automáticamente si hay sesión), solicitar_otp, verificar_otp, firmar_consentimientos, verificar_firma, obtener_datos_firma, notificar_email, crear_carpeta |
-| js/utils.js | mostrar_error/exito (toast), mensaje_usuario (27 códigos), escapar_html, formatear_fecha, deshabilitar/habilitar_boton, validar_email/documento, obtener_ip |
+| js/utils.js | mostrar_error/exito (toast), mensaje_usuario (27 códigos), escapar_html, formatear_fecha, formatear_tipo_documento (sigla→nombre legible), deshabilitar/habilitar_boton, validar_email/documento, obtener_ip |
 | js/consentimientos.js | Catálogo F-DATO-01 v1.0 — 7 consentimientos (C1-C7) con textos aprobados por Asamblea General, importado por firma.html y registro.html |
 
 API keys eliminadas del frontend — gas_fetch envía JWT de sesión Supabase. GAS API keys reservadas para llamadas server-to-server GAS↔GAS.
@@ -117,7 +117,7 @@ API keys eliminadas del frontend — gas_fetch envía JWT de sesión Supabase. G
 |---------|-----------|
 | pages/firma.html | Página standalone de firma de consentimientos (se abre desde link en email, sin sesión Supabase) |
 
-Flujo: carga datos via GAS obtenerDatosFirma → página continua (sin stepper): tarjeta firmante readonly con reloj COT en vivo → iframe SICE-POL-01 + iframe F-DATO-01 (Google Docs embebidos) → 7 consentimientos F-DATO-01 (ninguno pre-seleccionado, Ley 1581/2012) → verificación OTP inline (acto indivisible con consentimiento) → firma via GAS → completar_tarea si es firma solicitada → confirmación con folios, fecha, IP, email + link PDF.
+Flujo: carga datos via GAS obtenerDatosFirma → página continua (sin stepper): tarjeta firmante readonly (tipo_documento legible via formatear_tipo_documento) con reloj COT en vivo → iframe SICE-POL-01 + iframe F-DATO-01 (Google Docs embebidos) → 7 consentimientos F-DATO-01 (ninguno pre-seleccionado, checkbox "Leí y acepto" al final de cada uno, Ley 1581/2012) → verificación OTP inline (acto indivisible con consentimiento) → firma via GAS → completar_tarea si es firma solicitada → confirmación con folios, fecha, IP, email + link PDF.
 
 Características: página continua sin stepper (Vista 3), campo cargo editable si falta para jurídica, obligatorios configurables por analista (C1+C2 siempre + C3-C7 según tarea.detalle), tarea_id en payload para completar_tarea, CSP frame-src https://docs.google.com, accesibilidad (skip link, aria-labels, focus management, keyboard nav), responsive 480px.
 
@@ -127,9 +127,9 @@ Características: página continua sin stepper (Vista 3), campo cargo editable s
 |---------|-----------|
 | pages/registro.html | Página de auto-registro para perfiles externos (3 pasos) |
 
-Flujo: selección tipo perfil (4 cards: beneficiario/aliado/contratista/proveedor) → datos básicos (natural vs jurídica dinámico, validación inline blur) → paso 3 "Consentimiento y firma" (acto indivisible): tarjeta firmante readonly con reloj COT en vivo → iframe SICE-POL-01 + iframe F-DATO-01 (Google Docs embebidos) → 7 consentimientos F-DATO-01 (ninguno pre-seleccionado, Ley 1581/2012) → verificación OTP inline → firma via GAS → perfil INSERT en Supabase (estado pendiente, auth_user_id null) → confirmación con folios, fecha, IP + link PDF.
+Flujo: selección tipo perfil (4 cards: beneficiario/aliado/contratista/proveedor) → datos básicos (natural vs jurídica dinámico, validación inline blur) → paso 3 "Consentimiento y firma" (acto indivisible): tarjeta firmante readonly (tipo_documento legible via formatear_tipo_documento) con reloj COT en vivo → iframe SICE-POL-01 + iframe F-DATO-01 (Google Docs embebidos) → 7 consentimientos F-DATO-01 (ninguno pre-seleccionado, checkbox "Leí y acepto" al final de cada uno, Ley 1581/2012) → verificación OTP inline → firma via GAS → perfil INSERT en Supabase (estado pendiente, auth_user_id null) → confirmación con folios, fecha, IP + link PDF.
 
-Características: stepper 3 pasos (fusión consentimiento+verificación como acto indivisible), campos dinámicos (natural: nombre+apellido+documento personal, jurídica: razón social+NIT+representante+cargo), tipos documento CC/CE/NIT/PA/PEP/PPT/TI, detección duplicados (idx_profiles_doc + email_principal), CSP frame-src https://docs.google.com + *.supabase.co, accesibilidad (skip link, aria-labels, focus management, keyboard nav), responsive 480px.
+Características: stepper 3 pasos (fusión consentimiento+verificación como acto indivisible), campos dinámicos (natural: nombre+apellido+documento personal, jurídica: razón social+NIT+representante+cargo), tipos documento CC/CE/NIT/PA/PEP/PPT/TI (nombres legibles, PEP y PPT completos), detección duplicados (idx_profiles_doc + email_principal), CSP frame-src https://docs.google.com + *.supabase.co, accesibilidad (skip link, aria-labels, focus management, keyboard nav), responsive 480px.
 
 ## Página login — Implementada
 
@@ -160,6 +160,13 @@ Características: verificación permisos al cargar (redirect si no autorizado), 
 Migración `003_rls_accesos.sql` ejecutada en BD remota (2026-05-11 via MCP execute_sql):
 - profiles SELECT: agregado `tiene_permiso('gestion_accesos')` — necesario para que Tab 1 y Tab 2 de accesos.html funcionen con gestion_accesos
 - profiles UPDATE: agregado `tiene_permiso('gestion_accesos')` — necesario para aprobar/rechazar perfiles
+
+## Migración 005 — CHECK tipo_documento
+
+Migración `005_check_tipo_documento.sql` ejecutada en BD remota (2026-05-11 via MCP execute_sql):
+- `profiles.tipo_documento`: CHECK IN ('CC','CE','NIT','PA','PEP','PPT','TI')
+- `consentimientos.tipo_documento_firmante`: CHECK IN ('CC','CE','NIT','PA','PEP','PPT','TI')
+- `catalogo_docs.tipo_documento`: sin CHECK (es tipo de documento del expediente, no identificación personal)
 
 ## Página mi expediente — Implementada
 

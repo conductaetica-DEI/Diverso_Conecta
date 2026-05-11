@@ -191,3 +191,13 @@ Registro de errores cometidos por Claude durante el desarrollo. Propósito: evit
 **Qué debí hacer:** No tocar un dato que ya era correcto. Si iba a actualizar una fecha, verificar primero cuál es la fecha actual.
 
 **Regla violada:** Ciclo obligatorio paso 1 (AUDITAR): el valor existente ya era correcto. Regla de oro: "Si no se pidió quitar, no se toca."
+
+---
+
+## Error 20 — Checkbox en cabecera sin "Leí y acepto": no seguir el diseño aprobado
+
+**Qué pasó:** VISTAS-FIRMA.md muestra claramente que el checkbox va al final del texto de cada consentimiento con el label "Leí y acepto". En su lugar, implementé el checkbox en la cabecera con el título del consentimiento como label (ej: `[☐] C1 — General obligatorio`). El titular veía el checkbox antes de leer el contenido, y el acto de marcar no decía expresamente "leí y acepto". El documento de diseño era específico y lo ignoré.
+
+**Qué debí hacer:** Leer VISTAS-FIRMA.md antes de implementar y seguir el mockup exacto: título + badge en cabecera, texto del consentimiento en el cuerpo, y `☐ Leí y acepto` al final. El diseño ya resolvía el cumplimiento de Ley 1581/2012 — solo había que implementarlo.
+
+**Regla violada:** Regla de oro: "Si un patrón ya existe en otro archivo, cópialo exacto." VISTAS-FIRMA.md es el diseño aprobado. Riesgo legal: sin label "Leí y acepto", el acto de marcar el checkbox no constituye declaración expresa de consentimiento.
