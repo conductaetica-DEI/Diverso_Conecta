@@ -213,7 +213,7 @@ Diferencias con Vista 1:
 │  Email:         juan.perez@email.com                     │
 │                                                          │
 │  Programa:      Acompañamiento PCDi 2026                 │
-│  Solicitado por: Diana López (analista@diversolab.org)  │
+│  Solicitado por: Admin (admin@diversolab.org)           │
 │                                                          │
 │  Fecha:         10 de mayo de 2026, 11:42 PM (COT)      │
 │                                                          │

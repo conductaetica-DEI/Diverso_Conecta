@@ -13,11 +13,15 @@ function enviar_otp_email(email, codigo, nombre, empresa) {
     'Válido por 10 minutos. No lo compartas con nadie.\n\n' +
     '— DiversoLab';
 
+  var reply_to = PropertiesService.getScriptProperties().getProperty('EMAIL_REPLY_TO');
+
   MailApp.sendEmail({
     to: email,
     subject: '[DiversoLab] Tu código de verificación',
     body: texto_plano,
-    htmlBody: html
+    htmlBody: html,
+    replyTo: reply_to,
+    name: 'DiversoLab'
   });
 }
 
@@ -27,10 +31,14 @@ function notificarEmail(destinatario, asunto, cuerpo) {
   }
 
   try {
+    var reply_to = PropertiesService.getScriptProperties().getProperty('EMAIL_REPLY_TO');
+
     MailApp.sendEmail({
       to: destinatario,
       subject: asunto,
-      body: cuerpo
+      body: cuerpo,
+      replyTo: reply_to,
+      name: 'DiversoLab'
     });
     return { ok: true };
   } catch (err) {

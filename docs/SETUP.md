@@ -85,6 +85,7 @@ INSERT INTO permisos_miembro (perfil_id, permiso) VALUES
    - `API_KEY`: generar string aleatorio de 32+ caracteres (usar `openssl rand -hex 32`) — solo para llamadas server-to-server GAS↔GAS
    - `SUPABASE_URL`: el URL del proyecto Supabase
    - `SUPABASE_SERVICE_ROLE_KEY`: la service_role key de Supabase (necesaria para crear auth users, generar sesiones y verificar JWTs)
+   - `EMAIL_REPLY_TO`: correo público para Reply-To en emails de salida (ej. `info@diversolab.org`)
 
 ### Probar
 
@@ -116,6 +117,7 @@ Mismo proceso que OTP pero con nombre "DiversoLab Firma" y directorio `gas/firma
 - `FOLIO_PREFIJO`: "DL" (o el prefijo del proyecto)
 - `DOC_ID_FDATO01`: ID del Google Doc con el Consentimiento Informado Integral (F-DATO-01)
 - `DOC_ID_SICEPOL01`: ID del Google Doc con la Política de Protección de Datos (SICE-POL-01)
+- `EMAIL_REPLY_TO`: correo público para Reply-To en emails de salida (ej. `info@diversolab.org`)
 
 ---
 
@@ -240,3 +242,4 @@ Puedes crear un segundo proyecto Supabase para dev, o usar el mismo con datos de
 | GAS_FIRMA_API_KEY | GAS Firma Script Properties | Solo GAS Firma (server-to-server) |
 | GAS_DRIVE_URL | config.js (frontend) | Frontend |
 | GAS_DRIVE_API_KEY | GAS Drive Script Properties | Solo GAS Drive (server-to-server) |
+| EMAIL_REPLY_TO | GAS OTP + GAS Firma Script Properties | Reply-To en emails de salida |

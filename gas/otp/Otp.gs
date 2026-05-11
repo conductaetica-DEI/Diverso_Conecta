@@ -1,48 +1,48 @@
 // Lógica OTP — generación, verificación, rate limit, token de verificación
 
 var OTP_MAX_SOLICITUDES = 3;
-var OTP_VENTANA_MS = 10 * 60 * 1000;
+var OTP_VENTANA_SEG = 600;
 var OTP_MAX_INTENTOS = 5;
-var OTP_TTL_MS = 10 * 60 * 1000;
-var TOKEN_TTL_MS = 5 * 60 * 1000;
+var OTP_TTL_SEG = 600;
+var TOKEN_TTL_SEG = 300;
 
 function solicitarOTP(email, nombre, empresa) {
   if (!email) return { ok: false, error: 'EMAIL_REQUERIDO' };
 
-  var props = PropertiesService.getScriptProperties();
+  var cache = CacheService.getScriptCache();
   var clave_otp = 'otp_' + email;
   var clave_rate = 'rate_' + email;
 
   var ahora = Date.now();
 
   // Rate limit
-  var datos_rate = props.getProperty(clave_rate);
+  var datos_rate = cache.get(clave_rate);
   if (datos_rate) {
     var rate = JSON.parse(datos_rate);
     var solicitudes_en_ventana = rate.timestamps.filter(function(t) {
-      return (ahora - t) < OTP_VENTANA_MS;
+      return (ahora - t) < (OTP_VENTANA_SEG * 1000);
     });
     if (solicitudes_en_ventana.length >= OTP_MAX_SOLICITUDES) {
       return { ok: false, error: 'OTP_RATE_LIMIT' };
     }
     solicitudes_en_ventana.push(ahora);
-    props.setProperty(clave_rate, JSON.stringify({ timestamps: solicitudes_en_ventana }));
+    cache.put(clave_rate, JSON.stringify({ timestamps: solicitudes_en_ventana }), OTP_VENTANA_SEG);
   } else {
-    props.setProperty(clave_rate, JSON.stringify({ timestamps: [ahora] }));
+    cache.put(clave_rate, JSON.stringify({ timestamps: [ahora] }), OTP_VENTANA_SEG);
   }
 
   var codigo = String(Math.floor(100000 + Math.random() * 900000));
 
-  props.setProperty(clave_otp, JSON.stringify({
+  cache.put(clave_otp, JSON.stringify({
     codigo: codigo,
     creado: ahora,
     intentos: 0
-  }));
+  }), OTP_TTL_SEG);
 
   try {
     enviar_otp_email(email, codigo, nombre, empresa);
   } catch (err) {
-    props.deleteProperty(clave_otp);
+    cache.remove(clave_otp);
     return { ok: false, error: 'OTP_ENVIO_FALLIDO' };
   }
 
@@ -52,41 +52,41 @@ function solicitarOTP(email, nombre, empresa) {
 function verificarOTP(email, codigo) {
   if (!email || !codigo) return { ok: false, error: 'DATOS_REQUERIDOS' };
 
-  var props = PropertiesService.getScriptProperties();
+  var cache = CacheService.getScriptCache();
   var clave_otp = 'otp_' + email;
-  var datos = props.getProperty(clave_otp);
+  var datos = cache.get(clave_otp);
 
   if (!datos) return { ok: false, error: 'OTP_EXPIRADO' };
 
   var otp = JSON.parse(datos);
   var ahora = Date.now();
 
-  if ((ahora - otp.creado) > OTP_TTL_MS) {
-    props.deleteProperty(clave_otp);
+  if ((ahora - otp.creado) > (OTP_TTL_SEG * 1000)) {
+    cache.remove(clave_otp);
     return { ok: false, error: 'OTP_EXPIRADO' };
   }
 
   if (otp.intentos >= OTP_MAX_INTENTOS) {
-    props.deleteProperty(clave_otp);
+    cache.remove(clave_otp);
     return { ok: false, error: 'OTP_BLOQUEADO' };
   }
 
   if (String(codigo).trim() !== String(otp.codigo).trim()) {
     otp.intentos++;
-    props.setProperty(clave_otp, JSON.stringify(otp));
+    cache.put(clave_otp, JSON.stringify(otp), OTP_TTL_SEG);
     if (otp.intentos >= OTP_MAX_INTENTOS) {
       return { ok: false, error: 'OTP_BLOQUEADO' };
     }
     return { ok: false, error: 'OTP_INCORRECTO', intentos_restantes: OTP_MAX_INTENTOS - otp.intentos };
   }
 
-  props.deleteProperty(clave_otp);
+  cache.remove(clave_otp);
 
   var token = generar_token_verificacion();
-  props.setProperty('tkn_' + email, JSON.stringify({
+  cache.put('tkn_' + email, JSON.stringify({
     token: token,
     creado: ahora
-  }));
+  }), TOKEN_TTL_SEG);
 
   return { ok: true, token_verificacion: token };
 }
@@ -94,17 +94,17 @@ function verificarOTP(email, codigo) {
 function verificarTokenVerificacion(email, token) {
   if (!email || !token) return { ok: false, error: 'DATOS_REQUERIDOS' };
 
-  var props = PropertiesService.getScriptProperties();
+  var cache = CacheService.getScriptCache();
   var clave_token = 'tkn_' + email;
-  var datos = props.getProperty(clave_token);
+  var datos = cache.get(clave_token);
 
   if (!datos) return { ok: false, error: 'TOKEN_EXPIRADO' };
 
   var info = JSON.parse(datos);
   var ahora = Date.now();
 
-  if ((ahora - info.creado) > TOKEN_TTL_MS) {
-    props.deleteProperty(clave_token);
+  if ((ahora - info.creado) > (TOKEN_TTL_SEG * 1000)) {
+    cache.remove(clave_token);
     return { ok: false, error: 'TOKEN_EXPIRADO' };
   }
 

@@ -76,6 +76,8 @@ function firmar(datos) {
 
   // 7. Enviar email con PDF adjunto
   try {
+    var reply_to = PropertiesService.getScriptProperties().getProperty('EMAIL_REPLY_TO');
+
     MailApp.sendEmail({
       to: datos.firmante.email,
       subject: '[DiversoLab] Constancia de consentimiento informado',
@@ -84,7 +86,9 @@ function firmar(datos) {
             'Este documento incluye como anexos la Política de Protección de Datos (SICE-POL-01) ' +
             'y el Consentimiento Informado Integral (F-DATO-01), disponibles en diversolab.org/politica\n\n' +
             '— DiversoLab',
-      attachments: [pdf.archivo]
+      attachments: [pdf.archivo],
+      replyTo: reply_to,
+      name: 'DiversoLab'
     });
   } catch (err) {
     // PDF ya se generó y subió a Drive — el email es best-effort
