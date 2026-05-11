@@ -82,16 +82,17 @@ INSERT INTO permisos_miembro (perfil_id, permiso) VALUES
 
 1. En el editor de GAS → Project Settings → Script Properties
 2. Agregar:
-   - `API_KEY`: generar string aleatorio de 32+ caracteres (usar `openssl rand -hex 32`)
+   - `API_KEY`: generar string aleatorio de 32+ caracteres (usar `openssl rand -hex 32`) — solo para llamadas server-to-server GAS↔GAS
    - `SUPABASE_URL`: el URL del proyecto Supabase
-   - `SUPABASE_SERVICE_ROLE_KEY`: la service_role key de Supabase (necesaria para crear auth users y generar sesiones)
+   - `SUPABASE_SERVICE_ROLE_KEY`: la service_role key de Supabase (necesaria para crear auth users, generar sesiones y verificar JWTs)
 
 ### Probar
 
 ```bash
+# solicitarOTP es acción pública (no requiere auth)
 curl -X POST "URL_DEL_DEPLOYMENT" \
   -H "Content-Type: application/json" \
-  -d '{"api_key":"TU_API_KEY","action":"solicitarOTP","email":"test@diversolab.org","nombre":"Test"}'
+  -d '{"action":"solicitarOTP","email":"test@diversolab.org","nombre":"Test"}'
 ```
 
 Debe retornar: `{"ok":true}`
@@ -106,11 +107,11 @@ Mismo proceso que OTP pero con nombre "DiversoLab Firma" y directorio `gas/firma
 
 ### Script Properties
 
-- `API_KEY`: diferente al de OTP (cada servicio tiene su propia key)
+- `API_KEY`: para llamadas server-to-server (diferente al de OTP)
 - `SUPABASE_URL`: mismo
-- `SUPABASE_SERVICE_ROLE_KEY`: mismo
+- `SUPABASE_SERVICE_ROLE_KEY`: mismo (también usado por Auth.gs para verificar JWTs)
 - `OTP_URL`: URL del deployment de GAS OTP
-- `OTP_API_KEY`: API key del servicio OTP (para validar token_verificacion)
+- `OTP_API_KEY`: API key del servicio OTP (para llamadas Firma→OTP server-to-server)
 - `DRIVE_CARPETA_FIRMAS`: ID de carpeta Drive para PDFs de constancia
 - `FOLIO_PREFIJO`: "DL" (o el prefijo del proyecto)
 - `DOC_ID_FDATO01`: ID del Google Doc con el Consentimiento Informado Integral (F-DATO-01)
@@ -126,9 +127,9 @@ Mismo proceso, nombre "DiversoLab Drive", directorio `gas/drive`.
 
 ### Script Properties
 
-- `API_KEY`: diferente a los otros
+- `API_KEY`: para llamadas server-to-server (diferente a los otros)
 - `SUPABASE_URL`: mismo
-- `SUPABASE_SERVICE_ROLE_KEY`: mismo
+- `SUPABASE_SERVICE_ROLE_KEY`: mismo (también usado por Auth.gs para verificar JWTs)
 - `CARPETA_RAIZ_ID`: ID de la carpeta "DiversoLab_Expedientes" en Drive (crearla manualmente primero)
 
 ### Crear carpeta raíz en Drive
@@ -231,11 +232,11 @@ Puedes crear un segundo proyecto Supabase para dev, o usar el mismo con datos de
 | Secreto | Dónde configurar | Dónde se usa |
 |---------|-----------------|-------------|
 | SUPABASE_URL | config.js (frontend) + GAS Script Properties | Frontend + GAS |
-| SUPABASE_ANON_KEY | config.js (frontend) | Frontend |
-| SUPABASE_SERVICE_ROLE_KEY | GAS Script Properties (3 proyectos) | Solo GAS |
+| SUPABASE_ANON_KEY | config.js (frontend) | Frontend (público por diseño) |
+| SUPABASE_SERVICE_ROLE_KEY | GAS Script Properties (3 proyectos) | Solo GAS (auth admin + verificar JWT) |
 | GAS_OTP_URL | config.js (frontend) | Frontend |
-| GAS_OTP_API_KEY | GAS OTP Script Properties + GAS Firma Script Properties | GAS OTP (valida) + GAS Firma (envía) |
+| GAS_OTP_API_KEY | GAS OTP Script Properties + GAS Firma Script Properties | Solo GAS↔GAS server-to-server |
 | GAS_FIRMA_URL | config.js (frontend) | Frontend |
-| GAS_FIRMA_API_KEY | GAS Firma Script Properties | Solo GAS Firma (valida) |
-| GAS_DRIVE_URL | config.js o solo backend | Frontend o GAS |
-| GAS_DRIVE_API_KEY | GAS Drive Script Properties | Solo GAS Drive (valida) |
+| GAS_FIRMA_API_KEY | GAS Firma Script Properties | Solo GAS Firma (server-to-server) |
+| GAS_DRIVE_URL | config.js (frontend) | Frontend |
+| GAS_DRIVE_API_KEY | GAS Drive Script Properties | Solo GAS Drive (server-to-server) |

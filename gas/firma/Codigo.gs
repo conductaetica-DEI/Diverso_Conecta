@@ -4,9 +4,13 @@ function doPost(e) {
   try {
     var body = JSON.parse(e.postData.contents);
 
-    var clave_esperada = PropertiesService.getScriptProperties().getProperty('API_KEY');
-    if (!body.api_key || body.api_key !== clave_esperada) {
-      return respuesta_json({ ok: false, error: 'NO_AUTORIZADO' });
+    // token_verificacion y UUID de tarea protegen cada acción
+    var acciones_publicas = ['firmar', 'verificarFirma', 'obtenerDatosFirma'];
+    if (acciones_publicas.indexOf(body.action) === -1) {
+      var auth = autenticar(body);
+      if (!auth.ok) {
+        return respuesta_json({ ok: false, error: 'NO_AUTORIZADO' });
+      }
     }
 
     var resultado;

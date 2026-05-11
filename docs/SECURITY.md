@@ -52,7 +52,7 @@ La seguridad está en Supabase (RLS) y GAS (validación), NO en el frontend. El 
 | Inmutabilidad BD | No repudio | Tabla consentimientos: no UPDATE, no DELETE. Ni con service_role |
 | Folio único | Trazabilidad | DL-{codigo}-{año}-{secuencial}. Verificable por cualquiera |
 | PDF constancia | Evidencia jurídica | PDF con todos los datos de firma depositado en Drive + enviado por email |
-| API key + origen | Acceso al servicio | GAS Firma solo acepta requests con API key válida |
+| JWT + token_verificacion | Acceso al servicio | Acciones autenticadas requieren JWT válido; firma usa token_verificacion de OTP |
 
 ### Cumplimiento legal
 
@@ -72,7 +72,8 @@ La seguridad está en Supabase (RLS) y GAS (validación), NO en el frontend. El 
 |---------|-----------|-------------|---------------------|
 | Supabase anon key | JS en GitHub Pages | Frontend (fetch + JWT) | ✅ Sí — es público por diseño |
 | Supabase service_role key | GAS Script Properties | Solo GAS | ❌ NUNCA |
-| GAS API keys | GAS Script Properties | Solo GAS valida | ❌ NUNCA |
+| GAS API keys | GAS Script Properties | Solo GAS↔GAS (server-to-server) | ❌ NUNCA |
+| JWT Supabase (access_token) | Frontend → GAS en body.jwt | Frontend autenticado → GAS valida contra Supabase Auth | ⚡ Transitorio (1 hora, HTTPS) |
 | Token verificación OTP | Memoria temporal GAS | GAS OTP → GAS Firma | ❌ Transitorio (5 min) |
 | access_token + refresh_token | Transitan GAS → frontend (HTTPS) | Frontend (setSession) | ⚡ Transitorio (una vez, HTTPS) |
 
@@ -110,7 +111,8 @@ Para cada tabla, verificar estas preguntas:
 
 ### En GAS (segunda línea, confiable)
 
-- API key válida
+- JWT válido (verificado contra Supabase Auth) o API key válida (server-to-server)
+- Acciones públicas: rate limit (OTP) o token_verificacion (firma)
 - Email existe en profiles (cuando aplica)
 - Token verificación válido y no expirado
 - Datos completos para la operación
@@ -153,7 +155,12 @@ Configurar en dashboard: solo aceptar requests desde `app.diversolab.org` y `loc
 
 ### GAS
 
-GAS Web Apps no soportan CORS nativo. La protección es via API key — sin key válida, no hay respuesta útil.
+GAS Web Apps no soportan CORS nativo. Cada servicio usa `autenticar(body)` con dos métodos:
+
+1. **JWT** (`body.jwt`): `verificar_jwt()` llama `SUPABASE_URL/auth/v1/user` — si el token es válido, el usuario está autenticado. Usado por frontend con sesión Supabase.
+2. **API key** (`body.api_key`): valida contra Script Property `API_KEY`. Reservado para llamadas server-to-server GAS↔GAS (ej. Firma→OTP para verificarTokenVerificacion).
+
+Acciones públicas (solicitarOTP, verificarOTP, firmar, obtenerDatosFirma) no requieren ninguno — tienen su propia protección (rate limit, token_verificacion, UUID de tarea).
 
 ---
 
@@ -164,7 +171,7 @@ GAS Web Apps no soportan CORS nativo. La protección es via API key — sin key 
 | Ver anon key en DevTools | Inútil sin JWT. RLS bloquea todo. |
 | Robar JWT de otro usuario | JWT expira en 1 hora. Solo se genera post-OTP al email del dueño. |
 | Modificar JS para hacer queries a otras tablas | RLS rechaza. La BD filtra, no el frontend. |
-| Llamar directo a GAS sin frontend | API key requerida. Sin key = NO_AUTORIZADO. |
+| Llamar directo a GAS sin frontend | Acciones protegidas requieren JWT válido de Supabase. Acciones públicas (OTP, firma) tienen su propia protección (rate limit, token_verificacion). |
 | Fuerza bruta OTP | Rate limit: 3/10min, 5 intentos, TTL 10min. |
 | Crear perfil falso | Perfil queda en 'pendiente'. No puede hacer nada sin aprobación. |
 | Modificar consentimiento firmado | Tabla inmutable (no UPDATE, no DELETE). Hash detecta manipulación. |

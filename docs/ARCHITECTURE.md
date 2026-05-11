@@ -11,7 +11,7 @@ Plataforma de gestión de expedientes digitales para DiversoLab — organizació
 ```
 GitHub Pages (HTML/CSS/JS) ──fetch()+JWT──→ Supabase (BD + Auth + RLS)
        │                                         ↑
-       └──fetch()+apiKey──→ GAS (OTP + Firma + Drive)──fetch()+service_role──┘
+       └──fetch()+JWT──→ GAS (OTP + Firma + Drive)──fetch()+service_role──┘
 ```
 
 | Componente | Rol |
@@ -289,7 +289,6 @@ Firma electrónica de consentimientos y documentos. Servicio transversal reutili
 Persona natural (beneficiario, contratista):
 ```json
 {
-  "api_key": "...",
   "token_verificacion": "...",
   "proyecto": "diversolab",
   "tipo_firma": "persona_natural",
@@ -310,7 +309,6 @@ Persona natural (beneficiario, contratista):
 Persona jurídica (aliado, proveedor):
 ```json
 {
-  "api_key": "...",
   "token_verificacion": "...",
   "proyecto": "diversolab",
   "tipo_firma": "persona_juridica",
@@ -350,8 +348,8 @@ Persona jurídica (aliado, proveedor):
 ```
 
 **Lógica interna:**
-1. Valida API key
-2. Valida token_verificacion contra GAS OTP (debe ser válido y reciente <5 min)
+1. Acción pública (no requiere JWT ni api_key — token_verificacion es la autenticación)
+2. Valida token_verificacion contra GAS OTP server-to-server con api_key (debe ser válido y reciente <5 min)
 3. Valida tipo_firma: si `persona_juridica`, exige cargo + empresa + nit_empresa
 4. Valida que todos los consentimientos con es_obligatorio=true estén aceptados
 5. Por cada consentimiento: genera folio (DL-{codigo}-{año}-{secuencial}), genera hash SHA-256 (email + codigo + version + timestamp + ip)

@@ -4,8 +4,8 @@ function doPost(e) {
   try {
     var body = JSON.parse(e.postData.contents);
 
-    var clave_esperada = PropertiesService.getScriptProperties().getProperty('API_KEY');
-    if (!body.api_key || body.api_key !== clave_esperada) {
+    var auth = autenticar(body);
+    if (!auth.ok) {
       return respuesta_json({ ok: false, error: 'NO_AUTORIZADO' });
     }
 

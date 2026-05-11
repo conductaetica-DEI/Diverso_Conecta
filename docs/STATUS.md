@@ -18,7 +18,8 @@
 | Archivo | Contenido |
 |---------|-----------|
 | appsscript.json | Timezone Bogotá, webapp ANYONE_ANONYMOUS |
-| Codigo.gs | Router: doPost, doGet, respuesta_json |
+| Codigo.gs | Router: doPost (acciones públicas: solicitarOTP, verificarOTP; protegidas: verificarTokenVerificacion, notificarEmail), doGet, respuesta_json |
+| Auth.gs | verificar_jwt (valida contra Supabase Auth API), autenticar (JWT o api_key) |
 | Otp.gs | solicitarOTP, verificarOTP, verificarTokenVerificacion, generar_token_verificacion |
 | Email.gs | enviar_otp_email, notificarEmail, generar_html_otp, escapar_html |
 
@@ -31,7 +32,8 @@ Pendiente: pruebas con POST real (requiere API_KEY).
 | Archivo | Contenido |
 |---------|-----------|
 | appsscript.json | Timezone Bogotá, webapp ANYONE_ANONYMOUS |
-| Codigo.gs | Router: doPost (firmar, verificarFirma, obtenerDatosFirma), doGet, respuesta_json |
+| Codigo.gs | Router: doPost (acciones públicas: firmar, verificarFirma, obtenerDatosFirma), doGet, respuesta_json |
+| Auth.gs | verificar_jwt (valida contra Supabase Auth API), autenticar (JWT o api_key) |
 | Firma.gs | firmar, verificarFirma, obtener_datos_firma, verificar_token_otp, validar_firmante, validar_consentimientos |
 | Folio.gs | generar_folio (DL-{codigo}-{año}-{secuencial}), generar_hash (SHA-256), bytes_a_hex |
 | Pdf.gs | generar_pdf_constancia, construir_encabezado/datos/tabla/evidencia, anexos legales (F-DATO-01, SICE-POL-01), estilos |
@@ -58,7 +60,8 @@ Los originales viven en Google Docs (DOC_ID_FDATO01 y DOC_ID_SICEPOL01) y se emb
 | Archivo | Contenido |
 |---------|-----------|
 | appsscript.json | Timezone Bogotá, webapp ANYONE_ANONYMOUS |
-| Codigo.gs | Router: doPost (crearCarpeta), doGet, respuesta_json |
+| Codigo.gs | Router: doPost (todas las acciones requieren JWT o api_key), doGet, respuesta_json |
+| Auth.gs | verificar_jwt (valida contra Supabase Auth API), autenticar (JWT o api_key) |
 | Drive.gs | crear_carpeta_expediente, obtener_o_crear_subcarpeta, obtener_subcarpetas_por_tipo, validar_datos_carpeta |
 | Supabase.gs | actualizar_carpeta_perfil (PATCH profiles SET carpeta_drive_id) |
 
@@ -92,12 +95,12 @@ Cero colores hardcodeados en componentes. Variantes generadas con color-mix(in s
 
 | Archivo | Contenido |
 |---------|-----------|
-| js/config.js | CONFIG con SUPABASE_URL, SUPABASE_ANON_KEY (placeholder), 3 URLs GAS (reales) |
+| js/config.js | CONFIG con SUPABASE_URL, SUPABASE_ANON_KEY (real), 3 URLs GAS (reales) |
 | js/supabase-client.js | iniciar_supabase, obtener_sesion, verificar_sesion, supabase_fetch (retry 401 + refresh), cerrar_sesion |
-| js/gas-client.js | gas_fetch, solicitar_otp, verificar_otp, firmar_consentimientos, verificar_firma, obtener_datos_firma, notificar_email, crear_carpeta |
+| js/gas-client.js | gas_fetch (adjunta JWT automáticamente si hay sesión), solicitar_otp, verificar_otp, firmar_consentimientos, verificar_firma, obtener_datos_firma, notificar_email, crear_carpeta |
 | js/utils.js | mostrar_error/exito (toast), mensaje_usuario (27 códigos), escapar_html, formatear_fecha, deshabilitar/habilitar_boton, validar_email/documento, obtener_ip |
 
-Pendiente: reemplazar SUPABASE_ANON_KEY y GAS_API_KEYS con valores reales.
+API keys eliminadas del frontend — gas_fetch envía JWT de sesión Supabase. GAS API keys reservadas para llamadas server-to-server GAS↔GAS.
 
 ## Documentación actualizada
 

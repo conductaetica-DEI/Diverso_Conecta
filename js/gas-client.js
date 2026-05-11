@@ -1,13 +1,18 @@
 // Cliente GAS — helpers para llamar servicios OTP, Firma, Drive
 
-var GAS_API_KEYS = {
-  OTP: 'REEMPLAZAR_CON_OTP_API_KEY',
-  FIRMA: 'REEMPLAZAR_CON_FIRMA_API_KEY',
-  DRIVE: 'REEMPLAZAR_CON_DRIVE_API_KEY'
-};
+async function gas_fetch(url, datos) {
+  var payload = Object.assign({}, datos);
 
-async function gas_fetch(url, api_key, datos) {
-  var payload = Object.assign({}, datos, { api_key: api_key });
+  if (typeof obtener_sesion === 'function') {
+    try {
+      var sesion = await obtener_sesion();
+      if (sesion) {
+        payload.jwt = sesion.access_token;
+      }
+    } catch (e) {
+      // Sin sesión — continuar sin JWT
+    }
+  }
 
   var respuesta = await fetch(url, {
     method: 'POST',
@@ -35,41 +40,40 @@ async function solicitar_otp(email, nombre, empresa) {
   if (empresa) {
     datos.empresa = empresa;
   }
-  return gas_fetch(CONFIG.GAS_OTP_URL, GAS_API_KEYS.OTP, datos);
+  return gas_fetch(CONFIG.GAS_OTP_URL, datos);
 }
 
 async function verificar_otp(email, codigo) {
-  var resultado = await gas_fetch(CONFIG.GAS_OTP_URL, GAS_API_KEYS.OTP, {
+  return gas_fetch(CONFIG.GAS_OTP_URL, {
     action: 'verificarOTP',
     email: email,
     codigo: codigo
   });
-  return resultado;
 }
 
 // --- Firma ---
 
 async function firmar_consentimientos(datos) {
   datos.action = 'firmar';
-  return gas_fetch(CONFIG.GAS_FIRMA_URL, GAS_API_KEYS.FIRMA, datos);
+  return gas_fetch(CONFIG.GAS_FIRMA_URL, datos);
 }
 
 async function verificar_firma(folio) {
-  return gas_fetch(CONFIG.GAS_FIRMA_URL, GAS_API_KEYS.FIRMA, {
+  return gas_fetch(CONFIG.GAS_FIRMA_URL, {
     action: 'verificarFirma',
     folio: folio
   });
 }
 
 async function obtener_datos_firma(token) {
-  return gas_fetch(CONFIG.GAS_FIRMA_URL, GAS_API_KEYS.FIRMA, {
+  return gas_fetch(CONFIG.GAS_FIRMA_URL, {
     action: 'obtenerDatosFirma',
     token: token
   });
 }
 
 async function notificar_email(destinatario, asunto, cuerpo) {
-  return gas_fetch(CONFIG.GAS_OTP_URL, GAS_API_KEYS.OTP, {
+  return gas_fetch(CONFIG.GAS_OTP_URL, {
     action: 'notificarEmail',
     destinatario: destinatario,
     asunto: asunto,
@@ -81,5 +85,5 @@ async function notificar_email(destinatario, asunto, cuerpo) {
 
 async function crear_carpeta(datos) {
   datos.action = 'crearCarpeta';
-  return gas_fetch(CONFIG.GAS_DRIVE_URL, GAS_API_KEYS.DRIVE, datos);
+  return gas_fetch(CONFIG.GAS_DRIVE_URL, datos);
 }

@@ -18,9 +18,12 @@
 
 ```
 gas/
-  otp/Codigo.gs              ← servicio OTP
-  firma/Codigo.gs             ← servicio firma electrónica
-  drive/Codigo.gs             ← servicio Drive
+  otp/Codigo.gs              ← servicio OTP (router)
+  otp/Auth.gs                ← verificar_jwt + autenticar
+  firma/Codigo.gs             ← servicio firma electrónica (router)
+  firma/Auth.gs               ← verificar_jwt + autenticar
+  drive/Codigo.gs             ← servicio Drive (router)
+  drive/Auth.gs               ← verificar_jwt + autenticar
 css/
   tokens.css                  ← variables CSS del design system
   componentes.css             ← estilos de botones, inputs, cards, badges, tablas
@@ -112,17 +115,16 @@ async function obtener_mi_expediente() {
 }
 ```
 
-### Toda función que llama a GAS incluye API key y error handling
+### Toda función que llama a GAS usa gas_fetch (JWT automático)
 
 ```javascript
 async function solicitar_otp(email, nombre) {
   try {
-    const respuesta = await gas_fetch(GAS_OTP_URL, {
+    const respuesta = await gas_fetch(CONFIG.GAS_OTP_URL, {
       action: 'solicitarOTP',
       email: email,
       nombre: nombre
     });
-    if (!respuesta.ok) throw new Error(respuesta.error);
     return respuesta;
   } catch (error) {
     mostrar_error(error.message);
@@ -130,15 +132,19 @@ async function solicitar_otp(email, nombre) {
 }
 ```
 
-### Toda función GAS valida API key primero
+### Toda función GAS usa autenticar() para acciones protegidas
 
 ```javascript
 function doPost(e) {
   try {
     var body = JSON.parse(e.postData.contents);
-    var expectedKey = PropertiesService.getScriptProperties().getProperty('API_KEY');
-    if (!body.api_key || body.api_key !== expectedKey) {
-      return respuesta_json({ ok: false, error: 'NO_AUTORIZADO' });
+
+    var acciones_publicas = ['solicitarOTP', 'verificarOTP'];
+    if (acciones_publicas.indexOf(body.action) === -1) {
+      var auth = autenticar(body);
+      if (!auth.ok) {
+        return respuesta_json({ ok: false, error: 'NO_AUTORIZADO' });
+      }
     }
     // ... lógica
   } catch (err) {
