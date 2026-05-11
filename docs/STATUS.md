@@ -34,10 +34,10 @@ Pendiente: pruebas con POST real (requiere API_KEY).
 | appsscript.json | Timezone Bogotá, webapp ANYONE_ANONYMOUS |
 | Codigo.gs | Router: doPost (acciones públicas: firmar, verificarFirma, obtenerDatosFirma), doGet, respuesta_json |
 | Auth.gs | verificar_jwt (valida contra Supabase Auth API), autenticar (JWT o api_key) |
-| Firma.gs | firmar, verificarFirma, obtener_datos_firma, verificar_token_otp, validar_firmante, validar_consentimientos |
+| Firma.gs | firmar (incluye completar_tarea si tarea_id presente), verificarFirma, obtener_datos_firma, verificar_token_otp, validar_firmante, validar_consentimientos |
 | Folio.gs | generar_folio (DL-{codigo}-{año}-{secuencial}), generar_hash (SHA-256), bytes_a_hex |
 | Pdf.gs | generar_pdf_constancia, construir_encabezado/datos/tabla/evidencia, anexos legales (F-DATO-01, SICE-POL-01), estilos |
-| Supabase.gs | insertar_consentimientos, consultar_por_folio, registrar_log, obtener_carpeta_perfil, consultar_tarea_firma, consultar_perfil |
+| Supabase.gs | insertar_consentimientos, consultar_por_folio, registrar_log, obtener_carpeta_perfil, consultar_tarea_firma, completar_tarea, consultar_perfil |
 
 Script Properties configuradas (9):
 - API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
@@ -87,7 +87,7 @@ Seed `002_seed.sql` ejecutado: 8 profiles, 7 permisos, 4 asignaciones, 2 tareas.
 | Archivo | Contenido |
 |---------|-----------|
 | css/tokens.css | @import Google Fonts, 7 colores base, 6 variantes (color-mix), 6 estados semánticos, 3 fuentes, 7 tamaños, 6 espaciados, 4 radios, 2 sombras, --color-borde-tabla |
-| css/componentes.css | body base, botones (primario/secundario/ghost + disabled + loading), inputs/selects (focus/error/válido), cards (4 variantes), badges (4 estados), tabla, modal, toast (éxito/error), stepper, skip link, focus visible global |
+| css/componentes.css | body base, botones (primario/secundario/ghost + disabled + loading), inputs/selects (focus/error/válido), cards (4 variantes), badges (4 estados), tabla, modal, toast (éxito/error), stepper, skip link, focus visible global, consentimientos (10 clases), OTP (8 clases), confirmación (5 clases), firmante (4 clases), documento-iframe (1 clase) |
 
 Cero colores hardcodeados en componentes. Variantes generadas con color-mix(in srgb).
 
@@ -99,14 +99,17 @@ Cero colores hardcodeados en componentes. Variantes generadas con color-mix(in s
 | js/supabase-client.js | iniciar_supabase, obtener_sesion, verificar_sesion, supabase_fetch (retry 401 + refresh), cerrar_sesion |
 | js/gas-client.js | gas_fetch (adjunta JWT automáticamente si hay sesión), solicitar_otp, verificar_otp, firmar_consentimientos, verificar_firma, obtener_datos_firma, notificar_email, crear_carpeta |
 | js/utils.js | mostrar_error/exito (toast), mensaje_usuario (27 códigos), escapar_html, formatear_fecha, deshabilitar/habilitar_boton, validar_email/documento, obtener_ip |
+| js/consentimientos.js | Catálogo F-DATO-01 v1.0 — 7 consentimientos (C1-C7) con textos aprobados por Asamblea General, importado por firma.html y registro.html |
 
 API keys eliminadas del frontend — gas_fetch envía JWT de sesión Supabase. GAS API keys reservadas para llamadas server-to-server GAS↔GAS.
 
 ## Documentación actualizada
 
-- ARCHITECTURE.md — verificarOTP retorna access_token + refresh_token + token_verificacion, flujo login con GAS→tokens→setSession, auth_user_id null hasta primer login
+- ARCHITECTURE.md — verificarOTP retorna access_token + refresh_token + token_verificacion, flujo login con GAS→tokens→setSession, auth_user_id null hasta primer login, profiles: nombre+apellido (no nombre_completo)
 - SECURITY.md — flujo auth completo con Auth Admin API, tokens transitorios en tabla de secretos
-- SETUP.md — service_role para crear sesiones, eliminada mención de Edge Functions
+- SETUP.md — service_role para crear sesiones, eliminada mención de Edge Functions, seed con nombre+apellido
+- QUALITY.md — PostgREST joins con nombre+apellido
+- VISTAS-FIRMA.md — 3 vistas de referencia visual (natural, jurídica, solicitada por analista)
 
 ## Página firma standalone — Implementada
 
@@ -114,19 +117,19 @@ API keys eliminadas del frontend — gas_fetch envía JWT de sesión Supabase. G
 |---------|-----------|
 | pages/firma.html | Página standalone de firma de consentimientos (se abre desde link en email, sin sesión Supabase) |
 
-Flujo: carga datos via GAS obtenerDatosFirma → muestra datos firmante + 7 consentimientos F-DATO-01 con textos legales completos siempre visibles → verificación OTP (6 dígitos, auto-advance, reenvío 60s) → firma via GAS → confirmación con folios + link PDF.
+Flujo: carga datos via GAS obtenerDatosFirma → página continua (sin stepper): tarjeta firmante readonly con reloj COT en vivo → iframe SICE-POL-01 + iframe F-DATO-01 (Google Docs embebidos) → 7 consentimientos F-DATO-01 (ninguno pre-seleccionado, Ley 1581/2012) → verificación OTP inline (acto indivisible con consentimiento) → firma via GAS → completar_tarea si es firma solicitada → confirmación con folios, fecha, IP, email + link PDF.
 
-Características: stepper 3 pasos, campo cargo dinámico para persona jurídica, obligatorios configurables por analista (C1+C2 siempre + C3-C7 según tarea.detalle), CSP meta tag, accesibilidad (skip link, aria-labels, focus management, keyboard nav), responsive 480px.
+Características: página continua sin stepper (Vista 3), campo cargo editable si falta para jurídica, obligatorios configurables por analista (C1+C2 siempre + C3-C7 según tarea.detalle), tarea_id en payload para completar_tarea, CSP frame-src https://docs.google.com, accesibilidad (skip link, aria-labels, focus management, keyboard nav), responsive 480px.
 
 ## Página registro — Implementada
 
 | Archivo | Contenido |
 |---------|-----------|
-| pages/registro.html | Página de auto-registro para perfiles externos (4 pasos) |
+| pages/registro.html | Página de auto-registro para perfiles externos (3 pasos) |
 
-Flujo: selección tipo perfil (4 cards: beneficiario/aliado/contratista/proveedor) → datos básicos (natural vs jurídica dinámico, validación inline blur) → 7 consentimientos F-DATO-01 siempre visibles (C1+C2 obligatorios, C3-C7 voluntarios) → verificación OTP → firma via GAS → perfil INSERT en Supabase (estado pendiente, auth_user_id null) → confirmación con folios.
+Flujo: selección tipo perfil (4 cards: beneficiario/aliado/contratista/proveedor) → datos básicos (natural vs jurídica dinámico, validación inline blur) → paso 3 "Consentimiento y firma" (acto indivisible): tarjeta firmante readonly con reloj COT en vivo → iframe SICE-POL-01 + iframe F-DATO-01 (Google Docs embebidos) → 7 consentimientos F-DATO-01 (ninguno pre-seleccionado, Ley 1581/2012) → verificación OTP inline → firma via GAS → perfil INSERT en Supabase (estado pendiente, auth_user_id null) → confirmación con folios, fecha, IP + link PDF.
 
-Características: stepper 4 pasos, campos dinámicos (natural: nombre+documento personal, jurídica: razón social+NIT+representante+cargo), tipos documento CC/CE/NIT/PA/PEP/PPT/TI, detección duplicados (idx_profiles_doc + email_principal), CSP incluye *.supabase.co, accesibilidad (skip link, aria-labels, focus management, keyboard nav), responsive 480px.
+Características: stepper 3 pasos (fusión consentimiento+verificación como acto indivisible), campos dinámicos (natural: nombre+apellido+documento personal, jurídica: razón social+NIT+representante+cargo), tipos documento CC/CE/NIT/PA/PEP/PPT/TI, detección duplicados (idx_profiles_doc + email_principal), CSP frame-src https://docs.google.com + *.supabase.co, accesibilidad (skip link, aria-labels, focus management, keyboard nav), responsive 480px.
 
 ## Página login — Implementada
 
