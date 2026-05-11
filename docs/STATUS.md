@@ -79,6 +79,15 @@ Migración `001_schema.sql` ejecutada en BD remota:
 
 Seed `002_seed.sql` ejecutado: 8 profiles, 7 permisos, 4 asignaciones, 2 tareas.
 
+## Design system CSS — Implementado
+
+| Archivo | Contenido |
+|---------|-----------|
+| css/tokens.css | @import Google Fonts, 7 colores base, 6 variantes (color-mix), 6 estados semánticos, 3 fuentes, 7 tamaños, 6 espaciados, 4 radios, 2 sombras, --color-borde-tabla |
+| css/componentes.css | body base, botones (primario/secundario/ghost + disabled + loading), inputs/selects (focus/error/válido), cards (4 variantes), badges (4 estados), tabla, modal, toast (éxito/error), stepper, skip link, focus visible global |
+
+Cero colores hardcodeados en componentes. Variantes generadas con color-mix(in srgb).
+
 ## Documentación actualizada
 
 - ARCHITECTURE.md — verificarOTP retorna access_token + refresh_token + token_verificacion, flujo login con GAS→tokens→setSession, auth_user_id null hasta primer login
@@ -89,14 +98,13 @@ Seed `002_seed.sql` ejecutado: 8 profiles, 7 permisos, 4 asignaciones, 2 tareas.
 
 | Prioridad | Componente | Archivos |
 |-----------|-----------|----------|
-| 1 | Design system CSS | css/tokens.css, css/componentes.css |
-| 2 | Clientes JS | js/config.js, js/supabase-client.js, js/gas-client.js |
-| 3 | Login | pages/login.html |
-| 4 | Registro | pages/registro.html |
-| 5 | Firma standalone | pages/firma.html |
-| 6 | Mi expediente | pages/mi-expediente.html |
-| 7 | Dashboard | pages/dashboard.html |
-| 8 | Gestión accesos | pages/accesos.html |
+| 1 | Clientes JS | js/config.js, js/supabase-client.js, js/gas-client.js |
+| 2 | Login | pages/login.html |
+| 3 | Registro | pages/registro.html |
+| 4 | Firma standalone | pages/firma.html |
+| 5 | Mi expediente | pages/mi-expediente.html |
+| 6 | Dashboard | pages/dashboard.html |
+| 7 | Gestión accesos | pages/accesos.html |
 
 ## Preguntas arquitectónicas resueltas
 

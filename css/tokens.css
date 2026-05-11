@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Sans+Narrow:wght@400;700&family=Titillium+Web:wght@600;700;900&display=swap');
+
+:root {
+  /* --- Colores base --- */
+  --color-sol: #fdda64;
+  --color-aqua: #a2ddd2;
+  --color-coral: #ff8e6f;
+  --color-lavanda: #cad2e9;
+  --color-violeta: #3f2b56;
+  --color-crema: #fffaef;
+  --color-mn: #1f1845;
+
+  /* --- Variantes al 10% y 30% (sobre blanco) --- */
+  --color-sol-10: color-mix(in srgb, var(--color-sol) 10%, white);
+  --color-sol-30: color-mix(in srgb, var(--color-sol) 30%, white);
+  --color-aqua-10: color-mix(in srgb, var(--color-aqua) 10%, white);
+  --color-coral-10: color-mix(in srgb, var(--color-coral) 10%, white);
+  --color-lavanda-10: color-mix(in srgb, var(--color-lavanda) 10%, white);
+  --color-violeta-10: color-mix(in srgb, var(--color-violeta) 10%, white);
+
+  /* --- Estados semánticos --- */
+  --color-exito: var(--color-aqua);
+  --color-progreso: var(--color-sol);
+  --color-alerta: var(--color-coral);
+  --color-neutro: var(--color-lavanda);
+  --color-texto: var(--color-violeta);
+  --color-texto-muted: color-mix(in srgb, var(--color-violeta) 70%, transparent);
+
+  /* --- Tipografía --- */
+  --font-titulos: 'Titillium Web', sans-serif;
+  --font-cuerpo: 'PT Sans', sans-serif;
+  --font-datos: 'PT Sans Narrow', sans-serif;
+
+  /* --- Tamaños de texto --- */
+  --text-xs: 0.72rem;
+  --text-sm: 0.82rem;
+  --text-base: 0.95rem;
+  --text-lg: 1.1rem;
+  --text-xl: 1.3rem;
+  --text-2xl: 1.6rem;
+  --text-3xl: 2rem;
+
+  /* --- Espaciado --- */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+
+  /* --- Bordes --- */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* --- Sombras --- */
+  --shadow-sm: 0 2px 12px rgba(63, 43, 86, 0.08);
+  --shadow-md: 0 4px 24px rgba(63, 43, 86, 0.12);
+
+  /* --- Bordes de componentes --- */
+  --color-borde-tabla: #f0ece0;
+}
