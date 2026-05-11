@@ -91,3 +91,13 @@ Registro de errores cometidos por Claude durante el desarrollo. Propósito: evit
 **Qué debí hacer:** Anticipar el problema basado en la experiencia con OTP. Advertir al usuario que los permisos de webapp deben verificarse manualmente en Deploy → Manage deployments → "Who has access" → "Anyone".
 
 **Regla violada:** Ciclo obligatorio paso 6 (VERIFICAR): no anticipé un problema conocido. Debí documentar el patrón desde el primer servicio.
+
+---
+
+## Error 10 — Eliminar directorio de link de Supabase CLI
+
+**Qué pasó:** El directorio `supabase/supabase/` parecía un artefacto confuso. Lo eliminé con `rm -rf` sin verificar que el CLI lo necesitaba. Contenía `.temp/project-ref` y otros archivos que `supabase link` genera para conectar con el proyecto remoto. Después de eliminarlo, `supabase db query --linked` falló con "Cannot find project ref."
+
+**Qué debí hacer:** Antes de eliminar, verificar que el CLI seguía funcionando. Inspeccionar el contenido y entender su propósito. El directorio es necesario pero no debe subirse a git — la solución correcta era solo `.gitignore`.
+
+**Regla violada:** Regla de oro: "Si vas a eliminar código, grep todos los usos primero." Ciclo obligatorio paso 1 (AUDITAR): no entendí la dependencia antes de actuar.

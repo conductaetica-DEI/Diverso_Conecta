@@ -8,7 +8,7 @@
 
 | Servicio | Estado | Detalle |
 |----------|--------|---------|
-| Supabase | Vinculado | Proyecto `nrqmnaktnpcgqrqpoksi`, BD vacía, CLI local en `supabase/` |
+| Supabase | Migrado | Proyecto `nrqmnaktnpcgqrqpoksi`, 7 tablas + RLS, CLI local en `supabase/` |
 | GAS OTP | Desplegado | Script `13lSaw-...`, deployment v1.2 funcionando (GET OK) |
 | GAS Firma | Desplegado | Script `16yZGc-...`, deployment v1.1 funcionando (GET OK) |
 | GAS Drive | Desplegado | Script `1pMbDQ-...`, deployment v1.0 funcionando (GET OK) |
@@ -43,7 +43,7 @@ Script Properties configuradas (9):
 - DRIVE_CARPETA_FIRMAS, FOLIO_PREFIJO (DL)
 - DOC_ID_FDATO01, DOC_ID_SICEPOL01 (Google Docs con documentos legales completos)
 
-Pendiente: pruebas con POST real (requiere tabla consentimientos en Supabase).
+Pendiente: pruebas con POST real (tablas ya creadas en Supabase).
 
 ## Documentos legales de referencia
 
@@ -65,7 +65,19 @@ Los originales viven en Google Docs (DOC_ID_FDATO01 y DOC_ID_SICEPOL01) y se emb
 Script Properties configuradas (4):
 - API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, CARPETA_RAIZ_ID
 
-Pendiente: pruebas con POST real (requiere tabla profiles en Supabase).
+Pendiente: pruebas con POST real (tablas ya creadas en Supabase).
+
+## Supabase — Migración 001 ejecutada
+
+Migración `001_schema.sql` ejecutada en BD remota:
+- 7 tablas: profiles, permisos_miembro, asignaciones, tareas, catalogo_docs, consentimientos, logs_actividad
+- 5 funciones: get_profile_id, es_miembro, tiene_permiso, es_miembro_de, actualizar_updated_at
+- 24 políticas RLS en las 7 tablas
+- RLS habilitado en todas las tablas
+- Trigger updated_at en profiles
+- consentimientos y logs_actividad: sin UPDATE ni DELETE (inmutables)
+
+Pendiente: seed de datos de prueba (002_datos_prueba.sql).
 
 ## Documentación actualizada
 
@@ -77,7 +89,7 @@ Pendiente: pruebas con POST real (requiere tabla profiles en Supabase).
 
 | Prioridad | Componente | Archivos |
 |-----------|-----------|----------|
-| 1 | Migración SQL | supabase/migrations/001_schema.sql (7 tablas + funciones RLS + políticas) |
+| 1 | Seed datos prueba | supabase/migrations/002_datos_prueba.sql |
 | 2 | Design system CSS | css/tokens.css, css/componentes.css |
 | 3 | Clientes JS | js/config.js, js/supabase-client.js, js/gas-client.js |
 | 4 | Login | pages/login.html |
