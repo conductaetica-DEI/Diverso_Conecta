@@ -87,7 +87,7 @@ Seed `002_seed.sql` ejecutado: 1 profile (Super Admin admin@diversolab.org), 4 p
 | Archivo | Contenido |
 |---------|-----------|
 | css/tokens.css | @import Google Fonts, 7 colores base, 6 variantes (color-mix), 6 estados semánticos, 3 fuentes, 7 tamaños, 6 espaciados, 4 radios, 2 sombras, --color-borde-tabla |
-| css/componentes.css | body base, botones (primario/secundario/ghost + disabled + loading), inputs/selects (focus/error/válido), cards (4 variantes), badges (4 estados), tabla, modal, toast (éxito/error), stepper, skip link, focus visible global, consentimientos (10 clases), OTP (8 clases), confirmación (5 clases), firmante (4 clases), documento-iframe (1 clase) |
+| css/componentes.css | body base, botones (primario/secundario/ghost + disabled + loading), inputs/selects (focus/error/válido), cards (4 variantes), badges (4 estados), tabla, modal, toast (éxito/error), stepper, skip link, focus visible global, consentimientos (10 clases), OTP (8 clases), confirmación (5 clases), firmante (4 clases), documento-iframe (1 clase), encabezado-app (6 clases: app, izquierda, logo, titulo, btn-salir + responsive) |
 
 Cero colores hardcodeados en componentes. Variantes generadas con color-mix(in srgb).
 
@@ -139,7 +139,7 @@ Características: stepper 3 pasos (fusión consentimiento+verificación como act
 
 Flujo: email → validar formato → solicitar OTP via GAS (GAS valida perfil: no encontrado/pendiente/suspendido/activo) → 6 dígitos OTP (auto-advance, paste, backspace, Enter) → verificar OTP → setSession(access_token, refresh_token) → query profile_type → redirect (miembro → dashboard, externo → mi-expediente).
 
-Características: tarjeta centrada sobre fondo violeta, verifica sesión existente al cargar (redirect si ya autenticado), timer 60s reenvío, "Usar otro correo" regresa a estado email, validación blur en email, Supabase JS SDK via CDN, CSP (cdn.jsdelivr.net, *.supabase.co, script.google.com), accesibilidad (skip link, aria-labels, focus management, keyboard nav), responsive 480px.
+Características: encabezado-app unificado (logo + "Iniciar sesión"), verifica sesión existente al cargar (redirect si ya autenticado), timer 60s reenvío, "Usar otro correo" regresa a estado email, validación blur en email, Supabase JS SDK via CDN, CSP (cdn.jsdelivr.net, *.supabase.co, script.google.com), accesibilidad (skip link, aria-labels, focus management, keyboard nav), responsive 480px.
 
 ## Página gestión accesos — Implementada
 
@@ -200,7 +200,7 @@ Modos vista:
 - Sin permisos: mensaje "Contacta al administrador"
 
 Secciones:
-1. Header: nombre + badges permisos + link accesos + cerrar sesion
+1. Header: encabezado-app (logo + "Panel de gestión" + cerrar sesión), info usuario (nombre + badges permisos + link accesos) debajo
 2. KPIs: perfiles asignados, tareas activas, docs pendientes revision
 3. Expedientes: tabla con nombre, tipo (badge), estado (badge), completitud por capas (C0/F/C1/C2), ultima actividad
 4. Tareas recientes: tabla con tipo, perfil, detalle, estado, fecha
@@ -219,6 +219,8 @@ Caracteristicas: filtrado por permisos + asignaciones, batch query consentimient
 | Mi expediente | pages/mi-expediente.html | Perfiles externos autenticados |
 | Dashboard | pages/dashboard.html | Miembros internos |
 | Gestion accesos | pages/accesos.html | Miembros con gestion_accesos/plataforma |
+
+Header unificado: todas las páginas usan `.encabezado-app` (logo + título). Páginas con sesión (mi-expediente, dashboard, accesos) incluyen botón "Cerrar sesión". index.html (landing) mantiene su propio diseño.
 
 ## Preguntas arquitectónicas resueltas
 

@@ -243,3 +243,23 @@ Registro de errores cometidos por Claude durante el desarrollo. Propósito: evit
 **Qué debí hacer:** Antes de implementar, verificar cómo `padding-block` interactúa con `height` y `box-sizing: border-box`. Después de implementar, verificar visualmente que la barra se renderiza correctamente.
 
 **Regla violada:** Ciclo obligatorio paso 6 (VERIFICAR): no verifiqué el resultado. QUALITY.md: verificar que los cambios CSS se renderizan como se espera.
+
+---
+
+## Error 25 — Header unificado aplicado sin verificar compatibilidad de layout
+
+**Qué pasó:** Se aplicó `<header class="encabezado-app">` a las 6 páginas de pages/ y se hizo commit+push sin verificar que cada layout de página fuera compatible. login.html tenía `.login-pagina { align-items: center; justify-content: center; background-color: var(--color-violeta) }` — un diseño de tarjeta centrada sobre fondo violeta. El header (también violeta, sin width explícito) se encogió a su contenido por `align-items: center`, se centró verticalmente por `justify-content: center`, y se fundió con el fondo violeta. La tarjeta blanca quedó sin logo ni identificación.
+
+**Qué debí hacer:** Antes de hacer commit, verificar que el CSS de cada página fuera compatible con el nuevo header. login.html tenía un layout completamente diferente a las demás — el header requería quitar `align-items: center`, `justify-content: center` y `background-color` del body, y mover el footer a fondo violeta. Debí auditar los 6 layouts, no solo insertar HTML idéntico.
+
+**Regla violada:** Ciclo obligatorio paso 6 (VERIFICAR): commit+push sin verificar resultado visual. Regla de oro: "Si un patrón ya existe en otro archivo, cópialo exacto" — pero copiar HTML sin copiar el layout compatible no es copiar el patrón.
+
+---
+
+## Error 26 — Diagnosticar el mismo problema 3 veces sin resolver
+
+**Qué pasó:** Después de que el usuario señaló que login y registro se veían mal, audité y diagnostiqué el mismo problema de CSS 3 veces: (1) propuse revertir login/registro/firma a headers originales, (2) propuse quitar align-items/justify-content pero sin quitar el fondo violeta, (3) volví a auditar exactamente los mismos archivos. En cada iteración releí los mismos CSS, llegué a la misma conclusión parcial, y presenté un fix incompleto.
+
+**Qué debí hacer:** Diagnosticar UNA vez de forma completa — listar TODAS las diferencias entre login y registro — y proponer el fix completo en una sola iteración. La causa raíz (login tenía layout propio incompatible) era evidente desde la primera lectura.
+
+**Regla violada:** Eficiencia y respeto por el tiempo del usuario. El ciclo obligatorio dice DIAGNOSTICAR una vez con rigor, no diagnosticar tres veces a medias.
