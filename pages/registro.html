@@ -89,6 +89,13 @@
       background-color: var(--color-violeta-10);
     }
 
+    .tipo-card-emoji {
+      font-size: 2rem;
+      line-height: 1;
+      margin-bottom: var(--spacing-sm);
+      display: block;
+    }
+
     .tipo-card-titulo {
       font-family: var(--font-titulos);
       font-weight: 700;
@@ -272,21 +279,25 @@
 
       <div class="tipo-grid" id="tipo-grid">
         <button type="button" class="tipo-card" data-tipo="beneficiario">
+          <span class="tipo-card-emoji" aria-hidden="true">👨‍👩‍👧‍👦</span>
           <div class="tipo-card-titulo">Beneficiario</div>
           <span class="insignia insignia-neutra">Persona natural</span>
           <p class="tipo-card-desc">Persona con discapacidad que recibe acompañamiento de DiversoLab.</p>
         </button>
         <button type="button" class="tipo-card" data-tipo="aliado">
+          <span class="tipo-card-emoji" aria-hidden="true">🤝</span>
           <div class="tipo-card-titulo">Aliado</div>
           <span class="insignia insignia-neutra">Persona jurídica</span>
           <p class="tipo-card-desc">Empresa u organización en programas de inclusión y DEI.</p>
         </button>
         <button type="button" class="tipo-card" data-tipo="contratista">
+          <span class="tipo-card-emoji" aria-hidden="true">💼</span>
           <div class="tipo-card-titulo">Contratista</div>
           <span class="insignia insignia-neutra">Persona natural</span>
           <p class="tipo-card-desc">Profesional independiente que presta servicios a DiversoLab.</p>
         </button>
         <button type="button" class="tipo-card" data-tipo="proveedor">
+          <span class="tipo-card-emoji" aria-hidden="true">🏢</span>
           <div class="tipo-card-titulo">Proveedor</div>
           <span class="insignia insignia-neutra">Persona jurídica</span>
           <p class="tipo-card-desc">Empresa proveedora de bienes o servicios.</p>
