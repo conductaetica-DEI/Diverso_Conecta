@@ -362,7 +362,7 @@
         <div class="dashboard-permisos-badges" id="encabezado-permisos"></div>
       </div>
       <nav class="dashboard-nav" aria-label="Navegacion principal">
-        <a href="/pages/accesos.html" id="link-accesos" class="btn-ghost dashboard-btn-nav" hidden>Gestion accesos</a>
+        <a href="accesos.html" id="link-accesos" class="btn-ghost dashboard-btn-nav" hidden>Gestion accesos</a>
         <button type="button" id="btn-cerrar-sesion" class="btn-ghost dashboard-btn-nav">Cerrar sesion</button>
       </nav>
     </div>
@@ -643,7 +643,7 @@
       estado.perfil = datos[0];
 
       if (estado.perfil.profile_type !== 'miembro') {
-        window.location.href = '/pages/mi-expediente.html';
+        window.location.href = 'mi-expediente.html';
         return;
       }
 
@@ -999,7 +999,8 @@
         });
 
         var tarea_id = resultado[0].id;
-        var enlace = window.location.origin + '/pages/firma.html?token=' + tarea_id;
+        var base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+        var enlace = base + 'firma.html?token=' + tarea_id;
         var nombre = nombre_display(perfil);
 
         try {

@@ -542,7 +542,7 @@
       );
 
       if (!perfiles || perfiles.length === 0 || perfiles[0].profile_type !== 'miembro') {
-        window.location.href = '/pages/mi-expediente.html';
+        window.location.href = 'mi-expediente.html';
         return;
       }
 
@@ -556,7 +556,7 @@
       var lista_permisos = (permisos || []).map(function(p) { return p.permiso; });
 
       if (lista_permisos.indexOf('gestion_accesos') === -1 && lista_permisos.indexOf('gestion_plataforma') === -1) {
-        window.location.href = '/pages/dashboard.html';
+        window.location.href = 'dashboard.html';
         return;
       }
 

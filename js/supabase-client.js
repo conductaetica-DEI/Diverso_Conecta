@@ -20,7 +20,7 @@ async function obtener_sesion() {
 async function verificar_sesion() {
   var sesion = await obtener_sesion();
   if (!sesion) {
-    window.location.href = '/pages/login.html';
+    window.location.href = 'login.html';
     return null;
   }
   return sesion;
@@ -60,7 +60,7 @@ async function supabase_fetch(ruta, jwt, opciones) {
       config_fetch.headers = headers;
       respuesta = await fetch(url, config_fetch);
     } else {
-      window.location.href = '/pages/login.html';
+      window.location.href = 'login.html';
       return null;
     }
   }
@@ -78,7 +78,7 @@ async function supabase_fetch(ruta, jwt, opciones) {
 async function cerrar_sesion() {
   var cliente = iniciar_supabase();
   await cliente.auth.signOut();
-  window.location.href = '/pages/login.html';
+  window.location.href = 'login.html';
 }
 
 async function _intentar_refresh() {

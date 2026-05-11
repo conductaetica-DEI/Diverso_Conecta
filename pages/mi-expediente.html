@@ -447,7 +447,7 @@
         estado.perfil = perfiles[0];
 
         if (estado.perfil.profile_type === 'miembro') {
-          window.location.href = '/pages/dashboard.html';
+          window.location.href = 'dashboard.html';
           return;
         }
 
@@ -604,7 +604,7 @@
     function al_click_tarea(e) {
       var btn = e.target.closest('[data-accion="firmar"]');
       if (!btn) return;
-      window.location.href = '/pages/firma.html?token=' + btn.dataset.tareaId;
+      window.location.href = 'firma.html?token=' + btn.dataset.tareaId;
     }
 
     // --- Documentos ---

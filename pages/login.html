@@ -207,7 +207,7 @@
 
       <button type="button" id="btn-enviar" class="btn-primario login-btn-completo">Enviar código</button>
 
-      <p class="login-link-registro">¿No tienes cuenta? <a href="/pages/registro.html">Regístrate</a></p>
+      <p class="login-link-registro">¿No tienes cuenta? <a href="registro.html">Regístrate</a></p>
     </section>
 
     <!-- ESTADO 2: OTP -->
@@ -493,12 +493,12 @@
           sesion.access_token
         );
         if (perfiles && perfiles.length > 0 && perfiles[0].profile_type === 'miembro') {
-          window.location.href = '/pages/dashboard.html';
+          window.location.href = 'dashboard.html';
         } else {
-          window.location.href = '/pages/mi-expediente.html';
+          window.location.href = 'mi-expediente.html';
         }
       } catch (e) {
-        window.location.href = '/pages/mi-expediente.html';
+        window.location.href = 'mi-expediente.html';
       }
     }
   </script>
