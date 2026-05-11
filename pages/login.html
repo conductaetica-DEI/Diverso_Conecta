@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
+    connect-src 'self' https://script.google.com https://script.googleusercontent.com https://*.supabase.co;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    font-src https://fonts.gstatic.com;
+    img-src 'self' data:;
+  ">
+  <title>Iniciar sesión — DiversoLab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/componentes.css">
+  <style>
+    .login-pagina {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--color-violeta);
+      padding: var(--spacing-md);
+    }
+
+    .login-tarjeta {
+      background-color: white;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      padding: var(--spacing-2xl) var(--spacing-xl);
+      max-width: 420px;
+      width: 100%;
+    }
+
+    .login-logo {
+      text-align: center;
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .login-logo h1 {
+      font-family: var(--font-titulos);
+      font-weight: 900;
+      font-size: var(--text-3xl);
+      color: var(--color-violeta);
+    }
+
+    .login-logo p {
+      font-family: var(--font-cuerpo);
+      font-size: var(--text-base);
+      color: var(--color-texto-muted);
+      margin-top: var(--spacing-xs);
+    }
+
+    .campo-label {
+      display: block;
+      font-family: var(--font-cuerpo);
+      font-weight: 700;
+      font-size: var(--text-sm);
+      margin-bottom: var(--spacing-xs);
+      color: var(--color-texto);
+    }
+
+    .login-campo {
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .login-btn-completo {
+      width: 100%;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .login-link-registro {
+      text-align: center;
+      font-size: var(--text-sm);
+      color: var(--color-texto-muted);
+    }
+
+    .login-link-registro a {
+      color: var(--color-violeta);
+      font-weight: 700;
+    }
+
+    /* --- OTP --- */
+
+    .otp-seccion { text-align: center; }
+
+    .otp-titulo {
+      font-family: var(--font-titulos);
+      font-weight: 700;
+      font-size: var(--text-xl);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .otp-descripcion {
+      font-size: var(--text-sm);
+      color: var(--color-texto-muted);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .otp-grupo {
+      display: flex;
+      justify-content: center;
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .otp-digito {
+      width: 48px;
+      height: 56px;
+      text-align: center;
+      font-family: var(--font-titulos);
+      font-size: var(--text-2xl);
+      font-weight: 700;
+      border: 2px solid var(--color-lavanda);
+      border-radius: var(--radius-sm);
+      color: var(--color-texto);
+      background-color: white;
+      transition: border-color 0.2s;
+    }
+
+    .otp-digito:focus {
+      border-color: var(--color-violeta);
+      outline: 2px solid color-mix(in srgb, var(--color-sol) 50%, transparent);
+      outline-offset: 0;
+    }
+
+    .otp-reenvio {
+      font-size: var(--text-sm);
+      color: var(--color-texto-muted);
+      margin-bottom: var(--spacing-md);
+      text-align: center;
+    }
+
+    .otp-temporizador {
+      font-family: var(--font-datos);
+      font-weight: 700;
+    }
+
+    .btn-reenviar {
+      background: none;
+      border: none;
+      color: var(--color-violeta);
+      font-family: var(--font-cuerpo);
+      font-weight: 700;
+      font-size: var(--text-sm);
+      cursor: pointer;
+      text-decoration: underline;
+      min-height: 44px;
+    }
+
+    .btn-reenviar:disabled {
+      color: var(--color-texto-muted);
+      cursor: not-allowed;
+      text-decoration: none;
+    }
+
+    .login-btn-otro-correo {
+      width: 100%;
+      margin-top: var(--spacing-sm);
+    }
+
+    /* --- Footer --- */
+
+    .login-pie {
+      color: color-mix(in srgb, white 70%, transparent);
+      padding: var(--spacing-lg) var(--spacing-xl);
+      text-align: center;
+      font-size: var(--text-xs);
+    }
+
+    .login-pie a { color: var(--color-sol); }
+
+    @media (max-width: 480px) {
+      .login-tarjeta {
+        padding: var(--spacing-xl) var(--spacing-md);
+      }
+
+      .otp-digito {
+        width: 40px;
+        height: 48px;
+        font-size: var(--text-xl);
+      }
+    }
+  </style>
+</head>
+<body class="login-pagina">
+  <a href="#contenido-principal" class="saltar-contenido">Ir al contenido principal</a>
+
+  <main id="contenido-principal" class="login-tarjeta">
+
+    <!-- ESTADO 1: Email -->
+    <section id="estado-email" aria-label="Inicio de sesión">
+      <div class="login-logo">
+        <h1>DiversoLab</h1>
+        <p>Iniciar sesión</p>
+      </div>
+
+      <div class="login-campo">
+        <label for="campo-email" class="campo-label">Correo electrónico</label>
+        <input type="email" id="campo-email" class="campo-texto" autocomplete="email" aria-required="true" aria-describedby="campo-email-error" placeholder="tu@correo.com">
+        <p id="campo-email-error" class="campo-mensaje-error" hidden>Ingresa un correo electrónico válido.</p>
+      </div>
+
+      <button type="button" id="btn-enviar" class="btn-primario login-btn-completo">Enviar código</button>
+
+      <p class="login-link-registro">¿No tienes cuenta? <a href="/pages/registro.html">Regístrate</a></p>
+    </section>
+
+    <!-- ESTADO 2: OTP -->
+    <section id="estado-otp" hidden aria-label="Verificación de código">
+      <div class="otp-seccion">
+        <h2 class="otp-titulo">Ingresa el código</h2>
+        <p class="otp-descripcion">Enviamos un código de 6 dígitos a <strong id="otp-email"></strong></p>
+
+        <div class="otp-grupo" role="group" aria-label="Código de verificación">
+          <input type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" class="otp-digito" aria-label="Dígito 1" autocomplete="one-time-code">
+          <input type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" class="otp-digito" aria-label="Dígito 2">
+          <input type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" class="otp-digito" aria-label="Dígito 3">
+          <input type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" class="otp-digito" aria-label="Dígito 4">
+          <input type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" class="otp-digito" aria-label="Dígito 5">
+          <input type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" class="otp-digito" aria-label="Dígito 6">
+        </div>
+
+        <button type="button" id="btn-verificar" class="btn-primario login-btn-completo" disabled>Verificar</button>
+
+        <div class="otp-reenvio">
+          <span id="otp-timer" class="otp-temporizador">60s</span>
+          <button type="button" id="btn-reenviar" class="btn-reenviar" hidden>Reenviar código</button>
+        </div>
+
+        <button type="button" id="btn-otro-correo" class="btn-ghost login-btn-otro-correo">Usar otro correo</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="login-pie">
+    <p>DiversoLab &mdash; Inclusión social de personas con discapacidad</p>
+    <p><a href="https://diversolab.org/politica" target="_blank" rel="noopener">Política de protección de datos</a></p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/gas-client.js"></script>
+  <script src="../js/utils.js"></script>
+  <script>
+    // --- Estado ---
+
+    var estado = {
+      email: null,
+      temporizador_id: null,
+      segundos_reenvio: 0
+    };
+
+    // --- Inicialización ---
+
+    document.addEventListener('DOMContentLoaded', function() {
+      verificar_sesion_existente();
+      vincular_eventos();
+    });
+
+    async function verificar_sesion_existente() {
+      try {
+        var sesion = await obtener_sesion();
+        if (sesion) redirigir_segun_perfil(sesion);
+      } catch (e) {
+        // Sin sesión, continuar con login
+      }
+    }
+
+    function vincular_eventos() {
+      document.getElementById('btn-enviar').addEventListener('click', al_enviar_email);
+      document.getElementById('btn-verificar').addEventListener('click', al_verificar_codigo);
+      document.getElementById('btn-reenviar').addEventListener('click', al_reenviar_otp);
+      document.getElementById('btn-otro-correo').addEventListener('click', al_usar_otro_correo);
+
+      document.getElementById('campo-email').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') al_enviar_email();
+      });
+
+      document.getElementById('campo-email').addEventListener('blur', al_blur_email);
+
+      var otp_inputs = document.querySelectorAll('.otp-digito');
+      for (var i = 0; i < otp_inputs.length; i++) {
+        otp_inputs[i].addEventListener('input', al_input_otp);
+        otp_inputs[i].addEventListener('keydown', al_keydown_otp);
+        otp_inputs[i].addEventListener('paste', al_paste_otp);
+      }
+    }
+
+    // --- Estado 1: Email ---
+
+    function al_blur_email() {
+      var email = document.getElementById('campo-email').value.trim();
+      var input = document.getElementById('campo-email');
+      var error_el = document.getElementById('campo-email-error');
+
+      if (!email) {
+        input.classList.remove('campo-error', 'campo-valido');
+        error_el.hidden = true;
+        return;
+      }
+
+      var valido = validar_email(email);
+      input.classList.toggle('campo-error', !valido);
+      input.classList.toggle('campo-valido', valido);
+      error_el.hidden = valido;
+    }
+
+    async function al_enviar_email() {
+      var input = document.getElementById('campo-email');
+      var email = input.value.trim();
+      var error_el = document.getElementById('campo-email-error');
+
+      if (!validar_email(email)) {
+        input.classList.add('campo-error');
+        input.classList.remove('campo-valido');
+        error_el.hidden = false;
+        input.focus();
+        return;
+      }
+
+      input.classList.remove('campo-error');
+      error_el.hidden = true;
+
+      var btn = document.getElementById('btn-enviar');
+      deshabilitar_boton(btn, 'Verificando...');
+
+      try {
+        await solicitar_otp(email, null, null);
+        estado.email = email;
+        mostrar_estado_otp();
+      } catch (error) {
+        mostrar_error(mensaje_usuario(error.message));
+      } finally {
+        habilitar_boton(btn, 'Enviar código');
+      }
+    }
+
+    // --- Estado 2: OTP ---
+
+    function mostrar_estado_otp() {
+      document.getElementById('estado-email').hidden = true;
+      document.getElementById('estado-otp').hidden = false;
+      document.getElementById('otp-email').textContent = estado.email;
+      limpiar_otp_inputs();
+      iniciar_temporizador();
+    }
+
+    function mostrar_estado_email() {
+      document.getElementById('estado-otp').hidden = true;
+      document.getElementById('estado-email').hidden = false;
+      if (estado.temporizador_id) clearInterval(estado.temporizador_id);
+      document.getElementById('campo-email').focus();
+    }
+
+    function al_usar_otro_correo() {
+      estado.email = null;
+      mostrar_estado_email();
+    }
+
+    // --- OTP inputs ---
+
+    function al_input_otp(e) {
+      var valor = e.target.value.replace(/[^0-9]/g, '');
+      e.target.value = valor;
+      if (valor && e.target.nextElementSibling && e.target.nextElementSibling.classList.contains('otp-digito')) {
+        e.target.nextElementSibling.focus();
+      }
+      verificar_otp_completo();
+    }
+
+    function al_keydown_otp(e) {
+      if (e.key === 'Backspace' && !e.target.value) {
+        if (e.target.previousElementSibling && e.target.previousElementSibling.classList.contains('otp-digito')) {
+          e.target.previousElementSibling.focus();
+          e.target.previousElementSibling.value = '';
+        }
+      }
+      if (e.key === 'Enter') al_verificar_codigo();
+    }
+
+    function al_paste_otp(e) {
+      e.preventDefault();
+      var texto = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '');
+      var digitos = texto.split('');
+      var inputs = document.querySelectorAll('.otp-digito');
+      for (var i = 0; i < Math.min(digitos.length, inputs.length); i++) {
+        inputs[i].value = digitos[i];
+      }
+      var ultimo = Math.min(digitos.length, inputs.length) - 1;
+      if (ultimo >= 0) inputs[ultimo].focus();
+      verificar_otp_completo();
+    }
+
+    function verificar_otp_completo() {
+      document.getElementById('btn-verificar').disabled = obtener_codigo_otp().length !== 6;
+    }
+
+    function obtener_codigo_otp() {
+      var inputs = document.querySelectorAll('.otp-digito');
+      var codigo = '';
+      for (var i = 0; i < inputs.length; i++) codigo += inputs[i].value;
+      return codigo;
+    }
+
+    function limpiar_otp_inputs() {
+      var inputs = document.querySelectorAll('.otp-digito');
+      for (var i = 0; i < inputs.length; i++) inputs[i].value = '';
+      document.getElementById('btn-verificar').disabled = true;
+      inputs[0].focus();
+    }
+
+    // --- Timer ---
+
+    function iniciar_temporizador() {
+      estado.segundos_reenvio = 60;
+      var btn_reenviar = document.getElementById('btn-reenviar');
+      var span_timer = document.getElementById('otp-timer');
+
+      btn_reenviar.hidden = true;
+      span_timer.hidden = false;
+      span_timer.textContent = '60s';
+
+      if (estado.temporizador_id) clearInterval(estado.temporizador_id);
+
+      estado.temporizador_id = setInterval(function() {
+        estado.segundos_reenvio--;
+        span_timer.textContent = estado.segundos_reenvio + 's';
+        if (estado.segundos_reenvio <= 0) {
+          clearInterval(estado.temporizador_id);
+          span_timer.hidden = true;
+          btn_reenviar.hidden = false;
+          btn_reenviar.disabled = false;
+        }
+      }, 1000);
+    }
+
+    async function al_reenviar_otp() {
+      var btn = document.getElementById('btn-reenviar');
+      btn.disabled = true;
+      try {
+        await solicitar_otp(estado.email, null, null);
+        mostrar_exito('Código reenviado a ' + estado.email);
+        iniciar_temporizador();
+      } catch (error) {
+        mostrar_error(mensaje_usuario(error.message));
+        btn.disabled = false;
+      }
+    }
+
+    // --- Verificación + Sesión ---
+
+    async function al_verificar_codigo() {
+      var codigo = obtener_codigo_otp();
+      if (codigo.length !== 6) return;
+
+      var btn = document.getElementById('btn-verificar');
+      deshabilitar_boton(btn, 'Verificando...');
+
+      try {
+        var resultado = await verificar_otp(estado.email, codigo);
+
+        btn.textContent = 'Iniciando sesión...';
+
+        var cliente = iniciar_supabase();
+        await cliente.auth.setSession({
+          access_token: resultado.access_token,
+          refresh_token: resultado.refresh_token
+        });
+
+        var sesion = await obtener_sesion();
+        redirigir_segun_perfil(sesion);
+
+      } catch (error) {
+        mostrar_error(mensaje_usuario(error.message));
+        limpiar_otp_inputs();
+        habilitar_boton(btn, 'Verificar');
+      }
+    }
+
+    // --- Redirección ---
+
+    async function redirigir_segun_perfil(sesion) {
+      try {
+        var perfiles = await supabase_fetch(
+          '/profiles?auth_user_id=eq.' + sesion.user.id + '&select=profile_type&limit=1',
+          sesion.access_token
+        );
+        if (perfiles && perfiles.length > 0 && perfiles[0].profile_type === 'miembro') {
+          window.location.href = '/pages/dashboard.html';
+        } else {
+          window.location.href = '/pages/mi-expediente.html';
+        }
+      } catch (e) {
+        window.location.href = '/pages/mi-expediente.html';
+      }
+    }
+  </script>
+</body>
+</html>

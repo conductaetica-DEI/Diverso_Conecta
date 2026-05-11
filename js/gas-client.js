@@ -68,6 +68,15 @@ async function obtener_datos_firma(token) {
   });
 }
 
+async function notificar_email(destinatario, asunto, cuerpo) {
+  return gas_fetch(CONFIG.GAS_OTP_URL, GAS_API_KEYS.OTP, {
+    action: 'notificarEmail',
+    destinatario: destinatario,
+    asunto: asunto,
+    cuerpo: cuerpo
+  });
+}
+
 // --- Drive ---
 
 async function crear_carpeta(datos) {

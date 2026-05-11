@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
+    connect-src 'self' https://script.google.com https://script.googleusercontent.com https://*.supabase.co;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    font-src https://fonts.gstatic.com;
+    img-src 'self' data:;
+  ">
+  <title>Gestión de accesos — DiversoLab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/componentes.css">
+  <style>
+    .accesos-pagina {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .accesos-encabezado {
+      background-color: var(--color-violeta);
+      color: white;
+      padding: var(--spacing-lg) var(--spacing-xl);
+    }
+
+    .accesos-encabezado h1 {
+      font-family: var(--font-titulos);
+      font-weight: 900;
+      font-size: var(--text-2xl);
+    }
+
+    .accesos-encabezado p {
+      font-family: var(--font-cuerpo);
+      font-size: var(--text-sm);
+      color: var(--color-sol);
+      margin-top: var(--spacing-xs);
+    }
+
+    .accesos-contenedor {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: var(--spacing-xl) var(--spacing-md);
+      flex: 1;
+      width: 100%;
+    }
+
+    /* --- Tabs --- */
+
+    .accesos-tabs {
+      display: flex;
+      border-bottom: 2px solid var(--color-lavanda);
+      margin-bottom: var(--spacing-lg);
+      gap: var(--spacing-xs);
+    }
+
+    .accesos-tab {
+      font-family: var(--font-titulos);
+      font-weight: 700;
+      font-size: var(--text-base);
+      padding: var(--spacing-sm) var(--spacing-lg);
+      border: none;
+      background: none;
+      color: var(--color-texto-muted);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      min-height: 44px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .accesos-tab[aria-selected="true"] {
+      color: var(--color-violeta);
+      border-bottom-color: var(--color-sol);
+    }
+
+    .accesos-tab:hover {
+      color: var(--color-violeta);
+      background-color: var(--color-sol-10);
+    }
+
+    /* --- Panel header --- */
+
+    .panel-cabecera {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .panel-titulo {
+      font-family: var(--font-titulos);
+      font-weight: 700;
+      font-size: var(--text-xl);
+    }
+
+    /* --- Tables --- */
+
+    .tabla-contenedor {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .tabla-datos td { vertical-align: middle; }
+
+    .tabla-acciones {
+      display: flex;
+      gap: var(--spacing-xs);
+      flex-wrap: nowrap;
+    }
+
+    .btn-accion {
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      font-family: var(--font-datos);
+      font-weight: 700;
+      font-size: var(--text-xs);
+      cursor: pointer;
+      min-height: 32px;
+      min-width: 32px;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+
+    .btn-accion:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-accion-aprobar {
+      background-color: var(--color-aqua);
+      color: var(--color-violeta);
+    }
+
+    .btn-accion-rechazar {
+      background-color: var(--color-coral);
+      color: white;
+    }
+
+    .btn-accion-editar {
+      background-color: var(--color-lavanda-10);
+      color: var(--color-violeta);
+      border: 1px solid var(--color-lavanda);
+    }
+
+    .btn-accion-finalizar {
+      background-color: var(--color-coral-10);
+      color: var(--color-violeta);
+      border: 1px solid var(--color-coral);
+    }
+
+    /* --- Badges permisos --- */
+
+    .permisos-grupo {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-xs);
+    }
+
+    /* --- Empty state --- */
+
+    .estado-vacio {
+      text-align: center;
+      padding: var(--spacing-2xl) var(--spacing-lg);
+      color: var(--color-texto-muted);
+      font-size: var(--text-base);
+    }
+
+    /* --- Tab 3: Selector --- */
+
+    .asignaciones-selector {
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .campo-label {
+      display: block;
+      font-family: var(--font-cuerpo);
+      font-weight: 700;
+      font-size: var(--text-sm);
+      margin-bottom: var(--spacing-xs);
+      color: var(--color-texto);
+    }
+
+    .campo-obligatorio {
+      color: var(--color-coral);
+    }
+
+    /* --- Modal form --- */
+
+    .modal-campo {
+      margin-bottom: var(--spacing-md);
+    }
+
+    .modal-campo-fila {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-md);
+    }
+
+    .modal-permisos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-sm);
+    }
+
+    .modal-permiso-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm);
+      border: 1px solid var(--color-lavanda);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+
+    .modal-permiso-item:hover {
+      background-color: var(--color-sol-10);
+    }
+
+    .modal-permiso-check {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--color-violeta);
+    }
+
+    .modal-permiso-label {
+      font-family: var(--font-cuerpo);
+      font-size: var(--text-sm);
+      cursor: pointer;
+    }
+
+    .modal-acciones {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--spacing-sm);
+      margin-top: var(--spacing-lg);
+    }
+
+    .modal-info {
+      font-size: var(--text-sm);
+      color: var(--color-texto-muted);
+      margin-bottom: var(--spacing-md);
+      padding: var(--spacing-sm) var(--spacing-md);
+      background-color: var(--color-lavanda-10);
+      border-radius: var(--radius-sm);
+    }
+
+    /* --- Footer --- */
+
+    .accesos-pie {
+      background-color: var(--color-violeta);
+      color: color-mix(in srgb, white 70%, transparent);
+      padding: var(--spacing-lg) var(--spacing-xl);
+      text-align: center;
+      font-size: var(--text-xs);
+    }
+
+    .accesos-pie a { color: var(--color-sol); }
+
+    /* --- Loading --- */
+
+    .cargando-texto {
+      text-align: center;
+      padding: var(--spacing-xl);
+      color: var(--color-texto-muted);
+    }
+
+    @media (max-width: 480px) {
+      .accesos-contenedor {
+        padding: var(--spacing-md) var(--spacing-sm);
+      }
+
+      .accesos-tabs {
+        overflow-x: auto;
+      }
+
+      .accesos-tab {
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: var(--text-sm);
+        white-space: nowrap;
+      }
+
+      .panel-cabecera {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+      }
+
+      .modal-campo-fila,
+      .modal-permisos {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="accesos-pagina">
+  <a href="#contenido-principal" class="saltar-contenido">Ir al contenido principal</a>
+
+  <header class="accesos-encabezado">
+    <h1>Gestión de accesos</h1>
+    <p>Perfiles, miembros y asignaciones</p>
+  </header>
+
+  <main id="contenido-principal" class="accesos-contenedor">
+
+    <nav class="accesos-tabs" role="tablist" aria-label="Secciones de gestión">
+      <button role="tab" id="tab-pendientes" class="accesos-tab" aria-selected="true" aria-controls="panel-pendientes">Pendientes</button>
+      <button role="tab" id="tab-miembros" class="accesos-tab" aria-selected="false" aria-controls="panel-miembros">Miembros</button>
+      <button role="tab" id="tab-asignaciones" class="accesos-tab" aria-selected="false" aria-controls="panel-asignaciones">Asignaciones</button>
+    </nav>
+
+    <!-- TAB 1: Perfiles pendientes -->
+    <section role="tabpanel" id="panel-pendientes" aria-labelledby="tab-pendientes">
+      <div class="panel-cabecera">
+        <h2 class="panel-titulo">Perfiles pendientes de aprobación</h2>
+      </div>
+      <div id="contenido-pendientes">
+        <p class="cargando-texto" aria-busy="true">Cargando...</p>
+      </div>
+    </section>
+
+    <!-- TAB 2: Miembros del equipo -->
+    <section role="tabpanel" id="panel-miembros" aria-labelledby="tab-miembros" hidden>
+      <div class="panel-cabecera">
+        <h2 class="panel-titulo">Miembros del equipo</h2>
+        <button type="button" id="btn-nuevo-miembro" class="btn-primario">Nuevo miembro</button>
+      </div>
+      <div id="contenido-miembros">
+        <p class="cargando-texto" aria-busy="true">Cargando...</p>
+      </div>
+    </section>
+
+    <!-- TAB 3: Asignaciones -->
+    <section role="tabpanel" id="panel-asignaciones" aria-labelledby="tab-asignaciones" hidden>
+      <div class="panel-cabecera">
+        <h2 class="panel-titulo">Asignaciones</h2>
+        <button type="button" id="btn-asignar-perfil" class="btn-primario" disabled>Asignar perfil</button>
+      </div>
+      <div class="asignaciones-selector">
+        <label for="selector-analista" class="campo-label">Miembro</label>
+        <select id="selector-analista" class="campo-select">
+          <option value="">Seleccionar miembro...</option>
+        </select>
+      </div>
+      <div id="contenido-asignaciones">
+        <p class="estado-vacio">Selecciona un miembro para ver sus asignaciones.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal: Nuevo miembro -->
+  <div class="modal-overlay" id="modal-nuevo-miembro" role="dialog" aria-modal="true" aria-labelledby="modal-nuevo-titulo">
+    <div class="modal">
+      <button type="button" class="modal-cerrar" aria-label="Cerrar" data-cerrar-modal>&times;</button>
+      <h3 class="modal-titulo" id="modal-nuevo-titulo">Nuevo miembro</h3>
+
+      <div class="modal-campo">
+        <label for="nuevo-nombre" class="campo-label">Nombre completo <span class="campo-obligatorio">*</span></label>
+        <input type="text" id="nuevo-nombre" class="campo-texto" autocomplete="name" aria-required="true">
+      </div>
+
+      <div class="modal-campo">
+        <label for="nuevo-email" class="campo-label">Correo electrónico <span class="campo-obligatorio">*</span></label>
+        <input type="email" id="nuevo-email" class="campo-texto" placeholder="nombre@diversolab.org" aria-required="true" aria-describedby="nuevo-email-ayuda">
+        <p id="nuevo-email-ayuda" class="campo-mensaje-error" hidden>Debe ser un correo @diversolab.org válido.</p>
+      </div>
+
+      <div class="modal-campo modal-campo-fila">
+        <div>
+          <label for="nuevo-tipo-doc" class="campo-label">Tipo documento <span class="campo-obligatorio">*</span></label>
+          <select id="nuevo-tipo-doc" class="campo-select" aria-required="true">
+            <option value="CC" selected>Cédula de Ciudadanía</option>
+            <option value="CE">Cédula de Extranjería</option>
+            <option value="PA">Pasaporte</option>
+            <option value="PEP">PEP</option>
+            <option value="PPT">PPT</option>
+          </select>
+        </div>
+        <div>
+          <label for="nuevo-num-doc" class="campo-label">Número documento <span class="campo-obligatorio">*</span></label>
+          <input type="text" id="nuevo-num-doc" class="campo-texto" aria-required="true">
+        </div>
+      </div>
+
+      <div class="modal-campo">
+        <label class="campo-label">Permisos</label>
+        <div class="modal-permisos" id="nuevo-permisos">
+          <label class="modal-permiso-item">
+            <input type="checkbox" class="modal-permiso-check" value="gestion_beneficiarios">
+            <span class="modal-permiso-label">Beneficiarios</span>
+          </label>
+          <label class="modal-permiso-item">
+            <input type="checkbox" class="modal-permiso-check" value="gestion_proveedores">
+            <span class="modal-permiso-label">Proveedores</span>
+          </label>
+          <label class="modal-permiso-item">
+            <input type="checkbox" class="modal-permiso-check" value="gestion_accesos">
+            <span class="modal-permiso-label">Accesos</span>
+          </label>
+          <label class="modal-permiso-item">
+            <input type="checkbox" class="modal-permiso-check" value="gestion_plataforma">
+            <span class="modal-permiso-label">Plataforma</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-acciones">
+        <button type="button" class="btn-ghost" data-cerrar-modal>Cancelar</button>
+        <button type="button" id="btn-crear-miembro" class="btn-primario">Crear miembro</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Editar permisos -->
+  <div class="modal-overlay" id="modal-editar-permisos" role="dialog" aria-modal="true" aria-labelledby="modal-editar-titulo">
+    <div class="modal">
+      <button type="button" class="modal-cerrar" aria-label="Cerrar" data-cerrar-modal>&times;</button>
+      <h3 class="modal-titulo" id="modal-editar-titulo">Editar permisos</h3>
+
+      <div class="modal-info" id="editar-info-miembro"></div>
+
+      <div class="modal-campo">
+        <label class="campo-label">Permisos</label>
+        <div class="modal-permisos" id="editar-permisos">
+          <label class="modal-permiso-item">
+            <input type="checkbox" class="modal-permiso-check" value="gestion_beneficiarios">
+            <span class="modal-permiso-label">Beneficiarios</span>
+          </label>
+          <label class="modal-permiso-item">
+            <input type="checkbox" class="modal-permiso-check" value="gestion_proveedores">
+            <span class="modal-permiso-label">Proveedores</span>
+          </label>
+          <label class="modal-permiso-item">
+            <input type="checkbox" class="modal-permiso-check" value="gestion_accesos">
+            <span class="modal-permiso-label">Accesos</span>
+          </label>
+          <label class="modal-permiso-item">
+            <input type="checkbox" class="modal-permiso-check" value="gestion_plataforma">
+            <span class="modal-permiso-label">Plataforma</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-acciones">
+        <button type="button" class="btn-ghost" data-cerrar-modal>Cancelar</button>
+        <button type="button" id="btn-guardar-permisos" class="btn-primario">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Asignar perfil -->
+  <div class="modal-overlay" id="modal-asignar" role="dialog" aria-modal="true" aria-labelledby="modal-asignar-titulo">
+    <div class="modal">
+      <button type="button" class="modal-cerrar" aria-label="Cerrar" data-cerrar-modal>&times;</button>
+      <h3 class="modal-titulo" id="modal-asignar-titulo">Asignar perfil</h3>
+
+      <div class="modal-campo">
+        <label for="selector-perfil-asignar" class="campo-label">Perfil a asignar <span class="campo-obligatorio">*</span></label>
+        <select id="selector-perfil-asignar" class="campo-select" aria-required="true">
+          <option value="">Seleccionar perfil...</option>
+        </select>
+      </div>
+
+      <div class="modal-acciones">
+        <button type="button" class="btn-ghost" data-cerrar-modal>Cancelar</button>
+        <button type="button" id="btn-confirmar-asignacion" class="btn-primario">Asignar</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="accesos-pie">
+    <p>DiversoLab &mdash; Inclusión social de personas con discapacidad</p>
+    <p><a href="https://diversolab.org/politica" target="_blank" rel="noopener">Política de protección de datos</a></p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/gas-client.js"></script>
+  <script src="../js/utils.js"></script>
+  <script>
+    // --- Constantes ---
+
+    var LABELS_PERMISOS = {
+      gestion_beneficiarios: 'Beneficiarios',
+      gestion_proveedores: 'Proveedores',
+      gestion_accesos: 'Accesos',
+      gestion_plataforma: 'Plataforma'
+    };
+
+    var LABELS_TIPOS = {
+      beneficiario: 'Beneficiario',
+      aliado: 'Aliado',
+      contratista: 'Contratista',
+      proveedor: 'Proveedor',
+      miembro: 'Miembro'
+    };
+
+    var CLAVES_PERMISOS = ['gestion_beneficiarios', 'gestion_proveedores', 'gestion_accesos', 'gestion_plataforma'];
+
+    // --- Estado ---
+
+    var estado = {
+      sesion: null,
+      perfil_id: null,
+      jwt: null,
+      tab_activa: 'pendientes',
+      pendientes: [],
+      miembros: [],
+      asignaciones: [],
+      analista_seleccionado: null,
+      miembro_editando_id: null
+    };
+
+    // --- Inicialización ---
+
+    document.addEventListener('DOMContentLoaded', function() {
+      cargar_pagina();
+    });
+
+    async function cargar_pagina() {
+      estado.sesion = await verificar_sesion();
+      if (!estado.sesion) return;
+      estado.jwt = estado.sesion.access_token;
+
+      var perfiles = await supabase_fetch(
+        '/profiles?auth_user_id=eq.' + estado.sesion.user.id + '&select=id,profile_type&limit=1',
+        estado.jwt
+      );
+
+      if (!perfiles || perfiles.length === 0 || perfiles[0].profile_type !== 'miembro') {
+        window.location.href = '/pages/mi-expediente.html';
+        return;
+      }
+
+      estado.perfil_id = perfiles[0].id;
+
+      var permisos = await supabase_fetch(
+        '/permisos_miembro?perfil_id=eq.' + estado.perfil_id + '&activo=eq.true&select=permiso',
+        estado.jwt
+      );
+
+      var lista_permisos = (permisos || []).map(function(p) { return p.permiso; });
+
+      if (lista_permisos.indexOf('gestion_accesos') === -1 && lista_permisos.indexOf('gestion_plataforma') === -1) {
+        window.location.href = '/pages/dashboard.html';
+        return;
+      }
+
+      vincular_eventos();
+      cargar_pendientes();
+    }
+
+    function vincular_eventos() {
+      var tabs = document.querySelectorAll('.accesos-tab');
+      for (var i = 0; i < tabs.length; i++) {
+        tabs[i].addEventListener('click', al_click_tab);
+      }
+
+      document.getElementById('btn-nuevo-miembro').addEventListener('click', al_click_nuevo_miembro);
+      document.getElementById('btn-crear-miembro').addEventListener('click', al_crear_miembro);
+      document.getElementById('btn-guardar-permisos').addEventListener('click', al_guardar_permisos);
+      document.getElementById('selector-analista').addEventListener('change', al_cambiar_analista);
+      document.getElementById('btn-asignar-perfil').addEventListener('click', al_click_asignar_perfil);
+      document.getElementById('btn-confirmar-asignacion').addEventListener('click', al_confirmar_asignacion);
+
+      document.getElementById('contenido-pendientes').addEventListener('click', al_click_tabla_pendientes);
+      document.getElementById('contenido-miembros').addEventListener('click', al_click_tabla_miembros);
+      document.getElementById('contenido-asignaciones').addEventListener('click', al_click_tabla_asignaciones);
+
+      var cerrar_btns = document.querySelectorAll('[data-cerrar-modal]');
+      for (var j = 0; j < cerrar_btns.length; j++) {
+        cerrar_btns[j].addEventListener('click', function() {
+          cerrar_todos_modales();
+        });
+      }
+
+      var overlays = document.querySelectorAll('.modal-overlay');
+      for (var k = 0; k < overlays.length; k++) {
+        overlays[k].addEventListener('click', function(e) {
+          if (e.target === this) cerrar_todos_modales();
+        });
+      }
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') cerrar_todos_modales();
+      });
+    }
+
+    // --- Tabs ---
+
+    function al_click_tab(e) {
+      var nombre = e.target.id.replace('tab-', '');
+      activar_tab(nombre);
+    }
+
+    function activar_tab(nombre) {
+      estado.tab_activa = nombre;
+
+      var tabs = document.querySelectorAll('.accesos-tab');
+      var paneles = ['panel-pendientes', 'panel-miembros', 'panel-asignaciones'];
+
+      for (var i = 0; i < tabs.length; i++) {
+        var es_activa = tabs[i].id === 'tab-' + nombre;
+        tabs[i].setAttribute('aria-selected', es_activa ? 'true' : 'false');
+      }
+
+      for (var j = 0; j < paneles.length; j++) {
+        document.getElementById(paneles[j]).hidden = paneles[j] !== 'panel-' + nombre;
+      }
+
+      if (nombre === 'pendientes') cargar_pendientes();
+      if (nombre === 'miembros') cargar_miembros();
+      if (nombre === 'asignaciones') cargar_datos_asignaciones();
+    }
+
+    // --- Tab 1: Pendientes ---
+
+    async function cargar_pendientes() {
+      var contenedor = document.getElementById('contenido-pendientes');
+      contenedor.innerHTML = '<p class="cargando-texto" aria-busy="true">Cargando...</p>';
+
+      try {
+        var datos = await supabase_fetch(
+          '/profiles?estado_perfil=eq.pendiente&select=id,nombre_completo,razon_social,profile_type,tipo_documento,numero_documento,email_principal,fecha_registro&order=fecha_registro.asc',
+          estado.jwt
+        );
+
+        estado.pendientes = datos || [];
+        poblar_tabla_pendientes();
+      } catch (error) {
+        contenedor.innerHTML = '<p class="estado-vacio">Error al cargar perfiles pendientes.</p>';
+      }
+    }
+
+    function poblar_tabla_pendientes() {
+      var contenedor = document.getElementById('contenido-pendientes');
+
+      if (estado.pendientes.length === 0) {
+        contenedor.innerHTML = '<p class="estado-vacio">No hay perfiles pendientes de aprobación.</p>';
+        return;
+      }
+
+      var html = '<div class="tabla-contenedor"><table class="tabla-datos"><thead><tr>' +
+        '<th scope="col">Nombre / Razón social</th>' +
+        '<th scope="col">Tipo</th>' +
+        '<th scope="col">Documento</th>' +
+        '<th scope="col">Email</th>' +
+        '<th scope="col">Fecha</th>' +
+        '<th scope="col">Acciones</th>' +
+        '</tr></thead><tbody>';
+
+      for (var i = 0; i < estado.pendientes.length; i++) {
+        var p = estado.pendientes[i];
+        html += '<tr>' +
+          '<td>' + escapar_html(nombre_display(p)) + '</td>' +
+          '<td>' + badge_tipo(p.profile_type) + '</td>' +
+          '<td>' + escapar_html(p.tipo_documento + ' ' + p.numero_documento) + '</td>' +
+          '<td>' + escapar_html(p.email_principal) + '</td>' +
+          '<td>' + formatear_fecha(p.fecha_registro) + '</td>' +
+          '<td><div class="tabla-acciones">' +
+          '<button type="button" class="btn-accion btn-accion-aprobar" data-accion="aprobar" data-indice="' + i + '">Aprobar</button>' +
+          '<button type="button" class="btn-accion btn-accion-rechazar" data-accion="rechazar" data-indice="' + i + '">Rechazar</button>' +
+          '</div></td></tr>';
+      }
+
+      html += '</tbody></table></div>';
+      contenedor.innerHTML = html;
+    }
+
+    function al_click_tabla_pendientes(e) {
+      var btn = e.target.closest('[data-accion]');
+      if (!btn) return;
+      var indice = parseInt(btn.dataset.indice);
+      if (btn.dataset.accion === 'aprobar') al_aprobar_perfil(indice, btn);
+      if (btn.dataset.accion === 'rechazar') al_rechazar_perfil(indice, btn);
+    }
+
+    async function al_aprobar_perfil(indice, btn) {
+      var perfil = estado.pendientes[indice];
+      if (!perfil) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Aprobando...';
+
+      try {
+        await supabase_fetch('/profiles?id=eq.' + perfil.id, estado.jwt, {
+          metodo: 'PATCH',
+          cuerpo: { estado_perfil: 'activo' },
+          prefer: 'return=minimal'
+        });
+
+        try {
+          await crear_carpeta({
+            profile_id: perfil.id,
+            profile_type: perfil.profile_type,
+            nombre: perfil.nombre_completo,
+            razon_social: perfil.razon_social
+          });
+        } catch (e) { /* carpeta se puede crear después */ }
+
+        try {
+          await notificar_email(
+            perfil.email_principal,
+            'Tu cuenta ha sido aprobada — DiversoLab',
+            'Hola ' + escapar_html(nombre_display(perfil)) + ', tu cuenta en DiversoLab ha sido aprobada. Ya puedes iniciar sesión en app.diversolab.org.'
+          );
+        } catch (e) { /* notificación no bloquea */ }
+
+        mostrar_exito('Perfil aprobado: ' + nombre_display(perfil));
+        cargar_pendientes();
+      } catch (error) {
+        mostrar_error(mensaje_usuario(error.message));
+        btn.disabled = false;
+        btn.textContent = 'Aprobar';
+      }
+    }
+
+    async function al_rechazar_perfil(indice, btn) {
+      var perfil = estado.pendientes[indice];
+      if (!perfil) return;
+      if (!confirm('¿Rechazar el perfil de ' + nombre_display(perfil) + '? Esta acción no se puede deshacer.')) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Rechazando...';
+
+      try {
+        await supabase_fetch('/profiles?id=eq.' + perfil.id, estado.jwt, {
+          metodo: 'PATCH',
+          cuerpo: { estado_perfil: 'inactivo' },
+          prefer: 'return=minimal'
+        });
+
+        try {
+          await notificar_email(
+            perfil.email_principal,
+            'Actualización sobre tu solicitud — DiversoLab',
+            'Hola ' + escapar_html(nombre_display(perfil)) + ', lamentamos informarte que tu solicitud no fue aprobada. Para más información, contacta a conducta.etica@diversolab.org.'
+          );
+        } catch (e) { /* notificación no bloquea */ }
+
+        mostrar_exito('Perfil rechazado');
+        cargar_pendientes();
+      } catch (error) {
+        mostrar_error(mensaje_usuario(error.message));
+        btn.disabled = false;
+        btn.textContent = 'Rechazar';
+      }
+    }
+
+    // --- Tab 2: Miembros ---
+
+    async function cargar_miembros() {
+      var contenedor = document.getElementById('contenido-miembros');
+      contenedor.innerHTML = '<p class="cargando-texto" aria-busy="true">Cargando...</p>';
+
+      try {
+        var datos = await supabase_fetch(
+          '/profiles?profile_type=eq.miembro&estado_perfil=eq.activo&select=id,nombre_completo,email_principal,permisos_miembro(permiso,activo)&order=nombre_completo.asc',
+          estado.jwt
+        );
+
+        estado.miembros = datos || [];
+        poblar_tabla_miembros();
+      } catch (error) {
+        contenedor.innerHTML = '<p class="estado-vacio">Error al cargar miembros.</p>';
+      }
+    }
+
+    function poblar_tabla_miembros() {
+      var contenedor = document.getElementById('contenido-miembros');
+
+      if (estado.miembros.length === 0) {
+        contenedor.innerHTML = '<p class="estado-vacio">No hay miembros registrados.</p>';
+        return;
+      }
+
+      var html = '<div class="tabla-contenedor"><table class="tabla-datos"><thead><tr>' +
+        '<th scope="col">Nombre</th>' +
+        '<th scope="col">Email</th>' +
+        '<th scope="col">Permisos</th>' +
+        '<th scope="col">Acciones</th>' +
+        '</tr></thead><tbody>';
+
+      for (var i = 0; i < estado.miembros.length; i++) {
+        var m = estado.miembros[i];
+        var permisos_activos = (m.permisos_miembro || []).filter(function(p) { return p.activo; });
+
+        html += '<tr>' +
+          '<td>' + escapar_html(m.nombre_completo || '—') + '</td>' +
+          '<td>' + escapar_html(m.email_principal) + '</td>' +
+          '<td><div class="permisos-grupo">' + badges_permisos(permisos_activos) + '</div></td>' +
+          '<td><button type="button" class="btn-accion btn-accion-editar" data-accion="editar" data-indice="' + i + '">Editar</button></td>' +
+          '</tr>';
+      }
+
+      html += '</tbody></table></div>';
+      contenedor.innerHTML = html;
+    }
+
+    function al_click_tabla_miembros(e) {
+      var btn = e.target.closest('[data-accion="editar"]');
+      if (!btn) return;
+      var indice = parseInt(btn.dataset.indice);
+      mostrar_modal_editar_permisos(indice);
+    }
+
+    // --- Nuevo miembro ---
+
+    function al_click_nuevo_miembro() {
+      document.getElementById('nuevo-nombre').value = '';
+      document.getElementById('nuevo-email').value = '';
+      document.getElementById('nuevo-tipo-doc').value = 'CC';
+      document.getElementById('nuevo-num-doc').value = '';
+      document.getElementById('nuevo-email-ayuda').hidden = true;
+
+      var checks = document.querySelectorAll('#nuevo-permisos .modal-permiso-check');
+      for (var i = 0; i < checks.length; i++) checks[i].checked = false;
+
+      abrir_modal('modal-nuevo-miembro');
+      document.getElementById('nuevo-nombre').focus();
+    }
+
+    async function al_crear_miembro() {
+      var nombre = document.getElementById('nuevo-nombre').value.trim();
+      var email = document.getElementById('nuevo-email').value.trim();
+      var tipo_doc = document.getElementById('nuevo-tipo-doc').value;
+      var num_doc = document.getElementById('nuevo-num-doc').value.trim();
+
+      if (!nombre || !email || !tipo_doc || !num_doc) {
+        mostrar_error('Todos los campos son obligatorios.');
+        return;
+      }
+
+      if (!validar_email(email) || !email.endsWith('@diversolab.org')) {
+        document.getElementById('nuevo-email-ayuda').hidden = false;
+        return;
+      }
+      document.getElementById('nuevo-email-ayuda').hidden = true;
+
+      if (!validar_documento(tipo_doc, num_doc)) {
+        mostrar_error('Número de documento no válido.');
+        return;
+      }
+
+      var btn = document.getElementById('btn-crear-miembro');
+      deshabilitar_boton(btn, 'Creando...');
+
+      try {
+        var resultado = await supabase_fetch('/profiles', estado.jwt, {
+          metodo: 'POST',
+          cuerpo: {
+            profile_type: 'miembro',
+            nombre_completo: nombre,
+            email_principal: email,
+            tipo_documento: tipo_doc,
+            numero_documento: num_doc,
+            estado_perfil: 'activo'
+          },
+          prefer: 'return=representation'
+        });
+
+        var nuevo_id = resultado[0].id;
+
+        var permisos_seleccionados = obtener_permisos_modal('nuevo-permisos');
+        if (permisos_seleccionados.length > 0) {
+          var filas = permisos_seleccionados.map(function(p) {
+            return { perfil_id: nuevo_id, permiso: p, activo: true };
+          });
+          await supabase_fetch('/permisos_miembro', estado.jwt, {
+            metodo: 'POST',
+            cuerpo: filas,
+            prefer: 'return=minimal'
+          });
+        }
+
+        cerrar_todos_modales();
+        mostrar_exito('Miembro creado: ' + nombre);
+        cargar_miembros();
+      } catch (error) {
+        var msg = error.message;
+        if (msg && msg.indexOf('email_principal') !== -1) {
+          mostrar_error('Ya existe un miembro con ese correo.');
+        } else if (msg && msg.indexOf('idx_profiles_doc') !== -1) {
+          mostrar_error('Ya existe un perfil con ese documento.');
+        } else {
+          mostrar_error(mensaje_usuario(msg));
+        }
+      } finally {
+        habilitar_boton(btn, 'Crear miembro');
+      }
+    }
+
+    // --- Editar permisos ---
+
+    function mostrar_modal_editar_permisos(indice) {
+      var miembro = estado.miembros[indice];
+      if (!miembro) return;
+
+      estado.miembro_editando_id = miembro.id;
+
+      document.getElementById('editar-info-miembro').textContent =
+        (miembro.nombre_completo || '—') + ' — ' + miembro.email_principal;
+
+      var permisos_activos = (miembro.permisos_miembro || [])
+        .filter(function(p) { return p.activo; })
+        .map(function(p) { return p.permiso; });
+
+      var checks = document.querySelectorAll('#editar-permisos .modal-permiso-check');
+      for (var i = 0; i < checks.length; i++) {
+        checks[i].checked = permisos_activos.indexOf(checks[i].value) !== -1;
+      }
+
+      abrir_modal('modal-editar-permisos');
+    }
+
+    async function al_guardar_permisos() {
+      if (!estado.miembro_editando_id) return;
+
+      var btn = document.getElementById('btn-guardar-permisos');
+      deshabilitar_boton(btn, 'Guardando...');
+
+      try {
+        var seleccionados = obtener_permisos_modal('editar-permisos');
+
+        var filas = CLAVES_PERMISOS.map(function(clave) {
+          return {
+            perfil_id: estado.miembro_editando_id,
+            permiso: clave,
+            activo: seleccionados.indexOf(clave) !== -1
+          };
+        });
+
+        await supabase_fetch('/permisos_miembro', estado.jwt, {
+          metodo: 'POST',
+          cuerpo: filas,
+          prefer: 'resolution=merge-duplicates,return=minimal'
+        });
+
+        cerrar_todos_modales();
+        mostrar_exito('Permisos actualizados');
+        cargar_miembros();
+      } catch (error) {
+        mostrar_error(mensaje_usuario(error.message));
+      } finally {
+        habilitar_boton(btn, 'Guardar');
+      }
+    }
+
+    // --- Tab 3: Asignaciones ---
+
+    async function cargar_datos_asignaciones() {
+      try {
+        var miembros = await supabase_fetch(
+          '/profiles?profile_type=eq.miembro&estado_perfil=eq.activo&select=id,nombre_completo&order=nombre_completo.asc',
+          estado.jwt
+        );
+        poblar_selector_analistas(miembros || []);
+      } catch (error) {
+        document.getElementById('contenido-asignaciones').innerHTML =
+          '<p class="estado-vacio">Error al cargar datos.</p>';
+      }
+    }
+
+    function poblar_selector_analistas(miembros) {
+      var selector = document.getElementById('selector-analista');
+      var html = '<option value="">Seleccionar miembro...</option>';
+      for (var i = 0; i < miembros.length; i++) {
+        html += '<option value="' + miembros[i].id + '">' +
+          escapar_html(miembros[i].nombre_completo || '—') + '</option>';
+      }
+      selector.innerHTML = html;
+    }
+
+    async function al_cambiar_analista() {
+      var id = document.getElementById('selector-analista').value;
+      estado.analista_seleccionado = id || null;
+      document.getElementById('btn-asignar-perfil').disabled = !id;
+
+      if (!id) {
+        document.getElementById('contenido-asignaciones').innerHTML =
+          '<p class="estado-vacio">Selecciona un miembro para ver sus asignaciones.</p>';
+        return;
+      }
+
+      var contenedor = document.getElementById('contenido-asignaciones');
+      contenedor.innerHTML = '<p class="cargando-texto" aria-busy="true">Cargando...</p>';
+
+      try {
+        var asigs = await supabase_fetch(
+          '/asignaciones?analista_id=eq.' + id + '&estado=eq.activa&select=id,perfil_id,fecha_inicio&order=fecha_inicio.asc',
+          estado.jwt
+        );
+
+        asigs = asigs || [];
+
+        if (asigs.length === 0) {
+          estado.asignaciones = [];
+          contenedor.innerHTML = '<p class="estado-vacio">Este miembro no tiene perfiles asignados.</p>';
+          return;
+        }
+
+        var ids = asigs.map(function(a) { return a.perfil_id; });
+        var perfiles = await supabase_fetch(
+          '/profiles?id=in.(' + ids.join(',') + ')&select=id,nombre_completo,razon_social,profile_type,email_principal',
+          estado.jwt
+        );
+
+        var mapa_perfiles = {};
+        (perfiles || []).forEach(function(p) { mapa_perfiles[p.id] = p; });
+
+        estado.asignaciones = asigs.map(function(a) {
+          return {
+            id: a.id,
+            fecha_inicio: a.fecha_inicio,
+            perfil: mapa_perfiles[a.perfil_id] || null
+          };
+        });
+
+        poblar_tabla_asignaciones();
+      } catch (error) {
+        contenedor.innerHTML = '<p class="estado-vacio">Error al cargar asignaciones.</p>';
+      }
+    }
+
+    function poblar_tabla_asignaciones() {
+      var contenedor = document.getElementById('contenido-asignaciones');
+
+      if (estado.asignaciones.length === 0) {
+        contenedor.innerHTML = '<p class="estado-vacio">Este miembro no tiene perfiles asignados.</p>';
+        return;
+      }
+
+      var html = '<div class="tabla-contenedor"><table class="tabla-datos"><thead><tr>' +
+        '<th scope="col">Nombre / Razón social</th>' +
+        '<th scope="col">Tipo</th>' +
+        '<th scope="col">Email</th>' +
+        '<th scope="col">Desde</th>' +
+        '<th scope="col">Acciones</th>' +
+        '</tr></thead><tbody>';
+
+      for (var i = 0; i < estado.asignaciones.length; i++) {
+        var a = estado.asignaciones[i];
+        var p = a.perfil;
+        html += '<tr>' +
+          '<td>' + (p ? escapar_html(nombre_display(p)) : '—') + '</td>' +
+          '<td>' + (p ? badge_tipo(p.profile_type) : '—') + '</td>' +
+          '<td>' + (p ? escapar_html(p.email_principal) : '—') + '</td>' +
+          '<td>' + (a.fecha_inicio || '—') + '</td>' +
+          '<td><button type="button" class="btn-accion btn-accion-finalizar" data-accion="finalizar" data-indice="' + i + '">Finalizar</button></td>' +
+          '</tr>';
+      }
+
+      html += '</tbody></table></div>';
+      contenedor.innerHTML = html;
+    }
+
+    function al_click_tabla_asignaciones(e) {
+      var btn = e.target.closest('[data-accion="finalizar"]');
+      if (!btn) return;
+      var indice = parseInt(btn.dataset.indice);
+      al_finalizar_asignacion(indice, btn);
+    }
+
+    async function al_finalizar_asignacion(indice, btn) {
+      var asig = estado.asignaciones[indice];
+      if (!asig) return;
+      if (!confirm('¿Finalizar esta asignación?')) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Finalizando...';
+
+      try {
+        await supabase_fetch('/asignaciones?id=eq.' + asig.id, estado.jwt, {
+          metodo: 'PATCH',
+          cuerpo: {
+            estado: 'finalizada',
+            fecha_fin: new Date().toISOString().split('T')[0]
+          },
+          prefer: 'return=minimal'
+        });
+
+        mostrar_exito('Asignación finalizada');
+        al_cambiar_analista();
+      } catch (error) {
+        mostrar_error(mensaje_usuario(error.message));
+        btn.disabled = false;
+        btn.textContent = 'Finalizar';
+      }
+    }
+
+    // --- Asignar perfil ---
+
+    async function al_click_asignar_perfil() {
+      if (!estado.analista_seleccionado) return;
+
+      try {
+        var todos = await supabase_fetch(
+          '/profiles?estado_perfil=eq.activo&profile_type=neq.miembro&select=id,nombre_completo,razon_social,profile_type&order=nombre_completo.asc',
+          estado.jwt
+        );
+
+        var asignados_ids = estado.asignaciones.map(function(a) {
+          return a.perfil ? a.perfil.id : null;
+        });
+
+        var disponibles = (todos || []).filter(function(p) {
+          return asignados_ids.indexOf(p.id) === -1;
+        });
+
+        var selector = document.getElementById('selector-perfil-asignar');
+        var html = '<option value="">Seleccionar perfil...</option>';
+        for (var i = 0; i < disponibles.length; i++) {
+          var p = disponibles[i];
+          html += '<option value="' + p.id + '">' +
+            escapar_html(nombre_display(p)) + ' (' + (LABELS_TIPOS[p.profile_type] || p.profile_type) + ')' +
+            '</option>';
+        }
+        selector.innerHTML = html;
+
+        if (disponibles.length === 0) {
+          selector.innerHTML = '<option value="">No hay perfiles disponibles</option>';
+        }
+
+        abrir_modal('modal-asignar');
+      } catch (error) {
+        mostrar_error(mensaje_usuario(error.message));
+      }
+    }
+
+    async function al_confirmar_asignacion() {
+      var perfil_id = document.getElementById('selector-perfil-asignar').value;
+      if (!perfil_id || !estado.analista_seleccionado) {
+        mostrar_error('Selecciona un perfil para asignar.');
+        return;
+      }
+
+      var btn = document.getElementById('btn-confirmar-asignacion');
+      deshabilitar_boton(btn, 'Asignando...');
+
+      try {
+        await supabase_fetch('/asignaciones', estado.jwt, {
+          metodo: 'POST',
+          cuerpo: {
+            analista_id: estado.analista_seleccionado,
+            perfil_id: perfil_id,
+            estado: 'activa'
+          },
+          prefer: 'return=minimal'
+        });
+
+        cerrar_todos_modales();
+        mostrar_exito('Perfil asignado correctamente');
+        al_cambiar_analista();
+      } catch (error) {
+        mostrar_error(mensaje_usuario(error.message));
+      } finally {
+        habilitar_boton(btn, 'Asignar');
+      }
+    }
+
+    // --- Modales ---
+
+    function abrir_modal(id) {
+      var overlay = document.getElementById(id);
+      overlay.classList.add('modal-visible');
+      var primer_input = overlay.querySelector('input:not([type="checkbox"]), select');
+      if (primer_input) primer_input.focus();
+    }
+
+    function cerrar_todos_modales() {
+      var overlays = document.querySelectorAll('.modal-overlay');
+      for (var i = 0; i < overlays.length; i++) {
+        overlays[i].classList.remove('modal-visible');
+      }
+      estado.miembro_editando_id = null;
+    }
+
+    // --- Helpers ---
+
+    function nombre_display(perfil) {
+      return perfil.razon_social || perfil.nombre_completo || '—';
+    }
+
+    function badge_tipo(tipo) {
+      var label = LABELS_TIPOS[tipo] || tipo;
+      var clase = 'insignia-neutra';
+      if (tipo === 'miembro') clase = 'insignia-exito';
+      if (tipo === 'beneficiario') clase = 'insignia-progreso';
+      if (tipo === 'contratista') clase = 'insignia-progreso';
+      return '<span class="insignia ' + clase + '">' + escapar_html(label) + '</span>';
+    }
+
+    function badges_permisos(permisos_arr) {
+      if (!permisos_arr || permisos_arr.length === 0) return '<span style="color:var(--color-texto-muted)">Sin permisos</span>';
+      var html = '';
+      for (var i = 0; i < permisos_arr.length; i++) {
+        var label = LABELS_PERMISOS[permisos_arr[i].permiso] || permisos_arr[i].permiso;
+        html += '<span class="insignia insignia-exito">' + escapar_html(label) + '</span>';
+      }
+      return html;
+    }
+
+    function obtener_permisos_modal(contenedor_id) {
+      var checks = document.querySelectorAll('#' + contenedor_id + ' .modal-permiso-check');
+      var seleccionados = [];
+      for (var i = 0; i < checks.length; i++) {
+        if (checks[i].checked) seleccionados.push(checks[i].value);
+      }
+      return seleccionados;
+    }
+  </script>
+</body>
+</html>

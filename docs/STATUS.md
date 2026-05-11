@@ -94,8 +94,8 @@ Cero colores hardcodeados en componentes. Variantes generadas con color-mix(in s
 |---------|-----------|
 | js/config.js | CONFIG con SUPABASE_URL, SUPABASE_ANON_KEY (placeholder), 3 URLs GAS (reales) |
 | js/supabase-client.js | iniciar_supabase, obtener_sesion, verificar_sesion, supabase_fetch (retry 401 + refresh), cerrar_sesion |
-| js/gas-client.js | gas_fetch, solicitar_otp, verificar_otp, firmar_consentimientos, verificar_firma, obtener_datos_firma, crear_carpeta |
-| js/utils.js | mostrar_error/exito (toast), mensaje_usuario (26 códigos), escapar_html, formatear_fecha, deshabilitar/habilitar_boton, validar_email/documento, obtener_ip |
+| js/gas-client.js | gas_fetch, solicitar_otp, verificar_otp, firmar_consentimientos, verificar_firma, obtener_datos_firma, notificar_email, crear_carpeta |
+| js/utils.js | mostrar_error/exito (toast), mensaje_usuario (27 códigos), escapar_html, formatear_fecha, deshabilitar/habilitar_boton, validar_email/documento, obtener_ip |
 
 Pendiente: reemplazar SUPABASE_ANON_KEY y GAS_API_KEYS con valores reales.
 
@@ -115,15 +115,54 @@ Flujo: carga datos via GAS obtenerDatosFirma → muestra datos firmante + 7 cons
 
 Características: stepper 3 pasos, campo cargo dinámico para persona jurídica, obligatorios configurables por analista (C1+C2 siempre + C3-C7 según tarea.detalle), CSP meta tag, accesibilidad (skip link, aria-labels, focus management, keyboard nav), responsive 480px.
 
+## Página registro — Implementada
+
+| Archivo | Contenido |
+|---------|-----------|
+| pages/registro.html | Página de auto-registro para perfiles externos (4 pasos) |
+
+Flujo: selección tipo perfil (4 cards: beneficiario/aliado/contratista/proveedor) → datos básicos (natural vs jurídica dinámico, validación inline blur) → 7 consentimientos F-DATO-01 siempre visibles (C1+C2 obligatorios, C3-C7 voluntarios) → verificación OTP → firma via GAS → perfil INSERT en Supabase (estado pendiente, auth_user_id null) → confirmación con folios.
+
+Características: stepper 4 pasos, campos dinámicos (natural: nombre+documento personal, jurídica: razón social+NIT+representante+cargo), tipos documento CC/CE/NIT/PA/PEP/PPT/TI, detección duplicados (idx_profiles_doc + email_principal), CSP incluye *.supabase.co, accesibilidad (skip link, aria-labels, focus management, keyboard nav), responsive 480px.
+
+## Página login — Implementada
+
+| Archivo | Contenido |
+|---------|-----------|
+| pages/login.html | Inicio de sesión con OTP (2 estados) |
+
+Flujo: email → validar formato → solicitar OTP via GAS (GAS valida perfil: no encontrado/pendiente/suspendido/activo) → 6 dígitos OTP (auto-advance, paste, backspace, Enter) → verificar OTP → setSession(access_token, refresh_token) → query profile_type → redirect (miembro → dashboard, externo → mi-expediente).
+
+Características: tarjeta centrada sobre fondo violeta, verifica sesión existente al cargar (redirect si ya autenticado), timer 60s reenvío, "Usar otro correo" regresa a estado email, validación blur en email, Supabase JS SDK via CDN, CSP (cdn.jsdelivr.net, *.supabase.co, script.google.com), accesibilidad (skip link, aria-labels, focus management, keyboard nav), responsive 480px.
+
+## Página gestión accesos — Implementada
+
+| Archivo | Contenido |
+|---------|-----------|
+| pages/accesos.html | Panel de gestión con 3 tabs (requiere gestion_accesos o gestion_plataforma) |
+
+Tab 1 — Perfiles pendientes: tabla con nombre/razón, tipo (badge), documento, email, fecha. Botones Aprobar (PATCH activo → GAS Drive crear_carpeta → GAS OTP notificar_email) y Rechazar (PATCH inactivo → notificar_email). GAS calls non-blocking.
+
+Tab 2 — Miembros del equipo: tabla con nombre, email, permisos (badges). Botón "Nuevo miembro" → modal (nombre, email @diversolab.org validado, tipo/número documento, 4 checkboxes permisos). Click fila → modal editar permisos (UPSERT via resolution=merge-duplicates).
+
+Tab 3 — Asignaciones: selector de analista → tabla de perfiles asignados. Botón "Asignar perfil" → modal con selector de perfiles activos no asignados. Botón "Finalizar" por fila (PATCH estado=finalizada + fecha_fin).
+
+Características: verificación permisos al cargar (redirect si no autorizado), tabs ARIA (role=tablist/tab/tabpanel), 3 modales (cerrar con X/ESC/click fuera), event delegation en tablas, Supabase JS SDK via CDN, CSP, responsive 480px.
+
+## Migración 003 — RLS gestion_accesos
+
+Migración `003_rls_accesos.sql` creada (pendiente ejecutar en BD remota):
+- profiles SELECT: agregado `tiene_permiso('gestion_accesos')` — necesario para que Tab 1 y Tab 2 de accesos.html funcionen con gestion_accesos
+- profiles UPDATE: agregado `tiene_permiso('gestion_accesos')` — necesario para aprobar/rechazar perfiles
+
+Pendiente: ejecutar con `supabase db push` o SQL Editor en dashboard Supabase.
+
 ## Pendiente por construir
 
 | Prioridad | Componente | Archivos |
 |-----------|-----------|----------|
-| 1 | Login | pages/login.html |
-| 2 | Registro | pages/registro.html |
-| 3 | Mi expediente | pages/mi-expediente.html |
-| 4 | Dashboard | pages/dashboard.html |
-| 5 | Gestión accesos | pages/accesos.html |
+| 1 | Mi expediente | pages/mi-expediente.html |
+| 2 | Dashboard | pages/dashboard.html |
 
 ## Preguntas arquitectónicas resueltas
 

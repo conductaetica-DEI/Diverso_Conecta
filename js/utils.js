@@ -28,7 +28,8 @@ var MENSAJES_USUARIO = {
   'RAZON_SOCIAL_REQUERIDA': 'La razón social es obligatoria.',
   'TAREA_NO_ENCONTRADA': 'No se encontró la solicitud de firma. Verifica el enlace.',
   'TAREA_YA_COMPLETADA': 'Esta solicitud de firma ya fue completada.',
-  'TAREA_NO_ES_CONSENTIMIENTO': 'El enlace no corresponde a una solicitud de firma.'
+  'TAREA_NO_ES_CONSENTIMIENTO': 'El enlace no corresponde a una solicitud de firma.',
+  'EMAIL_DUPLICADO': 'Ya existe una cuenta con ese correo electrónico.'
 };
 
 var MENSAJE_FALLBACK = 'Ocurrió un error. Intenta de nuevo o contacta soporte.';

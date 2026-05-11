@@ -238,7 +238,7 @@ $$ LANGUAGE sql SECURITY DEFINER STABLE;
 
 | Tabla | SELECT | INSERT | UPDATE | DELETE |
 |-------|--------|--------|--------|--------|
-| profiles | Propio OR miembro asignado OR gestion_plataforma | Público (registro) | Propio OR gestion_plataforma | gestion_plataforma |
+| profiles | Propio OR miembro asignado OR gestion_accesos OR gestion_plataforma | Público (registro) | Propio OR gestion_accesos OR gestion_plataforma | gestion_plataforma |
 | permisos_miembro | gestion_accesos OR gestion_plataforma | gestion_accesos | gestion_accesos | gestion_plataforma |
 | asignaciones | Miembro (suyas) OR gestion_plataforma | gestion_accesos | gestion_accesos | gestion_plataforma |
 | tareas | Perfil (suyas) OR miembro (asignados) OR gestion_plataforma | es_miembro() | Perfil (completar propias) OR miembro | gestion_plataforma |

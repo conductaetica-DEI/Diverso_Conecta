@@ -91,7 +91,7 @@ RLS está activo en TODAS las tablas. Es la última línea de defensa — si el 
 Para cada tabla, verificar estas preguntas:
 
 1. ¿Un perfil externo puede ver datos de OTRO perfil externo? → Debe ser NO
-2. ¿Un miembro sin asignación puede ver un perfil? → Debe ser NO (excepto gestion_plataforma)
+2. ¿Un miembro sin asignación puede ver un perfil? → Debe ser NO (excepto gestion_accesos y gestion_plataforma)
 3. ¿Alguien puede modificar la tabla consentimientos? → Debe ser NO
 4. ¿Alguien puede modificar logs_actividad? → Debe ser NO
 5. ¿Un perfil pendiente puede hacer queries? → Debe ser NO (no tiene auth_user_id)
