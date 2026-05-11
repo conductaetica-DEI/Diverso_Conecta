@@ -127,7 +127,7 @@ function validar_documento(tipo, numero) {
   if (tipo === 'NIT') {
     return /^[0-9]{6,12}(-[0-9])?$/.test(limpio);
   }
-  if (tipo === 'PAS') {
+  if (tipo === 'PA') {
     return /^[a-zA-Z0-9]{5,20}$/.test(limpio);
   }
 

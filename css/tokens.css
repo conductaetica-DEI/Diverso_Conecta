@@ -16,7 +16,7 @@
   --color-aqua-10: color-mix(in srgb, var(--color-aqua) 10%, white);
   --color-coral-10: color-mix(in srgb, var(--color-coral) 10%, white);
   --color-lavanda-10: color-mix(in srgb, var(--color-lavanda) 10%, white);
-  --color-lavanda-30: color-mix(in srgb, var(--color-lavanda) 50%, white);
+  --color-lavanda-50: color-mix(in srgb, var(--color-lavanda) 50%, white);
   --color-violeta-10: color-mix(in srgb, var(--color-violeta) 10%, white);
 
   /* --- Estados semánticos --- */

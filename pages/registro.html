@@ -897,14 +897,19 @@
       }
     }
 
+    var _otp_vinculado = false;
+
     function configurar_otp_inputs() {
       var inputs = document.querySelectorAll('.otp-digito');
       for (var i = 0; i < inputs.length; i++) {
         inputs[i].value = '';
-        inputs[i].addEventListener('input', al_input_otp);
-        inputs[i].addEventListener('keydown', al_keydown_otp);
-        inputs[i].addEventListener('paste', al_paste_otp);
+        if (!_otp_vinculado) {
+          inputs[i].addEventListener('input', al_input_otp);
+          inputs[i].addEventListener('keydown', al_keydown_otp);
+          inputs[i].addEventListener('paste', al_paste_otp);
+        }
       }
+      _otp_vinculado = true;
       inputs[0].focus();
     }
 

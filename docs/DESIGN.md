@@ -25,7 +25,7 @@ Derivado del Manual de Marca oficial de DiversoLab. TODO elemento visual usa est
 | --color-aqua-10 | aqua al 10% | Fondo sutil de éxito |
 | --color-coral-10 | coral al 10% | Fondo sutil de error |
 | --color-lavanda-10 | lavanda al 10% | Fondo de hover |
-| --color-lavanda-30 | lavanda al 50% | Fondo de badge neutro |
+| --color-lavanda-50 | lavanda al 50% | Fondo de badge neutro |
 | --color-violeta-10 | violeta al 10% | Fondo de código, tags |
 
 ---
@@ -128,7 +128,7 @@ Tamaño mínimo de texto: 14px (0.875rem) para body, 12px (0.75rem) para caption
 - Padding: 2px 8px
 - Border-radius: --radius-sm
 - Color según estado semántico
-- Neutro (.insignia-neutra): fondo --color-lavanda-30 (visible sobre cards blancas)
+- Neutro (.insignia-neutra): fondo --color-lavanda-50 (visible sobre cards blancas)
 
 ### Tabla
 - Font: --font-datos para datos, --font-datos weight 700 uppercase para headers

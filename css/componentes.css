@@ -8,6 +8,8 @@
   padding: 0;
 }
 
+[hidden] { display: none !important; }
+
 body {
   background-color: var(--color-crema);
   color: var(--color-texto);
@@ -262,7 +264,7 @@ body {
 }
 
 .insignia-neutra {
-  background-color: var(--color-lavanda-30);
+  background-color: var(--color-lavanda-50);
   color: var(--color-violeta);
 }
 

@@ -395,8 +395,8 @@
         <select id="tarea-tipo" class="campo-select" aria-required="true">
           <option value="">Seleccionar tipo...</option>
           <option value="documento">Subir documento</option>
-          <option value="kyc">Documentacion KYC</option>
-          <option value="revision">Revision</option>
+          <option value="kyc">Documentación KYC</option>
+          <option value="revision">Revisión</option>
         </select>
       </div>
 
@@ -452,7 +452,7 @@
 
       <div class="modal-campo">
         <label for="firma-programa" class="campo-label">Programa <span class="campo-obligatorio">*</span></label>
-        <input type="text" id="firma-programa" class="campo-texto" placeholder="Ej: Acompanamiento PCDi 2026" aria-required="true">
+        <input type="text" id="firma-programa" class="campo-texto" placeholder="Ej: Acompañamiento PCDi 2026" aria-required="true">
       </div>
 
       <div class="modal-campo">
@@ -461,11 +461,11 @@
         <div class="firma-consentimientos" id="firma-consentimientos">
           <label class="firma-consent-item firma-consent-item-disabled">
             <input type="checkbox" class="firma-consent-check" checked disabled>
-            <span>C1 — Datos basicos (siempre obligatorio)</span>
+            <span>C1 — Datos básicos (siempre obligatorio)</span>
           </label>
           <label class="firma-consent-item firma-consent-item-disabled">
             <input type="checkbox" class="firma-consent-check" checked disabled>
-            <span>C2 — Identificacion (siempre obligatorio)</span>
+            <span>C2 — Identificación (siempre obligatorio)</span>
           </label>
           <label class="firma-consent-item">
             <input type="checkbox" class="firma-consent-check" value="C3">
@@ -473,7 +473,7 @@
           </label>
           <label class="firma-consent-item">
             <input type="checkbox" class="firma-consent-check" value="C4">
-            <span>C4 — Analitica/IA</span>
+            <span>C4 — Analítica/IA</span>
           </label>
           <label class="firma-consent-item">
             <input type="checkbox" class="firma-consent-check" value="C5">
@@ -499,7 +499,7 @@
 
   <footer class="dashboard-pie">
     <p>DiversoLab &mdash; Transformación desde el Potencial Humano Diverso</p>
-    <p><a href="https://diversolab.org/politica" target="_blank" rel="noopener">Politica de proteccion de datos</a></p>
+    <p><a href="https://diversolab.org/politica" target="_blank" rel="noopener">Política de protección de datos</a></p>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -535,8 +535,8 @@
     var LABELS_TIPO_TAREA = {
       consentimiento: 'Firma consentimientos',
       documento: 'Subir documento',
-      kyc: 'Documentacion KYC',
-      revision: 'Revision'
+      kyc: 'Documentación KYC',
+      revision: 'Revisión'
     };
 
     // --- Estado ---
@@ -1088,8 +1088,8 @@
       return '<div class="completitud-grupo">' +
         '<span class="comp-paso comp-completo" title="Registro">C0</span>' +
         '<span class="comp-paso' + (firma ? ' comp-completo' : '') + '" title="Firma">' + (firma ? 'F' : 'F') + '</span>' +
-        '<span class="comp-paso" title="Ubicacion">C1</span>' +
-        '<span class="comp-paso" title="Documentacion">C2</span>' +
+        '<span class="comp-paso" title="Ubicación">C1</span>' +
+        '<span class="comp-paso" title="Documentación">C2</span>' +
       '</div>';
     }
 
