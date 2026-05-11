@@ -62,7 +62,8 @@ CREATE TABLE profiles (
   id               uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   auth_user_id     uuid REFERENCES auth.users,  -- NULL hasta primer login post-aprobación
   profile_type     text NOT NULL CHECK (profile_type IN ('beneficiario','aliado','contratista','proveedor','miembro')),
-  nombre_completo  text,
+  nombre           text,
+  apellido         text,
   razon_social     text,
   tipo_documento   text NOT NULL,
   numero_documento text NOT NULL,
