@@ -55,17 +55,20 @@ diversolab-app/
     tokens.css              ← design system
     componentes.css         ← botones, inputs, cards, badges
   js/
+    config.js               ← URLs Supabase + GAS (públicas)
     supabase-client.js      ← init Supabase + auth helpers
     gas-client.js           ← helpers para llamar servicios GAS
+    utils.js                ← toasts, mensajes, validación, formato, helpers UI
   pages/
-    login.html
-    registro.html
+    login.html              ← inicio de sesión OTP
+    registro.html           ← auto-registro perfiles externos
     firma.html              ← página standalone de firma (link desde email)
-    mi-expediente.html
-    dashboard.html
-    accesos.html
+    mi-expediente.html      ← dashboard perfil externo
+    dashboard.html          ← panel miembro interno
+    accesos.html            ← gestión accesos (admin)
   supabase/
     migrations/
       001_schema.sql
-      002_datos_prueba.sql
+      002_seed.sql
+      003_rls_accesos.sql
 ```

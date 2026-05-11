@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
+    connect-src 'self' https://script.google.com https://script.googleusercontent.com https://*.supabase.co;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    font-src https://fonts.gstatic.com;
+    img-src 'self' data:;
+  ">
+  <title>Panel — DiversoLab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/componentes.css">
+  <style>
+    .dashboard-pagina {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* --- Header --- */
+
+    .dashboard-encabezado {
+      background-color: var(--color-violeta);
+      color: white;
+      padding: var(--spacing-lg) var(--spacing-xl);
+    }
+
+    .dashboard-encabezado-contenido {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .dashboard-encabezado h1 {
+      font-family: var(--font-titulos);
+      font-weight: 900;
+      font-size: var(--text-2xl);
+    }
+
+    .dashboard-encabezado-sub {
+      font-family: var(--font-cuerpo);
+      font-size: var(--text-sm);
+      color: var(--color-sol);
+      margin-top: var(--spacing-xs);
+    }
+
+    .dashboard-permisos-badges {
+      display: flex;
+      gap: var(--spacing-xs);
+      flex-wrap: wrap;
+      margin-top: var(--spacing-sm);
+    }
+
+    .dashboard-permiso-badge {
+      font-family: var(--font-datos);
+      font-weight: 700;
+      font-size: var(--text-xs);
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      background-color: color-mix(in srgb, var(--color-sol) 20%, transparent);
+      color: var(--color-sol);
+    }
+
+    .dashboard-nav {
+      display: flex;
+      gap: var(--spacing-sm);
+      align-items: center;
+    }
+
+    .dashboard-btn-nav {
+      color: white;
+      border: 1px solid color-mix(in srgb, white 40%, transparent);
+      font-size: var(--text-sm);
+      padding: var(--spacing-xs) var(--spacing-md);
+    }
+
+    .dashboard-btn-nav:hover {
+      background-color: color-mix(in srgb, white 15%, transparent);
+    }
+
+    /* --- Contenedor --- */
+
+    .dashboard-contenedor {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: var(--spacing-xl) var(--spacing-md);
+      flex: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-lg);
+    }
+
+    /* --- KPIs --- */
+
+    .kpis-fila {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-md);
+    }
+
+    .kpi-tarjeta {
+      text-align: center;
+      padding: var(--spacing-lg);
+    }
+
+    .kpi-valor {
+      font-family: var(--font-titulos);
+      font-weight: 900;
+      font-size: var(--text-3xl);
+      color: var(--color-violeta);
+    }
+
+    .kpi-etiqueta {
+      font-family: var(--font-datos);
+      font-size: var(--text-sm);
+      color: var(--color-texto-muted);
+      margin-top: var(--spacing-xs);
+    }
+
+    /* --- Panel header --- */
+
+    .panel-cabecera {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .seccion-titulo {
+      font-family: var(--font-titulos);
+      font-weight: 700;
+      font-size: var(--text-lg);
+      color: var(--color-violeta);
+    }
+
+    .panel-acciones {
+      display: flex;
+      gap: var(--spacing-sm);
+    }
+
+    /* --- Tables --- */
+
+    .tabla-contenedor {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .tabla-datos td { vertical-align: middle; }
+
+    /* --- Completitud --- */
+
+    .completitud-grupo {
+      display: flex;
+      gap: 2px;
+    }
+
+    .comp-paso {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 22px;
+      border-radius: 4px;
+      font-family: var(--font-datos);
+      font-weight: 700;
+      font-size: 10px;
+      background-color: var(--color-lavanda-10);
+      color: var(--color-texto-muted);
+    }
+
+    .comp-completo {
+      background-color: var(--color-aqua-10);
+      color: var(--color-violeta);
+    }
+
+    /* --- Action buttons --- */
+
+    .btn-accion {
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      font-family: var(--font-datos);
+      font-weight: 700;
+      font-size: var(--text-xs);
+      cursor: pointer;
+      min-height: 32px;
+      min-width: 32px;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+
+    .btn-accion:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* --- Empty + loading --- */
+
+    .estado-vacio {
+      text-align: center;
+      padding: var(--spacing-2xl) var(--spacing-lg);
+      color: var(--color-texto-muted);
+      font-size: var(--text-base);
+    }
+
+    .cargando-texto {
+      text-align: center;
+      padding: var(--spacing-xl);
+      color: var(--color-texto-muted);
+    }
+
+    /* --- Modal form --- */
+
+    .modal-campo {
+      margin-bottom: var(--spacing-md);
+    }
+
+    .campo-label {
+      display: block;
+      font-family: var(--font-cuerpo);
+      font-weight: 700;
+      font-size: var(--text-sm);
+      margin-bottom: var(--spacing-xs);
+      color: var(--color-texto);
+    }
+
+    .campo-obligatorio { color: var(--color-coral); }
+
+    .modal-campo-fila {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-md);
+    }
+
+    .modal-acciones {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--spacing-sm);
+      margin-top: var(--spacing-lg);
+    }
+
+    .modal-info {
+      font-size: var(--text-sm);
+      color: var(--color-texto-muted);
+      margin-bottom: var(--spacing-md);
+      padding: var(--spacing-sm) var(--spacing-md);
+      background-color: var(--color-lavanda-10);
+      border-radius: var(--radius-sm);
+    }
+
+    /* --- Firma modal: consentimientos --- */
+
+    .firma-consentimientos {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+    }
+
+    .firma-consent-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm);
+      border: 1px solid var(--color-lavanda);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: var(--font-cuerpo);
+      font-size: var(--text-sm);
+    }
+
+    .firma-consent-item:hover {
+      background-color: var(--color-sol-10);
+    }
+
+    .firma-consent-item-disabled {
+      opacity: 0.7;
+      cursor: default;
+      background-color: var(--color-aqua-10);
+    }
+
+    .firma-consent-item-disabled:hover {
+      background-color: var(--color-aqua-10);
+    }
+
+    .firma-consent-check {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--color-violeta);
+    }
+
+    .campo-readonly {
+      background-color: var(--color-lavanda-10);
+    }
+
+    /* --- Footer --- */
+
+    .dashboard-pie {
+      background-color: var(--color-violeta);
+      color: color-mix(in srgb, white 70%, transparent);
+      padding: var(--spacing-lg) var(--spacing-xl);
+      text-align: center;
+      font-size: var(--text-xs);
+    }
+
+    .dashboard-pie a { color: var(--color-sol); }
+
+    /* --- Responsive --- */
+
+    @media (max-width: 480px) {
+      .dashboard-contenedor {
+        padding: var(--spacing-md) var(--spacing-sm);
+      }
+
+      .dashboard-encabezado-contenido {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+      }
+
+      .kpis-fila {
+        grid-template-columns: 1fr;
+      }
+
+      .panel-cabecera {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+      }
+
+      .panel-acciones {
+        width: 100%;
+      }
+
+      .panel-acciones .btn-primario {
+        flex: 1;
+        font-size: var(--text-sm);
+      }
+
+      .modal-campo-fila {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="dashboard-pagina">
+  <a href="#contenido-principal" class="saltar-contenido">Ir al contenido principal</a>
+
+  <header class="dashboard-encabezado">
+    <div class="dashboard-encabezado-contenido">
+      <div>
+        <h1>Panel</h1>
+        <p class="dashboard-encabezado-sub" id="encabezado-nombre">Cargando...</p>
+        <div class="dashboard-permisos-badges" id="encabezado-permisos"></div>
+      </div>
+      <nav class="dashboard-nav" aria-label="Navegacion principal">
+        <a href="/pages/accesos.html" id="link-accesos" class="btn-ghost dashboard-btn-nav" hidden>Gestion accesos</a>
+        <button type="button" id="btn-cerrar-sesion" class="btn-ghost dashboard-btn-nav">Cerrar sesion</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenido-principal" class="dashboard-contenedor">
+
+    <!-- KPIs -->
+    <div class="kpis-fila" id="seccion-kpis">
+      <div class="tarjeta kpi-tarjeta">
+        <div class="kpi-valor" id="kpi-perfiles">—</div>
+        <div class="kpi-etiqueta">Perfiles asignados</div>
+      </div>
+      <div class="tarjeta kpi-tarjeta">
+        <div class="kpi-valor" id="kpi-tareas">—</div>
+        <div class="kpi-etiqueta">Tareas activas</div>
+      </div>
+      <div class="tarjeta kpi-tarjeta">
+        <div class="kpi-valor" id="kpi-docs">—</div>
+        <div class="kpi-etiqueta">Docs pendientes</div>
+      </div>
+    </div>
+
+    <!-- Expedientes -->
+    <section class="tarjeta" id="seccion-expedientes" aria-label="Expedientes">
+      <div class="panel-cabecera">
+        <h2 class="seccion-titulo">Expedientes</h2>
+        <div class="panel-acciones">
+          <button type="button" id="btn-solicitar-firma" class="btn-primario">Solicitar firma</button>
+          <button type="button" id="btn-nueva-tarea" class="btn-primario">Nueva tarea</button>
+        </div>
+      </div>
+      <div id="contenido-expedientes">
+        <p class="cargando-texto" aria-busy="true">Cargando...</p>
+      </div>
+    </section>
+
+    <!-- Tareas recientes -->
+    <section class="tarjeta" id="seccion-tareas" aria-label="Tareas recientes">
+      <div class="panel-cabecera">
+        <h2 class="seccion-titulo">Tareas recientes</h2>
+      </div>
+      <div id="contenido-tareas">
+        <p class="cargando-texto" aria-busy="true">Cargando...</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal: Nueva tarea -->
+  <div class="modal-overlay" id="modal-nueva-tarea" role="dialog" aria-modal="true" aria-labelledby="modal-tarea-titulo">
+    <div class="modal">
+      <button type="button" class="modal-cerrar" aria-label="Cerrar" data-cerrar-modal>&times;</button>
+      <h3 class="modal-titulo" id="modal-tarea-titulo">Nueva tarea</h3>
+
+      <div class="modal-campo">
+        <label for="tarea-perfil" class="campo-label">Perfil <span class="campo-obligatorio">*</span></label>
+        <select id="tarea-perfil" class="campo-select" aria-required="true">
+          <option value="">Seleccionar perfil...</option>
+        </select>
+      </div>
+
+      <div class="modal-campo">
+        <label for="tarea-tipo" class="campo-label">Tipo de tarea <span class="campo-obligatorio">*</span></label>
+        <select id="tarea-tipo" class="campo-select" aria-required="true">
+          <option value="">Seleccionar tipo...</option>
+          <option value="documento">Subir documento</option>
+          <option value="kyc">Documentacion KYC</option>
+          <option value="revision">Revision</option>
+        </select>
+      </div>
+
+      <div class="modal-campo">
+        <label for="tarea-detalle" class="campo-label">Detalle</label>
+        <input type="text" id="tarea-detalle" class="campo-texto" placeholder="Descripcion de la tarea">
+      </div>
+
+      <div class="modal-campo modal-campo-fila">
+        <div>
+          <label for="tarea-fecha" class="campo-label">Fecha limite</label>
+          <input type="date" id="tarea-fecha" class="campo-texto">
+        </div>
+        <div>
+          <label class="campo-label">&nbsp;</label>
+          <label style="display:flex;align-items:center;gap:var(--spacing-sm);min-height:44px;cursor:pointer;">
+            <input type="checkbox" id="tarea-urgente" style="width:18px;height:18px;accent-color:var(--color-violeta);">
+            <span style="font-family:var(--font-cuerpo);font-size:var(--text-sm);">Urgente</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-acciones">
+        <button type="button" class="btn-ghost" data-cerrar-modal>Cancelar</button>
+        <button type="button" id="btn-crear-tarea" class="btn-primario">Crear tarea</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Solicitar firma -->
+  <div class="modal-overlay" id="modal-solicitar-firma" role="dialog" aria-modal="true" aria-labelledby="modal-firma-titulo">
+    <div class="modal">
+      <button type="button" class="modal-cerrar" aria-label="Cerrar" data-cerrar-modal>&times;</button>
+      <h3 class="modal-titulo" id="modal-firma-titulo">Solicitar firma de consentimientos</h3>
+
+      <div class="modal-campo">
+        <label for="firma-perfil" class="campo-label">Firmante <span class="campo-obligatorio">*</span></label>
+        <select id="firma-perfil" class="campo-select" aria-required="true">
+          <option value="">Seleccionar perfil...</option>
+        </select>
+      </div>
+
+      <div class="modal-campo modal-campo-fila">
+        <div>
+          <label for="firma-email" class="campo-label">Email</label>
+          <input type="email" id="firma-email" class="campo-texto campo-readonly" readonly>
+        </div>
+        <div>
+          <label for="firma-documento" class="campo-label">Documento</label>
+          <input type="text" id="firma-documento" class="campo-texto campo-readonly" readonly>
+        </div>
+      </div>
+
+      <div class="modal-campo">
+        <label for="firma-programa" class="campo-label">Programa <span class="campo-obligatorio">*</span></label>
+        <input type="text" id="firma-programa" class="campo-texto" placeholder="Ej: Acompanamiento PCDi 2026" aria-required="true">
+      </div>
+
+      <div class="modal-campo">
+        <label class="campo-label">Consentimientos obligatorios</label>
+        <p class="modal-info">C1 y C2 son siempre obligatorios. Marca cuales de C3-C7 deben ser obligatorios para esta solicitud.</p>
+        <div class="firma-consentimientos" id="firma-consentimientos">
+          <label class="firma-consent-item firma-consent-item-disabled">
+            <input type="checkbox" class="firma-consent-check" checked disabled>
+            <span>C1 — Datos basicos (siempre obligatorio)</span>
+          </label>
+          <label class="firma-consent-item firma-consent-item-disabled">
+            <input type="checkbox" class="firma-consent-check" checked disabled>
+            <span>C2 — Identificacion (siempre obligatorio)</span>
+          </label>
+          <label class="firma-consent-item">
+            <input type="checkbox" class="firma-consent-check" value="C3">
+            <span>C3 — Datos sensibles</span>
+          </label>
+          <label class="firma-consent-item">
+            <input type="checkbox" class="firma-consent-check" value="C4">
+            <span>C4 — Analitica/IA</span>
+          </label>
+          <label class="firma-consent-item">
+            <input type="checkbox" class="firma-consent-check" value="C5">
+            <span>C5 — Comunicaciones</span>
+          </label>
+          <label class="firma-consent-item">
+            <input type="checkbox" class="firma-consent-check" value="C6">
+            <span>C6 — Imagen/voz</span>
+          </label>
+          <label class="firma-consent-item">
+            <input type="checkbox" class="firma-consent-check" value="C7">
+            <span>C7 — Seguimiento</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-acciones">
+        <button type="button" class="btn-ghost" data-cerrar-modal>Cancelar</button>
+        <button type="button" id="btn-enviar-firma" class="btn-primario">Enviar solicitud</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="dashboard-pie">
+    <p>DiversoLab &mdash; Inclusion social de personas con discapacidad</p>
+    <p><a href="https://diversolab.org/politica" target="_blank" rel="noopener">Politica de proteccion de datos</a></p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/gas-client.js"></script>
+  <script src="../js/utils.js"></script>
+  <script>
+    // --- Constantes ---
+
+    var LABELS_TIPOS = {
+      beneficiario: 'Beneficiario',
+      aliado: 'Aliado',
+      contratista: 'Contratista',
+      proveedor: 'Proveedor',
+      miembro: 'Miembro'
+    };
+
+    var LABELS_PERMISOS = {
+      gestion_beneficiarios: 'Beneficiarios',
+      gestion_proveedores: 'Proveedores',
+      gestion_accesos: 'Accesos',
+      gestion_plataforma: 'Plataforma'
+    };
+
+    var LABELS_ESTADOS_TAREA = {
+      pendiente: 'Pendiente',
+      en_curso: 'En curso',
+      completada: 'Completada',
+      vencida: 'Vencida'
+    };
+
+    var LABELS_TIPO_TAREA = {
+      consentimiento: 'Firma consentimientos',
+      documento: 'Subir documento',
+      kyc: 'Documentacion KYC',
+      revision: 'Revision'
+    };
+
+    // --- Estado ---
+
+    var estado = {
+      sesion: null,
+      jwt: null,
+      perfil: null,
+      permisos: [],
+      es_plataforma: false,
+      tipos_permitidos: [],
+      expedientes: [],
+      tareas: [],
+      perfiles_con_firma: {},
+      total_docs_pendientes: 0
+    };
+
+    // --- Inicializacion ---
+
+    document.addEventListener('DOMContentLoaded', function() {
+      cargar_pagina();
+    });
+
+    async function cargar_pagina() {
+      estado.sesion = await verificar_sesion();
+      if (!estado.sesion) return;
+      estado.jwt = estado.sesion.access_token;
+
+      try {
+        await cargar_perfil_y_permisos();
+        if (!estado.perfil) return;
+
+        poblar_encabezado();
+        determinar_modo_vista();
+
+        if (estado.tipos_permitidos.length === 0 && !estado.es_plataforma) {
+          mostrar_sin_permisos();
+          vincular_eventos();
+          return;
+        }
+
+        await cargar_expedientes();
+        await cargar_datos_secundarios();
+
+        poblar_kpis();
+        poblar_expedientes();
+        poblar_tareas();
+      } catch (error) {
+        mostrar_error(mensaje_usuario(error.message));
+      }
+
+      vincular_eventos();
+    }
+
+    // --- Carga de datos ---
+
+    async function cargar_perfil_y_permisos() {
+      var datos = await supabase_fetch(
+        '/profiles?auth_user_id=eq.' + estado.sesion.user.id +
+        '&select=id,profile_type,nombre_completo,email_principal,permisos_miembro(permiso,activo)&limit=1',
+        estado.jwt
+      );
+
+      if (!datos || datos.length === 0) {
+        mostrar_error('No se encontro tu perfil.');
+        return;
+      }
+
+      estado.perfil = datos[0];
+
+      if (estado.perfil.profile_type !== 'miembro') {
+        window.location.href = '/pages/mi-expediente.html';
+        return;
+      }
+
+      estado.permisos = (estado.perfil.permisos_miembro || [])
+        .filter(function(p) { return p.activo; })
+        .map(function(p) { return p.permiso; });
+    }
+
+    function determinar_modo_vista() {
+      estado.es_plataforma = estado.permisos.indexOf('gestion_plataforma') !== -1;
+      estado.tipos_permitidos = [];
+
+      if (estado.es_plataforma) return;
+
+      if (estado.permisos.indexOf('gestion_beneficiarios') !== -1) {
+        estado.tipos_permitidos.push('beneficiario', 'aliado');
+      }
+      if (estado.permisos.indexOf('gestion_proveedores') !== -1) {
+        estado.tipos_permitidos.push('contratista', 'proveedor');
+      }
+    }
+
+    async function cargar_expedientes() {
+      if (estado.es_plataforma) {
+        estado.expedientes = await supabase_fetch(
+          '/profiles?profile_type=neq.miembro&estado_perfil=eq.activo' +
+          '&select=id,nombre_completo,razon_social,profile_type,estado_perfil,email_principal,tipo_documento,numero_documento,fecha_registro,updated_at' +
+          '&order=fecha_registro.desc&limit=50',
+          estado.jwt
+        ) || [];
+        return;
+      }
+
+      var asignaciones = await supabase_fetch(
+        '/asignaciones?analista_id=eq.' + estado.perfil.id +
+        '&estado=eq.activa&select=perfil_id',
+        estado.jwt
+      ) || [];
+
+      if (asignaciones.length === 0) {
+        estado.expedientes = [];
+        return;
+      }
+
+      var ids = asignaciones.map(function(a) { return a.perfil_id; });
+
+      var perfiles = await supabase_fetch(
+        '/profiles?id=in.(' + ids.join(',') + ')' +
+        '&select=id,nombre_completo,razon_social,profile_type,estado_perfil,email_principal,tipo_documento,numero_documento,fecha_registro,updated_at' +
+        '&order=fecha_registro.desc',
+        estado.jwt
+      ) || [];
+
+      estado.expedientes = perfiles.filter(function(p) {
+        return estado.tipos_permitidos.indexOf(p.profile_type) !== -1;
+      });
+    }
+
+    async function cargar_datos_secundarios() {
+      var ids = estado.expedientes.map(function(e) { return e.id; });
+      var ids_str = ids.join(',');
+
+      var consultas = [
+        supabase_fetch(
+          '/tareas?solicitado_por=eq.' + estado.perfil.id +
+          '&select=id,tipo_tarea,detalle,estado,es_urgente,fecha_limite,perfil_id,created_at' +
+          '&order=created_at.desc&limit=20',
+          estado.jwt
+        ).catch(function() { return []; })
+      ];
+
+      if (ids.length > 0) {
+        consultas.push(
+          supabase_fetch(
+            '/consentimientos?perfil_id=in.(' + ids_str + ')&aceptado=eq.true&select=perfil_id',
+            estado.jwt
+          ).catch(function() { return []; })
+        );
+        consultas.push(
+          supabase_fetch(
+            '/catalogo_docs?perfil_id=in.(' + ids_str + ')&estado=eq.pendiente&select=id',
+            estado.jwt
+          ).catch(function() { return []; })
+        );
+      }
+
+      var resultados = await Promise.all(consultas);
+
+      estado.tareas = resultados[0] || [];
+
+      (resultados[1] || []).forEach(function(c) {
+        estado.perfiles_con_firma[c.perfil_id] = true;
+      });
+
+      estado.total_docs_pendientes = (resultados[2] || []).length;
+    }
+
+    // --- Poblar UI ---
+
+    function poblar_encabezado() {
+      document.getElementById('encabezado-nombre').textContent =
+        estado.perfil.nombre_completo || estado.perfil.email_principal;
+
+      var badges_html = '';
+      for (var i = 0; i < estado.permisos.length; i++) {
+        var label = LABELS_PERMISOS[estado.permisos[i]] || estado.permisos[i];
+        badges_html += '<span class="dashboard-permiso-badge">' + escapar_html(label) + '</span>';
+      }
+      document.getElementById('encabezado-permisos').innerHTML = badges_html;
+
+      var tiene_accesos = estado.permisos.indexOf('gestion_accesos') !== -1 || estado.es_plataforma;
+      document.getElementById('link-accesos').hidden = !tiene_accesos;
+    }
+
+    function poblar_kpis() {
+      document.getElementById('kpi-perfiles').textContent = estado.expedientes.length;
+
+      var tareas_activas = estado.tareas.filter(function(t) {
+        return t.estado === 'pendiente' || t.estado === 'en_curso';
+      });
+      document.getElementById('kpi-tareas').textContent = tareas_activas.length;
+
+      document.getElementById('kpi-docs').textContent = estado.total_docs_pendientes;
+    }
+
+    function poblar_expedientes() {
+      var contenedor = document.getElementById('contenido-expedientes');
+
+      if (estado.expedientes.length === 0) {
+        contenedor.innerHTML = '<p class="estado-vacio">No tienes perfiles asignados.</p>';
+        return;
+      }
+
+      var html = '<div class="tabla-contenedor"><table class="tabla-datos"><thead><tr>' +
+        '<th scope="col">Nombre</th>' +
+        '<th scope="col">Tipo</th>' +
+        '<th scope="col">Estado</th>' +
+        '<th scope="col">Completitud</th>' +
+        '<th scope="col">Actividad</th>' +
+        '</tr></thead><tbody>';
+
+      for (var i = 0; i < estado.expedientes.length; i++) {
+        var e = estado.expedientes[i];
+        html += '<tr>' +
+          '<td>' + escapar_html(nombre_display(e)) + '</td>' +
+          '<td>' + badge_tipo(e.profile_type) + '</td>' +
+          '<td>' + badge_estado(e.estado_perfil) + '</td>' +
+          '<td>' + completitud_capas(e.id) + '</td>' +
+          '<td>' + formatear_fecha_corta(e.updated_at || e.fecha_registro) + '</td>' +
+        '</tr>';
+      }
+
+      html += '</tbody></table></div>';
+      contenedor.innerHTML = html;
+    }
+
+    function poblar_tareas() {
+      var contenedor = document.getElementById('contenido-tareas');
+
+      if (estado.tareas.length === 0) {
+        contenedor.innerHTML = '<p class="estado-vacio">No has creado tareas.</p>';
+        return;
+      }
+
+      var mapa_nombres = {};
+      estado.expedientes.forEach(function(e) {
+        mapa_nombres[e.id] = nombre_display(e);
+      });
+
+      var html = '<div class="tabla-contenedor"><table class="tabla-datos"><thead><tr>' +
+        '<th scope="col">Tipo</th>' +
+        '<th scope="col">Perfil</th>' +
+        '<th scope="col">Detalle</th>' +
+        '<th scope="col">Estado</th>' +
+        '<th scope="col">Fecha</th>' +
+        '</tr></thead><tbody>';
+
+      for (var i = 0; i < estado.tareas.length; i++) {
+        var t = estado.tareas[i];
+        var nombre_perfil = mapa_nombres[t.perfil_id] || '—';
+        var detalle = extraer_detalle(t.detalle);
+
+        html += '<tr>' +
+          '<td>' + escapar_html(LABELS_TIPO_TAREA[t.tipo_tarea] || t.tipo_tarea) +
+            (t.es_urgente ? ' <span class="insignia insignia-alerta">Urgente</span>' : '') + '</td>' +
+          '<td>' + escapar_html(nombre_perfil) + '</td>' +
+          '<td>' + escapar_html(detalle || '—') + '</td>' +
+          '<td>' + badge_estado_tarea(t.estado) + '</td>' +
+          '<td>' + formatear_fecha_corta(t.created_at) + '</td>' +
+        '</tr>';
+      }
+
+      html += '</tbody></table></div>';
+      contenedor.innerHTML = html;
+    }
+
+    function mostrar_sin_permisos() {
+      document.getElementById('contenido-expedientes').innerHTML =
+        '<p class="estado-vacio">No tienes permisos de gestion asignados. Contacta al administrador.</p>';
+      document.getElementById('contenido-tareas').innerHTML =
+        '<p class="estado-vacio">Sin tareas.</p>';
+      document.getElementById('btn-nueva-tarea').hidden = true;
+      document.getElementById('btn-solicitar-firma').hidden = true;
+      document.getElementById('kpi-perfiles').textContent = '0';
+      document.getElementById('kpi-tareas').textContent = '0';
+      document.getElementById('kpi-docs').textContent = '0';
+    }
+
+    // --- Eventos ---
+
+    function vincular_eventos() {
+      document.getElementById('btn-cerrar-sesion').addEventListener('click', cerrar_sesion);
+      document.getElementById('btn-nueva-tarea').addEventListener('click', al_abrir_modal_tarea);
+      document.getElementById('btn-solicitar-firma').addEventListener('click', al_abrir_modal_firma);
+      document.getElementById('btn-crear-tarea').addEventListener('click', al_crear_tarea);
+      document.getElementById('btn-enviar-firma').addEventListener('click', al_enviar_firma);
+      document.getElementById('firma-perfil').addEventListener('change', al_cambiar_firmante);
+
+      var cerrar_btns = document.querySelectorAll('[data-cerrar-modal]');
+      for (var j = 0; j < cerrar_btns.length; j++) {
+        cerrar_btns[j].addEventListener('click', cerrar_todos_modales);
+      }
+
+      var overlays = document.querySelectorAll('.modal-overlay');
+      for (var k = 0; k < overlays.length; k++) {
+        overlays[k].addEventListener('click', function(e) {
+          if (e.target === this) cerrar_todos_modales();
+        });
+      }
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') cerrar_todos_modales();
+      });
+    }
+
+    // --- Modal: Nueva tarea ---
+
+    function al_abrir_modal_tarea() {
+      poblar_selector_perfiles('tarea-perfil');
+      document.getElementById('tarea-tipo').value = '';
+      document.getElementById('tarea-detalle').value = '';
+      document.getElementById('tarea-fecha').value = '';
+      document.getElementById('tarea-urgente').checked = false;
+      abrir_modal('modal-nueva-tarea');
+    }
+
+    async function al_crear_tarea() {
+      var perfil_id = document.getElementById('tarea-perfil').value;
+      var tipo = document.getElementById('tarea-tipo').value;
+      var detalle = document.getElementById('tarea-detalle').value.trim();
+      var fecha = document.getElementById('tarea-fecha').value;
+      var urgente = document.getElementById('tarea-urgente').checked;
+
+      if (!perfil_id || !tipo) {
+        mostrar_error('Selecciona un perfil y un tipo de tarea.');
+        return;
+      }
+
+      var btn = document.getElementById('btn-crear-tarea');
+      deshabilitar_boton(btn, 'Creando...');
+
+      try {
+        var cuerpo = {
+          perfil_id: perfil_id,
+          solicitado_por: estado.perfil.id,
+          tipo_tarea: tipo,
+          estado: 'pendiente',
+          es_urgente: urgente
+        };
+        if (detalle) cuerpo.detalle = detalle;
+        if (fecha) cuerpo.fecha_limite = fecha;
+
+        await supabase_fetch('/tareas', estado.jwt, {
+          metodo: 'POST',
+          cuerpo: cuerpo,
+          prefer: 'return=minimal'
+        });
+
+        cerrar_todos_modales();
+        mostrar_exito('Tarea creada correctamente.');
+        await recargar_tareas();
+      } catch (error) {
+        mostrar_error(mensaje_usuario(error.message));
+      } finally {
+        habilitar_boton(btn, 'Crear tarea');
+      }
+    }
+
+    // --- Modal: Solicitar firma ---
+
+    function al_abrir_modal_firma() {
+      poblar_selector_perfiles('firma-perfil');
+      document.getElementById('firma-email').value = '';
+      document.getElementById('firma-documento').value = '';
+      document.getElementById('firma-programa').value = '';
+
+      var checks = document.querySelectorAll('#firma-consentimientos .firma-consent-check[value]');
+      for (var i = 0; i < checks.length; i++) checks[i].checked = false;
+
+      abrir_modal('modal-solicitar-firma');
+    }
+
+    function al_cambiar_firmante() {
+      var perfil_id = document.getElementById('firma-perfil').value;
+      var perfil = buscar_expediente(perfil_id);
+
+      if (perfil) {
+        document.getElementById('firma-email').value = perfil.email_principal;
+        document.getElementById('firma-documento').value =
+          perfil.tipo_documento + ' ' + perfil.numero_documento;
+      } else {
+        document.getElementById('firma-email').value = '';
+        document.getElementById('firma-documento').value = '';
+      }
+    }
+
+    async function al_enviar_firma() {
+      var perfil_id = document.getElementById('firma-perfil').value;
+      var programa = document.getElementById('firma-programa').value.trim();
+
+      if (!perfil_id || !programa) {
+        mostrar_error('Selecciona un firmante e ingresa el programa.');
+        return;
+      }
+
+      var perfil = buscar_expediente(perfil_id);
+      if (!perfil) {
+        mostrar_error('Perfil no encontrado.');
+        return;
+      }
+
+      var obligatorios = obtener_obligatorios_seleccionados();
+
+      var btn = document.getElementById('btn-enviar-firma');
+      deshabilitar_boton(btn, 'Enviando...');
+
+      try {
+        var detalle_json = JSON.stringify({
+          programa: programa,
+          obligatorios: ['C1', 'C2'].concat(obligatorios)
+        });
+
+        var resultado = await supabase_fetch('/tareas', estado.jwt, {
+          metodo: 'POST',
+          cuerpo: {
+            perfil_id: perfil_id,
+            solicitado_por: estado.perfil.id,
+            tipo_tarea: 'consentimiento',
+            detalle: detalle_json,
+            estado: 'pendiente'
+          },
+          prefer: 'return=representation'
+        });
+
+        var tarea_id = resultado[0].id;
+        var enlace = window.location.origin + '/pages/firma.html?token=' + tarea_id;
+        var nombre = nombre_display(perfil);
+
+        try {
+          await notificar_email(
+            perfil.email_principal,
+            'Solicitud de firma — DiversoLab',
+            'Hola ' + nombre + ',\n\n' +
+            'Tienes una solicitud de firma de consentimientos para el programa "' + programa + '".\n\n' +
+            'Para completar la firma, abre el siguiente enlace:\n' + enlace + '\n\n' +
+            'Este enlace es personal e intransferible.\n\n' +
+            'Equipo DiversoLab'
+          );
+        } catch (e) { /* email no bloquea */ }
+
+        cerrar_todos_modales();
+        mostrar_exito('Solicitud de firma enviada a ' + nombre);
+        await recargar_tareas();
+      } catch (error) {
+        mostrar_error(mensaje_usuario(error.message));
+      } finally {
+        habilitar_boton(btn, 'Enviar solicitud');
+      }
+    }
+
+    function obtener_obligatorios_seleccionados() {
+      var checks = document.querySelectorAll('#firma-consentimientos .firma-consent-check[value]');
+      var seleccionados = [];
+      for (var i = 0; i < checks.length; i++) {
+        if (checks[i].checked) seleccionados.push(checks[i].value);
+      }
+      return seleccionados;
+    }
+
+    // --- Recargar tareas ---
+
+    async function recargar_tareas() {
+      try {
+        estado.tareas = await supabase_fetch(
+          '/tareas?solicitado_por=eq.' + estado.perfil.id +
+          '&select=id,tipo_tarea,detalle,estado,es_urgente,fecha_limite,perfil_id,created_at' +
+          '&order=created_at.desc&limit=20',
+          estado.jwt
+        ) || [];
+        poblar_tareas();
+        poblar_kpis();
+      } catch (e) {}
+    }
+
+    // --- Modales ---
+
+    function abrir_modal(id) {
+      var overlay = document.getElementById(id);
+      overlay.classList.add('modal-visible');
+      var primer_input = overlay.querySelector('select, input:not([type="checkbox"]):not([readonly])');
+      if (primer_input) primer_input.focus();
+    }
+
+    function cerrar_todos_modales() {
+      var overlays = document.querySelectorAll('.modal-overlay');
+      for (var i = 0; i < overlays.length; i++) {
+        overlays[i].classList.remove('modal-visible');
+      }
+    }
+
+    function poblar_selector_perfiles(selector_id) {
+      var selector = document.getElementById(selector_id);
+      var html = '<option value="">Seleccionar perfil...</option>';
+      for (var i = 0; i < estado.expedientes.length; i++) {
+        var e = estado.expedientes[i];
+        var tipo_label = LABELS_TIPOS[e.profile_type] || e.profile_type;
+        html += '<option value="' + e.id + '">' +
+          escapar_html(nombre_display(e)) + ' (' + tipo_label + ')' +
+        '</option>';
+      }
+      selector.innerHTML = html;
+    }
+
+    // --- Helpers ---
+
+    function nombre_display(perfil) {
+      return perfil.razon_social || perfil.nombre_completo || '—';
+    }
+
+    function buscar_expediente(perfil_id) {
+      for (var i = 0; i < estado.expedientes.length; i++) {
+        if (estado.expedientes[i].id === perfil_id) return estado.expedientes[i];
+      }
+      return null;
+    }
+
+    function badge_tipo(tipo) {
+      var label = LABELS_TIPOS[tipo] || tipo;
+      var clase = 'insignia-neutra';
+      if (tipo === 'beneficiario' || tipo === 'contratista') clase = 'insignia-progreso';
+      return '<span class="insignia ' + clase + '">' + escapar_html(label) + '</span>';
+    }
+
+    function badge_estado(est) {
+      var labels = { pendiente: 'Pendiente', activo: 'Activo', suspendido: 'Suspendido', inactivo: 'Inactivo' };
+      var label = labels[est] || est;
+      var clase = 'insignia-neutra';
+      if (est === 'activo') clase = 'insignia-exito';
+      if (est === 'pendiente') clase = 'insignia-progreso';
+      if (est === 'suspendido') clase = 'insignia-alerta';
+      return '<span class="insignia ' + clase + '">' + escapar_html(label) + '</span>';
+    }
+
+    function badge_estado_tarea(est) {
+      var label = LABELS_ESTADOS_TAREA[est] || est;
+      var clase = 'insignia-neutra';
+      if (est === 'pendiente') clase = 'insignia-alerta';
+      if (est === 'en_curso') clase = 'insignia-progreso';
+      if (est === 'completada') clase = 'insignia-exito';
+      if (est === 'vencida') clase = 'insignia-alerta';
+      return '<span class="insignia ' + clase + '">' + escapar_html(label) + '</span>';
+    }
+
+    function completitud_capas(perfil_id) {
+      var firma = estado.perfiles_con_firma[perfil_id];
+      return '<div class="completitud-grupo">' +
+        '<span class="comp-paso comp-completo" title="Registro">C0</span>' +
+        '<span class="comp-paso' + (firma ? ' comp-completo' : '') + '" title="Firma">' + (firma ? 'F' : 'F') + '</span>' +
+        '<span class="comp-paso" title="Ubicacion">C1</span>' +
+        '<span class="comp-paso" title="Documentacion">C2</span>' +
+      '</div>';
+    }
+
+    function extraer_detalle(detalle) {
+      if (!detalle) return '';
+      try {
+        var datos = JSON.parse(detalle);
+        if (datos.programa) return datos.programa;
+      } catch (e) {}
+      return detalle;
+    }
+
+    function formatear_fecha_corta(fecha_str) {
+      if (!fecha_str) return '—';
+      var fecha = new Date(fecha_str);
+      return fecha.toLocaleDateString('es-CO', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    }
+  </script>
+</body>
+</html>

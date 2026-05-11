@@ -25,19 +25,21 @@ css/
   tokens.css                  ← variables CSS del design system
   componentes.css             ← estilos de botones, inputs, cards, badges, tablas
 js/
+  config.js                   ← URLs Supabase + GAS (públicas)
   supabase-client.js          ← init Supabase, auth helpers, fetch wrappers
   gas-client.js               ← helpers para llamar servicios GAS
-  componentes/                ← JS reutilizable por componente (modal, stepper, tabs)
+  utils.js                    ← toasts, mensajes, validación, formato, helpers UI
 pages/
-  login.html
-  registro.html
-  firma.html
-  mi-expediente.html
-  dashboard.html
-  accesos.html
+  login.html                  ← inicio de sesión OTP
+  registro.html               ← auto-registro perfiles externos
+  firma.html                  ← firma standalone (link desde email)
+  mi-expediente.html          ← dashboard perfil externo
+  dashboard.html              ← panel miembro interno
+  accesos.html                ← gestión accesos (admin)
 supabase/
   migrations/001_schema.sql
-  migrations/002_datos_prueba.sql
+  migrations/002_seed.sql
+  migrations/003_rls_accesos.sql
 ```
 
 ---

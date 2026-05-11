@@ -151,18 +151,61 @@ Características: verificación permisos al cargar (redirect si no autorizado), 
 
 ## Migración 003 — RLS gestion_accesos
 
-Migración `003_rls_accesos.sql` creada (pendiente ejecutar en BD remota):
+Migración `003_rls_accesos.sql` ejecutada en BD remota (2026-05-11 via MCP execute_sql):
 - profiles SELECT: agregado `tiene_permiso('gestion_accesos')` — necesario para que Tab 1 y Tab 2 de accesos.html funcionen con gestion_accesos
 - profiles UPDATE: agregado `tiene_permiso('gestion_accesos')` — necesario para aprobar/rechazar perfiles
 
-Pendiente: ejecutar con `supabase db push` o SQL Editor en dashboard Supabase.
+## Página mi expediente — Implementada
 
-## Pendiente por construir
+| Archivo | Contenido |
+|---------|-----------|
+| pages/mi-expediente.html | Dashboard del perfil externo (beneficiario, aliado, contratista, proveedor) |
 
-| Prioridad | Componente | Archivos |
-|-----------|-----------|----------|
-| 1 | Mi expediente | pages/mi-expediente.html |
-| 2 | Dashboard | pages/dashboard.html |
+Flujo: verificar_sesion → obtener perfil (redirect miembro → dashboard) → Promise.all(tareas, documentos, consentimientos).
+
+Secciones:
+1. Perfil: nombre/razón social + badge tipo + badge estado + documento + email
+2. Progreso: stepper 4 pasos (Registro ✓, Consentimientos ✓/pendiente, Ubicación pendiente, Documentación pendiente)
+3. Tareas pendientes: lista con tipo, detalle, urgencia, fecha límite. Botón "Firmar" en tareas tipo consentimiento → /firma.html?token={tarea_id}
+4. Documentos: tabla con tipo, categoría, estado (badge semántico), fecha
+5. Consentimientos firmados: tabla con código, fecha, folio
+
+Características: queries con columnas específicas (no SELECT *), LIMIT 50, event delegation, CSP, accesibilidad (skip link, aria-labels, focus), responsive 480px, cerrar sesión.
+
+## Dashboard miembro — Implementado
+
+| Archivo | Contenido |
+|---------|-----------|
+| pages/dashboard.html | Panel del miembro interno con expedientes, tareas, firma |
+
+Flujo: verificar_sesion → profile + permisos (join PostgREST) → determinar modo vista → cargar expedientes + datos secundarios (Promise.all).
+
+Modos vista:
+- gestion_plataforma: todos los perfiles no-miembro activos
+- gestion_beneficiarios: beneficiarios + aliados asignados
+- gestion_proveedores: contratistas + proveedores asignados
+- Sin permisos: mensaje "Contacta al administrador"
+
+Secciones:
+1. Header: nombre + badges permisos + link accesos + cerrar sesion
+2. KPIs: perfiles asignados, tareas activas, docs pendientes revision
+3. Expedientes: tabla con nombre, tipo (badge), estado (badge), completitud por capas (C0/F/C1/C2), ultima actividad
+4. Tareas recientes: tabla con tipo, perfil, detalle, estado, fecha
+5. Modal "Nueva tarea": selector perfil, tipo, detalle, fecha limite, urgencia → INSERT tareas
+6. Modal "Solicitar firma": selector perfil (auto-fill email+doc), programa, C3-C7 obligatorios (C1+C2 disabled checked) → CREATE tarea consentimiento + notificar_email con link /firma.html?token={tarea_id}
+
+Caracteristicas: filtrado por permisos + asignaciones, batch query consentimientos para completitud, event delegation, CSP, accesibilidad, responsive 480px.
+
+## Todas las paginas construidas
+
+| Pagina | Archivo | Rol |
+|--------|---------|-----|
+| Login | pages/login.html | Todos |
+| Registro | pages/registro.html | Externos nuevos |
+| Firma standalone | pages/firma.html | Link desde email (sin sesion) |
+| Mi expediente | pages/mi-expediente.html | Perfiles externos autenticados |
+| Dashboard | pages/dashboard.html | Miembros internos |
+| Gestion accesos | pages/accesos.html | Miembros con gestion_accesos/plataforma |
 
 ## Preguntas arquitectónicas resueltas
 
