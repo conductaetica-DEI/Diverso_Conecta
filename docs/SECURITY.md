@@ -13,10 +13,15 @@ La seguridad está en Supabase (RLS) y GAS (validación), NO en el frontend. El 
 1. Email en login → JS consulta Supabase (profiles por email, estado activo)
 2. JS llama GAS OTP → genera código 6 dígitos → Gmail envía
 3. Usuario ingresa código → JS llama GAS verificarOTP
-4. Si OK → GAS retorna token_verificacion (válido 5 min)
-5. JS usa token_verificacion para operaciones que lo requieran (firma)
-6. JS crea sesión en Supabase Auth → JWT
+4. GAS verifica código → llama Supabase Auth Admin API (service_role):
+   - Busca auth user por email. Si no existe, lo crea (`admin.createUser`)
+   - Si es primer login: vincula `auth_user_id` al profile
+   - Genera `access_token` + `refresh_token` (`admin.generateLink` o token generation)
+   - Genera `token_verificacion` temporal (5 min) para firma
+5. GAS retorna `{ ok, access_token, refresh_token, token_verificacion }` al frontend (HTTPS)
+6. JS hace `supabase.auth.setSession({ access_token, refresh_token })` → sesión activa
 7. JWT se usa para todas las llamadas a Supabase REST → RLS filtra
+8. JS usa token_verificacion para operaciones que lo requieran (firma)
 
 ### Límites
 
@@ -69,6 +74,7 @@ La seguridad está en Supabase (RLS) y GAS (validación), NO en el frontend. El 
 | Supabase service_role key | GAS Script Properties | Solo GAS | ❌ NUNCA |
 | GAS API keys | GAS Script Properties | Solo GAS valida | ❌ NUNCA |
 | Token verificación OTP | Memoria temporal GAS | GAS OTP → GAS Firma | ❌ Transitorio (5 min) |
+| access_token + refresh_token | Transitan GAS → frontend (HTTPS) | Frontend (setSession) | ⚡ Transitorio (una vez, HTTPS) |
 
 ### Regla absoluta
 

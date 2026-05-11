@@ -60,7 +60,7 @@ Primer miembro = seed manual en Supabase con los 4 permisos. Usa panel de gesti�
 ```sql
 CREATE TABLE profiles (
   id               uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  auth_user_id     uuid REFERENCES auth.users,
+  auth_user_id     uuid REFERENCES auth.users,  -- NULL hasta primer login post-aprobación
   profile_type     text NOT NULL CHECK (profile_type IN ('beneficiario','aliado','contratista','proveedor','miembro')),
   nombre_completo  text,
   razon_social     text,
@@ -257,13 +257,18 @@ Verificar identidad por email. Código de 6 dígitos.
 | Endpoint | Parámetros | Retorna |
 |----------|-----------|---------|
 | solicitarOTP | email, nombre, empresa (si aplica) | { ok: true } |
-| verificarOTP | email, codigo | { ok: true, token_verificacion: "..." } |
+| verificarOTP | email, codigo | { ok: true, access_token, refresh_token, token_verificacion } |
 | notificarEmail | destinatario, asunto, cuerpo | { ok: true } |
 
 - Rate limit: 3 solicitudes/10 min por email
 - Máx 5 intentos de verificación
 - TTL: 10 minutos
-- Al verificar exitosamente, genera `token_verificacion` temporal (5 min) que GAS Firma requiere
+- Al verificar exitosamente:
+  1. Busca auth user en Supabase por email. Si no existe, lo crea vía Auth Admin API (service_role)
+  2. En primer login: vincula `auth_user_id` al profile
+  3. Genera `access_token` + `refresh_token` vía Auth Admin API
+  4. Genera `token_verificacion` temporal (5 min) que GAS Firma requiere
+  5. Retorna los 3 tokens al frontend
 - El email de OTP incluye contexto: "Código de verificación para [nombre]" (persona natural) o "Código de verificación para [nombre] en representación de [empresa]" (persona jurídica)
 - Referencia: `gas/otp/referencia-corex.gs`
 
@@ -416,7 +421,7 @@ DiversoLab_Expedientes/
 4. Ve los 7 consentimientos, marca los que acepta (C1+C2 obligatorios)
 5. Solicita OTP → verifica
 6. Frontend llama GAS Firma con token_verificacion
-7. Frontend crea perfil en Supabase (estado: pendiente)
+7. Frontend crea perfil en Supabase (estado: pendiente, auth_user_id: null)
 8. Confirmación: "Tu solicitud fue recibida"
 9. Miembro con gestion_accesos aprueba → GAS Drive crea carpeta → estado: activo
 
@@ -427,9 +432,11 @@ DiversoLab_Expedientes/
 3. Frontend consulta Supabase (profiles por email, estado)
 4. Si no existe o inactivo → error amigable
 5. Si activo → solicita OTP via GAS
-6. Usuario ingresa código → frontend verifica via GAS
-7. Frontend crea sesión en Supabase Auth → JWT
-8. Redirect según profile_type (miembro → /dashboard, externo → /mi-expediente)
+6. Usuario ingresa código → frontend llama GAS verificarOTP
+7. GAS verifica OTP → busca/crea auth user (service_role) → si es primer login vincula auth_user_id al profile → genera tokens
+8. GAS retorna { ok, access_token, refresh_token, token_verificacion }
+9. Frontend hace `supabase.auth.setSession({ access_token, refresh_token })` → sesión activa con JWT
+10. Redirect según profile_type (miembro → /dashboard, externo → /mi-expediente)
 
 ### Firma solicitada por analista
 

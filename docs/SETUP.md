@@ -84,7 +84,7 @@ INSERT INTO permisos_miembro (perfil_id, permiso) VALUES
 2. Agregar:
    - `API_KEY`: generar string aleatorio de 32+ caracteres (usar `openssl rand -hex 32`)
    - `SUPABASE_URL`: el URL del proyecto Supabase
-   - `SUPABASE_SERVICE_ROLE_KEY`: la service_role key de Supabase
+   - `SUPABASE_SERVICE_ROLE_KEY`: la service_role key de Supabase (necesaria para crear auth users y generar sesiones)
 
 ### Probar
 
@@ -199,7 +199,7 @@ var CONFIG = {
 
 **NOTA**: Las API keys de GAS NO van aquí. Van hardcodeadas en `gas-client.js` como variable. Aunque el código es público en GitHub Pages, las API keys de GAS protegen contra uso desde otros dominios. Si esto preocupa, considerar que la verdadera seguridad está en Supabase RLS — GAS es la segunda línea, no la única.
 
-Alternativa más segura: no poner GAS API keys en el frontend. En vez de llamar directo a GAS, hacer que el frontend llame a una Supabase Edge Function que actúe como proxy a GAS con la API key en el servidor. Esto agrega complejidad pero elimina keys del frontend. Evaluar si es necesario para el volumen actual.
+Las GAS API keys van en `gas-client.js`. La seguridad real está en Supabase RLS + validación interna de GAS, no en ocultar keys.
 
 ---
 
