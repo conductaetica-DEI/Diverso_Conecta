@@ -88,6 +88,17 @@ Seed `002_seed.sql` ejecutado: 8 profiles, 7 permisos, 4 asignaciones, 2 tareas.
 
 Cero colores hardcodeados en componentes. Variantes generadas con color-mix(in srgb).
 
+## Clientes JS — Implementados
+
+| Archivo | Contenido |
+|---------|-----------|
+| js/config.js | CONFIG con SUPABASE_URL, SUPABASE_ANON_KEY (placeholder), 3 URLs GAS (reales) |
+| js/supabase-client.js | iniciar_supabase, obtener_sesion, verificar_sesion, supabase_fetch (retry 401 + refresh), cerrar_sesion |
+| js/gas-client.js | gas_fetch, solicitar_otp, verificar_otp, firmar_consentimientos, verificar_firma, crear_carpeta |
+| js/utils.js | mostrar_error/exito (toast), mensaje_usuario (23 códigos), escapar_html, formatear_fecha, deshabilitar/habilitar_boton, validar_email/documento, obtener_ip |
+
+Pendiente: reemplazar SUPABASE_ANON_KEY y GAS_API_KEYS con valores reales.
+
 ## Documentación actualizada
 
 - ARCHITECTURE.md — verificarOTP retorna access_token + refresh_token + token_verificacion, flujo login con GAS→tokens→setSession, auth_user_id null hasta primer login
@@ -98,13 +109,12 @@ Cero colores hardcodeados en componentes. Variantes generadas con color-mix(in s
 
 | Prioridad | Componente | Archivos |
 |-----------|-----------|----------|
-| 1 | Clientes JS | js/config.js, js/supabase-client.js, js/gas-client.js |
-| 2 | Login | pages/login.html |
-| 3 | Registro | pages/registro.html |
-| 4 | Firma standalone | pages/firma.html |
-| 5 | Mi expediente | pages/mi-expediente.html |
-| 6 | Dashboard | pages/dashboard.html |
-| 7 | Gestión accesos | pages/accesos.html |
+| 1 | Login | pages/login.html |
+| 2 | Registro | pages/registro.html |
+| 3 | Firma standalone | pages/firma.html |
+| 4 | Mi expediente | pages/mi-expediente.html |
+| 5 | Dashboard | pages/dashboard.html |
+| 6 | Gestión accesos | pages/accesos.html |
 
 ## Preguntas arquitectónicas resueltas
 
