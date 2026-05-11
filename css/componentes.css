@@ -29,7 +29,6 @@ body {
 .marca-barra-aqua { background-color: var(--color-aqua); flex: 1; }
 .marca-barra-coral { background-color: var(--color-coral); flex: 1; }
 .marca-barra-lavanda { background-color: var(--color-lavanda); flex: 1; }
-.marca-barra-violeta { background-color: var(--color-violeta); flex: 1; }
 
 /* --- Focus visible global --- */
 
@@ -719,7 +718,7 @@ body {
 }
 
 .encabezado-logo {
-  max-height: 48px;
+  max-height: 64px;
   display: block;
 }
 
@@ -765,7 +764,7 @@ body {
 
 @media (max-width: 480px) {
   .encabezado-logo {
-    max-height: 36px;
+    max-height: 48px;
   }
 
   .encabezado-titulo {
