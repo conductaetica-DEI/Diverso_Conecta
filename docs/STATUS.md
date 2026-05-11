@@ -77,7 +77,7 @@ Migración `001_schema.sql` ejecutada en BD remota:
 - Trigger updated_at en profiles
 - consentimientos y logs_actividad: sin UPDATE ni DELETE (inmutables)
 
-Pendiente: seed de datos de prueba (002_datos_prueba.sql).
+Seed `002_seed.sql` ejecutado: 8 profiles, 7 permisos, 4 asignaciones, 2 tareas.
 
 ## Documentación actualizada
 
@@ -89,15 +89,14 @@ Pendiente: seed de datos de prueba (002_datos_prueba.sql).
 
 | Prioridad | Componente | Archivos |
 |-----------|-----------|----------|
-| 1 | Seed datos prueba | supabase/migrations/002_datos_prueba.sql |
-| 2 | Design system CSS | css/tokens.css, css/componentes.css |
-| 3 | Clientes JS | js/config.js, js/supabase-client.js, js/gas-client.js |
-| 4 | Login | pages/login.html |
-| 5 | Registro | pages/registro.html |
-| 6 | Firma standalone | pages/firma.html |
-| 7 | Mi expediente | pages/mi-expediente.html |
-| 8 | Dashboard | pages/dashboard.html |
-| 9 | Gestión accesos | pages/accesos.html |
+| 1 | Design system CSS | css/tokens.css, css/componentes.css |
+| 2 | Clientes JS | js/config.js, js/supabase-client.js, js/gas-client.js |
+| 3 | Login | pages/login.html |
+| 4 | Registro | pages/registro.html |
+| 5 | Firma standalone | pages/firma.html |
+| 6 | Mi expediente | pages/mi-expediente.html |
+| 7 | Dashboard | pages/dashboard.html |
+| 8 | Gestión accesos | pages/accesos.html |
 
 ## Preguntas arquitectónicas resueltas
 
