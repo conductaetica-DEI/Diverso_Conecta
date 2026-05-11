@@ -14,19 +14,19 @@
       align-items: center;
       justify-content: center;
       background: var(--color-crema);
-      padding: var(--space-lg);
+      padding: var(--spacing-lg);
     }
 
     .index-header {
       text-align: center;
-      margin-bottom: var(--space-xl);
+      margin-bottom: var(--spacing-xl);
     }
 
     .index-header h1 {
       font-family: var(--font-titulos);
       color: var(--color-violeta);
       font-size: var(--text-2xl);
-      margin: 0 0 var(--space-xs);
+      margin: 0 0 var(--spacing-xs);
     }
 
     .index-header p {
@@ -38,7 +38,7 @@
     .index-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: var(--space-md);
+      gap: var(--spacing-md);
       max-width: 860px;
       width: 100%;
     }
@@ -51,10 +51,10 @@
 
     .index-card:hover {
       transform: translateY(-2px);
-      box-shadow: var(--sombra-elevada);
+      box-shadow: var(--shadow-md);
     }
 
-    .index-card .card {
+    .index-card .tarjeta {
       height: 100%;
     }
 
@@ -62,21 +62,17 @@
       font-family: var(--font-titulos);
       font-size: var(--text-lg);
       color: var(--color-violeta);
-      margin: 0 0 var(--space-xs);
+      margin: 0 0 var(--spacing-xs);
     }
 
     .index-card p {
       font-size: var(--text-sm);
       color: var(--color-texto-muted);
-      margin: 0 0 var(--space-sm);
-    }
-
-    .index-card .badge {
-      font-size: var(--text-xs);
+      margin: 0 0 var(--spacing-sm);
     }
 
     .index-footer {
-      margin-top: var(--space-xl);
+      margin-top: var(--spacing-xl);
       text-align: center;
       color: var(--color-texto-muted);
       font-size: var(--text-xs);
@@ -91,50 +87,50 @@
 
   <div class="index-grid">
     <a href="pages/login.html" class="index-card">
-      <div class="card">
+      <div class="tarjeta">
         <h2>Login</h2>
         <p>Inicio de sesión con OTP por email</p>
-        <span class="badge badge--neutro">Todos</span>
+        <span class="insignia insignia-neutra">Todos</span>
       </div>
     </a>
 
     <a href="pages/registro.html" class="index-card">
-      <div class="card">
+      <div class="tarjeta">
         <h2>Registro</h2>
         <p>Auto-registro para perfiles externos (beneficiario, aliado, contratista, proveedor)</p>
-        <span class="badge badge--neutro">Sin sesión</span>
+        <span class="insignia insignia-neutra">Sin sesión</span>
       </div>
     </a>
 
     <a href="pages/firma.html" class="index-card">
-      <div class="card">
+      <div class="tarjeta">
         <h2>Firma standalone</h2>
         <p>Firma de consentimientos desde link en email. Requiere ?token={tarea_id}</p>
-        <span class="badge badge--neutro">Sin sesión</span>
+        <span class="insignia insignia-neutra">Sin sesión</span>
       </div>
     </a>
 
     <a href="pages/mi-expediente.html" class="index-card">
-      <div class="card">
+      <div class="tarjeta">
         <h2>Mi expediente</h2>
         <p>Dashboard del perfil externo: tareas, documentos, consentimientos</p>
-        <span class="badge badge--exito">Perfil externo</span>
+        <span class="insignia insignia-exito">Perfil externo</span>
       </div>
     </a>
 
     <a href="pages/dashboard.html" class="index-card">
-      <div class="card">
+      <div class="tarjeta">
         <h2>Dashboard</h2>
         <p>Panel del miembro interno: expedientes, tareas, solicitar firma</p>
-        <span class="badge badge--progreso">Miembro</span>
+        <span class="insignia insignia-progreso">Miembro</span>
       </div>
     </a>
 
     <a href="pages/accesos.html" class="index-card">
-      <div class="card">
+      <div class="tarjeta">
         <h2>Gestión accesos</h2>
         <p>Perfiles pendientes, miembros del equipo, asignaciones</p>
-        <span class="badge badge--alerta">Admin</span>
+        <span class="insignia insignia-alerta">Admin</span>
       </div>
     </a>
   </div>
