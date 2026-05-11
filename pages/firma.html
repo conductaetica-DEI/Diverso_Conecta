@@ -404,7 +404,7 @@
         document.getElementById('firmante-telefono-empresa').textContent = f.telefono || '';
         document.getElementById('firmante-nombre-rep').textContent = f.nombre || '';
         document.getElementById('firmante-apellido-rep').textContent = f.apellido || '';
-        document.getElementById('firmante-doc-rep').textContent = f.tipo_documento + ' ' + f.numero_documento;
+        document.getElementById('firmante-doc-rep').textContent = formatear_tipo_documento(f.tipo_documento) + ' ' + f.numero_documento;
 
         if (f.cargo) {
           document.getElementById('firmante-cargo-rep').textContent = f.cargo;
@@ -417,7 +417,7 @@
         document.getElementById('resumen-juridica').hidden = true;
         document.getElementById('firmante-nombre').textContent = f.nombre || '';
         document.getElementById('firmante-apellido').textContent = f.apellido || '';
-        document.getElementById('firmante-documento').textContent = f.tipo_documento + ' ' + f.numero_documento;
+        document.getElementById('firmante-documento').textContent = formatear_tipo_documento(f.tipo_documento) + ' ' + f.numero_documento;
         document.getElementById('firmante-email').textContent = f.email || '';
       }
 
@@ -468,18 +468,21 @@
 
         html += '<div class="consentimiento" data-codigo="' + c.codigo + '">' +
           '<div class="consentimiento-cabecera">' +
-          '<input type="checkbox" id="check-' + id + '" class="consentimiento-check"' +
-          ' data-codigo="' + c.codigo + '"' +
-          ' data-obligatorio="' + (es_obligatorio ? 'true' : 'false') + '"' +
-          ' aria-describedby="detalle-' + id + '">' +
-          '<label for="check-' + id + '" class="consentimiento-titulo-texto">' +
-          escapar_html(c.codigo + ' — ' + c.titulo) + '</label>' +
+          '<span class="consentimiento-titulo-texto">' +
+          escapar_html(c.codigo + ' — ' + c.titulo) + '</span>' +
           '<span class="insignia ' + (es_obligatorio ? 'insignia-alerta' : 'insignia-neutra') + '">' +
           (es_obligatorio ? 'OBLIGATORIO' : 'VOLUNTARIO') + '</span>' +
           '</div>' +
           '<div id="detalle-' + id + '" class="consentimiento-detalle">' +
           '<p class="consentimiento-ref">' + escapar_html(c.referencia) + '</p>' +
           c.texto_html +
+          '<div class="consentimiento-aceptacion">' +
+          '<input type="checkbox" id="check-' + id + '" class="consentimiento-check"' +
+          ' data-codigo="' + c.codigo + '"' +
+          ' data-obligatorio="' + (es_obligatorio ? 'true' : 'false') + '"' +
+          ' aria-describedby="detalle-' + id + '">' +
+          '<label for="check-' + id + '">Leí y acepto</label>' +
+          '</div>' +
           '</div></div>';
       }
 

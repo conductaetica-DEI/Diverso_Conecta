@@ -134,6 +134,22 @@ function validar_documento(tipo, numero) {
   return limpio.length >= 5;
 }
 
+// --- Tipo de documento ---
+
+var TIPOS_DOCUMENTO = {
+  'CC': 'Cédula de Ciudadanía',
+  'CE': 'Cédula de Extranjería',
+  'NIT': 'NIT',
+  'PA': 'Pasaporte',
+  'PEP': 'Permiso Especial de Permanencia',
+  'PPT': 'Permiso por Protección Temporal',
+  'TI': 'Tarjeta de Identidad'
+};
+
+function formatear_tipo_documento(sigla) {
+  return TIPOS_DOCUMENTO[sigla] || sigla;
+}
+
 // --- IP del cliente ---
 
 async function obtener_ip() {

@@ -726,13 +726,13 @@
         document.getElementById('resumen-nombre-firmante').textContent = document.getElementById('campo-nombre-firmante').value.trim();
         document.getElementById('resumen-apellido-firmante').textContent = document.getElementById('campo-apellido-firmante').value.trim();
         document.getElementById('resumen-cargo').textContent = document.getElementById('campo-cargo').value.trim();
-        document.getElementById('resumen-doc-firmante').textContent = document.getElementById('campo-tipo-doc-firmante').value + ' ' + document.getElementById('campo-num-doc-firmante').value.trim();
+        document.getElementById('resumen-doc-firmante').textContent = formatear_tipo_documento(document.getElementById('campo-tipo-doc-firmante').value) + ' ' + document.getElementById('campo-num-doc-firmante').value.trim();
       } else {
         document.getElementById('resumen-natural').hidden = false;
         document.getElementById('resumen-juridica').hidden = true;
         document.getElementById('resumen-nombre').textContent = document.getElementById('campo-nombre').value.trim();
         document.getElementById('resumen-apellido').textContent = document.getElementById('campo-apellido').value.trim();
-        document.getElementById('resumen-documento').textContent = document.getElementById('campo-tipo-doc').value + ' ' + document.getElementById('campo-num-doc').value.trim();
+        document.getElementById('resumen-documento').textContent = formatear_tipo_documento(document.getElementById('campo-tipo-doc').value) + ' ' + document.getElementById('campo-num-doc').value.trim();
         document.getElementById('resumen-email').textContent = obtener_email();
         document.getElementById('resumen-telefono').textContent = document.getElementById('campo-telefono').value.trim();
       }
@@ -774,18 +774,21 @@
 
         html += '<div class="consentimiento" data-codigo="' + c.codigo + '">' +
           '<div class="consentimiento-cabecera">' +
-          '<input type="checkbox" id="check-' + id + '" class="consentimiento-check"' +
-          ' data-codigo="' + c.codigo + '"' +
-          ' data-obligatorio="' + (es_obligatorio ? 'true' : 'false') + '"' +
-          ' aria-describedby="detalle-' + id + '">' +
-          '<label for="check-' + id + '" class="consentimiento-titulo-texto">' +
-          escapar_html(c.codigo + ' — ' + c.titulo) + '</label>' +
+          '<span class="consentimiento-titulo-texto">' +
+          escapar_html(c.codigo + ' — ' + c.titulo) + '</span>' +
           '<span class="insignia ' + (es_obligatorio ? 'insignia-alerta' : 'insignia-neutra') + '">' +
           (es_obligatorio ? 'OBLIGATORIO' : 'VOLUNTARIO') + '</span>' +
           '</div>' +
           '<div id="detalle-' + id + '" class="consentimiento-detalle">' +
           '<p class="consentimiento-ref">' + escapar_html(c.referencia) + '</p>' +
           c.texto_html +
+          '<div class="consentimiento-aceptacion">' +
+          '<input type="checkbox" id="check-' + id + '" class="consentimiento-check"' +
+          ' data-codigo="' + c.codigo + '"' +
+          ' data-obligatorio="' + (es_obligatorio ? 'true' : 'false') + '"' +
+          ' aria-describedby="detalle-' + id + '">' +
+          '<label for="check-' + id + '">Leí y acepto</label>' +
+          '</div>' +
           '</div></div>';
       }
 
