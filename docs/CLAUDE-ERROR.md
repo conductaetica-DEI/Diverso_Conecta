@@ -200,4 +200,6 @@ Registro de errores cometidos por Claude durante el desarrollo. Propósito: evit
 
 **Qué debí hacer:** Leer VISTAS-FIRMA.md antes de implementar y seguir el mockup exacto: título + badge en cabecera, texto del consentimiento en el cuerpo, y `☐ Leí y acepto` al final. El diseño ya resolvía el cumplimiento de Ley 1581/2012 — solo había que implementarlo.
 
-**Regla violada:** Regla de oro: "Si un patrón ya existe en otro archivo, cópialo exacto." VISTAS-FIRMA.md es el diseño aprobado. Riesgo legal: sin label "Leí y acepto", el acto de marcar el checkbox no constituye declaración expresa de consentimiento.
+**Regla violada:** Regla de oro: "Si un patrón ya existe en otro archivo, cópialo exacto." VISTAS-FIRMA.md es el diseño aprobado.
+
+**Riesgo al que expuso al usuario:** La Ley 1581 de 2012 y el Decreto 1377 de 2013 exigen que el consentimiento sea previo, expreso e informado. Un checkbox con label "C1 — General obligatorio" en la cabecera (antes del texto) no demuestra que el titular leyó el contenido ni que aceptó expresamente. En caso de auditoría de la SIC o reclamación de un titular, DiversoLab no podría demostrar que el consentimiento fue informado (el checkbox estaba antes del texto) ni expreso (el label no declaraba aceptación). Todos los consentimientos firmados con esa implementación serían jurídicamente cuestionables y podrían resultar en sanciones.
