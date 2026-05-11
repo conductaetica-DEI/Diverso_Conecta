@@ -16,6 +16,20 @@ body {
   line-height: 1.5;
 }
 
+/* --- Brand stripe --- */
+
+.marca-barra {
+  display: flex;
+  height: 4px;
+  width: 100%;
+}
+
+.marca-barra-sol { background-color: var(--color-sol); flex: 1; }
+.marca-barra-aqua { background-color: var(--color-aqua); flex: 1; }
+.marca-barra-coral { background-color: var(--color-coral); flex: 1; }
+.marca-barra-lavanda { background-color: var(--color-lavanda); flex: 1; }
+.marca-barra-violeta { background-color: var(--color-violeta); flex: 1; }
+
 /* --- Focus visible global --- */
 
 :focus-visible {
@@ -194,6 +208,11 @@ body {
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
   padding: var(--spacing-lg);
+  transition: box-shadow 0.2s;
+}
+
+.tarjeta:hover {
+  box-shadow: var(--shadow-md);
 }
 
 .tarjeta-exito {
@@ -224,6 +243,7 @@ body {
   padding: 2px 8px;
   border-radius: var(--radius-sm);
   white-space: nowrap;
+  transition: background-color 0.2s;
 }
 
 .insignia-exito {
@@ -437,6 +457,12 @@ body {
   margin-bottom: var(--spacing-sm);
   overflow: hidden;
   background-color: white;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.consentimiento:hover {
+  border-color: var(--color-violeta);
 }
 
 .consentimiento-cabecera {
