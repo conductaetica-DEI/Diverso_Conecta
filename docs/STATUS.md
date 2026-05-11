@@ -9,8 +9,8 @@
 | Servicio | Estado | Detalle |
 |----------|--------|---------|
 | Supabase | Migrado | Proyecto `nrqmnaktnpcgqrqpoksi`, 7 tablas + RLS, CLI local en `supabase/` |
-| GAS OTP | Desplegado | Script `13lSaw-...`, deployment v1.2 funcionando (GET OK) |
-| GAS Firma | Desplegado | Script `16yZGc-...`, deployment v1.1 funcionando (GET OK) |
+| GAS OTP | Desplegado | Script `13lSaw-...`, deployment v1.6 @7 funcionando (GET OK) |
+| GAS Firma | Desplegado | Script `16yZGc-...`, deployment v1.7 @10 funcionando (GET OK) |
 | GAS Drive | Desplegado | Script `1pMbDQ-...`, deployment v1.0 funcionando (GET OK) |
 
 ## GAS OTP — Servicio implementado
@@ -20,10 +20,10 @@
 | appsscript.json | Timezone Bogotá, webapp ANYONE_ANONYMOUS |
 | Codigo.gs | Router: doPost (acciones públicas: solicitarOTP, verificarOTP; protegidas: verificarTokenVerificacion, notificarEmail), doGet, respuesta_json |
 | Auth.gs | verificar_jwt (valida contra Supabase Auth API), autenticar (JWT o api_key) |
-| Otp.gs | solicitarOTP, verificarOTP, verificarTokenVerificacion, generar_token_verificacion |
-| Email.gs | enviar_otp_email, notificarEmail, generar_html_otp, escapar_html |
+| Otp.gs | solicitarOTP, verificarOTP, verificarTokenVerificacion, generar_token_verificacion — usa CacheService (no ScriptProperties) para datos efímeros con TTL |
+| Email.gs | enviar_otp_email, notificarEmail, generar_html_otp, escapar_html — replyTo via EMAIL_REPLY_TO property |
 
-Script Properties configuradas: API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY.
+Script Properties configuradas: API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, EMAIL_REPLY_TO.
 
 Pendiente: pruebas con POST real (requiere API_KEY).
 
@@ -39,8 +39,8 @@ Pendiente: pruebas con POST real (requiere API_KEY).
 | Pdf.gs | generar_pdf_constancia, construir_encabezado/datos/tabla/evidencia, anexos legales (F-DATO-01, SICE-POL-01), estilos |
 | Supabase.gs | insertar_consentimientos, consultar_por_folio, registrar_log, obtener_carpeta_perfil, consultar_tarea_firma, completar_tarea, consultar_perfil |
 
-Script Properties configuradas (9):
-- API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
+Script Properties configuradas (10):
+- API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, EMAIL_REPLY_TO
 - OTP_URL, OTP_API_KEY (inter-servicio con GAS OTP)
 - DRIVE_CARPETA_FIRMAS, FOLIO_PREFIJO (DL)
 - DOC_ID_FDATO01, DOC_ID_SICEPOL01 (Google Docs con documentos legales completos)
@@ -80,7 +80,7 @@ Migración `001_schema.sql` ejecutada en BD remota:
 - Trigger updated_at en profiles
 - consentimientos y logs_actividad: sin UPDATE ni DELETE (inmutables)
 
-Seed `002_seed.sql` ejecutado: 8 profiles, 7 permisos, 4 asignaciones, 2 tareas.
+Seed `002_seed.sql` ejecutado: 1 profile (Super Admin admin@diversolab.org), 4 permisos. Datos de prueba se crean desde la UI (registro + accesos).
 
 ## Design system CSS — Implementado
 
@@ -224,6 +224,6 @@ Caracteristicas: filtrado por permisos + asignaciones, batch query consentimient
 
 1. Sesión Supabase Auth: GAS crea auth user y genera tokens con service_role, frontend hace setSession()
 2. auth_user_id: null hasta primer login post-aprobación
-3. GAS API keys: directo en frontend para esta fase
-4. referencia-corex.gs: existe en docs/ como referencia
+3. GAS API keys: frontend envía JWT de sesión Supabase (no API keys). API keys solo para server-to-server GAS↔GAS
+4. referencia-corex.gs: existe en `docs/referencia-corex.gs` como referencia (actualizado: CacheService en vez de ScriptProperties)
 5. Monday.com: futuro, no entra en esta fase

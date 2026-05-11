@@ -2,6 +2,10 @@
 // REFERENCIA — Código OTP de CoreX
 // Adaptar para DiversoLab: cambiar branding,
 // API key property, agregar token_verificacion
+//
+// NOTA: datos efímeros (OTP, rate limit) usan
+// CacheService (TTL automático), NO ScriptProperties.
+// ScriptProperties solo para configuración permanente.
 // ============================================
 
 // --- appsscript.json ---
@@ -65,43 +69,43 @@ function doGet() {
 // --- otp.gs ---
 
 var OTP_MAX_SOLICITUDES = 3;
-var OTP_VENTANA_MS = 10 * 60 * 1000;
+var OTP_VENTANA_SEG = 600;
 var OTP_MAX_INTENTOS = 5;
-var OTP_TTL_MS = 10 * 60 * 1000;
+var OTP_TTL_SEG = 600;
 
 function solicitarOTP(email, nombre) {
   if (!email) return { ok: false, error: 'EMAIL_REQUERIDO' };
 
-  var props = PropertiesService.getScriptProperties();
+  var cache = CacheService.getScriptCache();
   var key = 'otp_' + email;
   var rateKey = 'rate_' + email;
 
   // Rate limit
-  var rateData = props.getProperty(rateKey);
+  var rateData = cache.get(rateKey);
   var ahora = Date.now();
   if (rateData) {
     var rate = JSON.parse(rateData);
     var solicitudesEnVentana = rate.timestamps.filter(function(t) {
-      return (ahora - t) < OTP_VENTANA_MS;
+      return (ahora - t) < (OTP_VENTANA_SEG * 1000);
     });
     if (solicitudesEnVentana.length >= OTP_MAX_SOLICITUDES) {
       return { ok: false, error: 'OTP_RATE_LIMIT' };
     }
     solicitudesEnVentana.push(ahora);
-    props.setProperty(rateKey, JSON.stringify({ timestamps: solicitudesEnVentana }));
+    cache.put(rateKey, JSON.stringify({ timestamps: solicitudesEnVentana }), OTP_VENTANA_SEG);
   } else {
-    props.setProperty(rateKey, JSON.stringify({ timestamps: [ahora] }));
+    cache.put(rateKey, JSON.stringify({ timestamps: [ahora] }), OTP_VENTANA_SEG);
   }
 
   // Generar código
   var codigo = String(Math.floor(100000 + Math.random() * 900000));
 
-  // Almacenar
-  props.setProperty(key, JSON.stringify({
+  // Almacenar con TTL
+  cache.put(key, JSON.stringify({
     codigo: codigo,
     creado: ahora,
     intentos: 0
-  }));
+  }), OTP_TTL_SEG);
 
   // Enviar email
   try {
@@ -116,7 +120,7 @@ function solicitarOTP(email, nombre) {
             '---\ncorex'
     });
   } catch (err) {
-    props.deleteProperty(key);
+    cache.remove(key);
     return { ok: false, error: 'OTP_ENVIO_FALLIDO', detalle: err.message };
   }
 
@@ -126,9 +130,9 @@ function solicitarOTP(email, nombre) {
 function verificarOTP(email, codigo) {
   if (!email || !codigo) return { ok: false, error: 'DATOS_REQUERIDOS' };
 
-  var props = PropertiesService.getScriptProperties();
+  var cache = CacheService.getScriptCache();
   var key = 'otp_' + email;
-  var data = props.getProperty(key);
+  var data = cache.get(key);
 
   if (!data) return { ok: false, error: 'OTP_EXPIRADO' };
 
@@ -136,21 +140,21 @@ function verificarOTP(email, codigo) {
   var ahora = Date.now();
 
   // Expirado
-  if ((ahora - otp.creado) > OTP_TTL_MS) {
-    props.deleteProperty(key);
+  if ((ahora - otp.creado) > (OTP_TTL_SEG * 1000)) {
+    cache.remove(key);
     return { ok: false, error: 'OTP_EXPIRADO' };
   }
 
   // Bloqueado por intentos
   if (otp.intentos >= OTP_MAX_INTENTOS) {
-    props.deleteProperty(key);
+    cache.remove(key);
     return { ok: false, error: 'OTP_BLOQUEADO' };
   }
 
   // Verificar código
   if (String(codigo).trim() !== String(otp.codigo).trim()) {
     otp.intentos++;
-    props.setProperty(key, JSON.stringify(otp));
+    cache.put(key, JSON.stringify(otp), OTP_TTL_SEG);
     if (otp.intentos >= OTP_MAX_INTENTOS) {
       return { ok: false, error: 'OTP_BLOQUEADO' };
     }
@@ -158,7 +162,7 @@ function verificarOTP(email, codigo) {
   }
 
   // Éxito: limpiar
-  props.deleteProperty(key);
+  cache.remove(key);
   return { ok: true };
 }
 

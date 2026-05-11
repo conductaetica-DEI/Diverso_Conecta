@@ -271,7 +271,7 @@ Verificar identidad por email. Código de 6 dígitos.
   4. Genera `token_verificacion` temporal (5 min) que GAS Firma requiere
   5. Retorna los 3 tokens al frontend
 - El email de OTP incluye contexto: "Código de verificación para [nombre]" (persona natural) o "Código de verificación para [nombre] en representación de [empresa]" (persona jurídica)
-- Referencia: `gas/otp/referencia-corex.gs`
+- Referencia: `docs/referencia-corex.gs`
 
 ### GAS Firma (`gas/firma/`)
 

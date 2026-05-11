@@ -23,44 +23,6 @@
       flex-direction: column;
     }
 
-    .expediente-encabezado {
-      background-color: var(--color-violeta);
-      color: white;
-      padding: var(--spacing-lg) var(--spacing-xl);
-    }
-
-    .expediente-encabezado-contenido {
-      max-width: 960px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .expediente-encabezado h1 {
-      font-family: var(--font-titulos);
-      font-weight: 900;
-      font-size: var(--text-2xl);
-    }
-
-    .expediente-encabezado p {
-      font-family: var(--font-cuerpo);
-      font-size: var(--text-sm);
-      color: var(--color-sol);
-      margin-top: var(--spacing-xs);
-    }
-
-    .expediente-btn-salir {
-      color: white;
-      border: 1px solid color-mix(in srgb, white 40%, transparent);
-      font-size: var(--text-sm);
-      padding: var(--spacing-xs) var(--spacing-md);
-    }
-
-    .expediente-btn-salir:hover {
-      background-color: color-mix(in srgb, white 15%, transparent);
-    }
-
     .expediente-contenedor {
       max-width: 960px;
       margin: 0 auto;
@@ -288,12 +250,6 @@
         padding: var(--spacing-md) var(--spacing-sm);
       }
 
-      .expediente-encabezado-contenido {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--spacing-sm);
-      }
-
       .perfil-cabecera {
         flex-direction: column;
       }
@@ -314,17 +270,16 @@
   <a href="#contenido-principal" class="saltar-contenido">Ir al contenido principal</a>
   <div class="marca-barra" aria-hidden="true"><span class="marca-barra-sol"></span><span class="marca-barra-aqua"></span><span class="marca-barra-coral"></span><span class="marca-barra-lavanda"></span><span class="marca-barra-violeta"></span></div>
 
-  <header class="expediente-encabezado">
-    <div class="expediente-encabezado-contenido">
-      <div>
-        <h1>Mi expediente</h1>
-        <p id="encabezado-subtitulo">Cargando...</p>
-      </div>
-      <button type="button" id="btn-cerrar-sesion" class="btn-ghost expediente-btn-salir">Cerrar sesion</button>
+  <header class="encabezado-app">
+    <div class="encabezado-app-izquierda">
+      <img src="../DiversoLab_Logo.gif" alt="DiversoLab" class="encabezado-logo">
+      <span class="encabezado-titulo">Mi expediente</span>
     </div>
+    <button type="button" id="btn-cerrar-sesion" class="encabezado-btn-salir">Cerrar sesión</button>
   </header>
 
   <main id="contenido-principal" class="expediente-contenedor">
+    <p id="encabezado-subtitulo" class="cargando-texto" style="font-size:var(--text-sm);color:var(--color-texto-muted);margin-bottom:0">Cargando...</p>
 
     <section class="tarjeta" id="seccion-perfil" aria-label="Datos del perfil">
       <div id="contenido-perfil">
@@ -363,7 +318,7 @@
   </main>
 
   <footer class="expediente-pie">
-    <p>DiversoLab &mdash; Inclusion social de personas con discapacidad</p>
+    <p>DiversoLab &mdash; Transformación desde el Potencial Humano Diverso</p>
     <p><a href="https://diversolab.org/politica" target="_blank" rel="noopener">Politica de proteccion de datos</a></p>
   </footer>
 

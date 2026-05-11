@@ -20,9 +20,8 @@ body {
 
 .marca-barra {
   display: flex;
-  height: 4px;
+  height: 8px;
   width: 100%;
-  padding-block: 2px;
   background-color: var(--color-crema);
 }
 
@@ -699,6 +698,55 @@ body {
   color: var(--color-texto);
 }
 
+/* --- Header app --- */
+
+.encabezado-app {
+  background-color: var(--color-violeta);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-bottom: 3px solid var(--color-sol);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.encabezado-app-izquierda {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.encabezado-logo {
+  max-height: 48px;
+  display: block;
+}
+
+.encabezado-titulo {
+  font-family: var(--font-titulos);
+  font-weight: 700;
+  font-size: var(--text-lg);
+  color: white;
+}
+
+.encabezado-btn-salir {
+  color: white;
+  border: 1px solid color-mix(in srgb, white 40%, transparent);
+  background: transparent;
+  font-family: var(--font-titulos);
+  font-weight: 700;
+  font-size: var(--text-sm);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.encabezado-btn-salir:hover {
+  background-color: color-mix(in srgb, white 10%, transparent);
+}
+
 /* --- Utilidades --- */
 
 .sr-only {
@@ -716,6 +764,14 @@ body {
 /* --- Responsive: componentes compartidos --- */
 
 @media (max-width: 480px) {
+  .encabezado-logo {
+    max-height: 36px;
+  }
+
+  .encabezado-titulo {
+    font-size: var(--text-base);
+  }
+
   .otp-digito {
     width: 40px;
     height: 48px;
