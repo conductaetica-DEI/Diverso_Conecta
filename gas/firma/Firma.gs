@@ -125,6 +125,62 @@ function verificarFirma(folio) {
   };
 }
 
+function obtener_datos_firma(token) {
+  if (!token) return { ok: false, error: 'DATOS_REQUERIDOS' };
+
+  var tarea = consultar_tarea_firma(token);
+  if (!tarea) {
+    return { ok: false, error: 'TAREA_NO_ENCONTRADA' };
+  }
+
+  if (tarea.estado !== 'pendiente') {
+    return { ok: false, error: 'TAREA_YA_COMPLETADA' };
+  }
+
+  if (tarea.tipo_tarea !== 'consentimiento') {
+    return { ok: false, error: 'TAREA_NO_ES_CONSENTIMIENTO' };
+  }
+
+  var perfil = consultar_perfil(tarea.perfil_id);
+  if (!perfil) {
+    return { ok: false, error: 'PERFIL_NO_ENCONTRADO' };
+  }
+
+  var config = {};
+  try {
+    config = JSON.parse(tarea.detalle);
+  } catch (e) {
+    config = {};
+  }
+
+  var tipo_firma = config.tipo_firma || 'persona_natural';
+  var es_empresa = perfil.profile_type === 'aliado' || perfil.profile_type === 'proveedor';
+
+  var firmante = {
+    nombre: perfil.nombre_completo || perfil.razon_social,
+    email: perfil.email_principal,
+    tipo_documento: perfil.tipo_documento,
+    numero_documento: perfil.numero_documento
+  };
+
+  if (es_empresa) {
+    firmante.empresa = perfil.razon_social;
+    firmante.nit_empresa = perfil.numero_documento;
+    firmante.cargo = config.cargo || null;
+    tipo_firma = 'persona_juridica';
+  }
+
+  return {
+    ok: true,
+    tarea_id: tarea.id,
+    perfil_id: tarea.perfil_id,
+    tipo_firma: tipo_firma,
+    firmante: firmante,
+    programa: config.programa || null,
+    obligatorios: config.obligatorios || ['C1', 'C2']
+  };
+}
+
 function verificar_token_otp(email, token) {
   var props = PropertiesService.getScriptProperties();
   var otp_url = props.getProperty('OTP_URL');

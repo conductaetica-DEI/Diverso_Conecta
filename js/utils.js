@@ -25,7 +25,10 @@ var MENSAJES_USUARIO = {
   'OBLIGATORIOS_FALTANTES': 'Debes aceptar todos los consentimientos obligatorios.',
   'TIPO_PERFIL_INVALIDO': 'Tipo de perfil no válido.',
   'NOMBRE_REQUERIDO': 'El nombre es obligatorio.',
-  'RAZON_SOCIAL_REQUERIDA': 'La razón social es obligatoria.'
+  'RAZON_SOCIAL_REQUERIDA': 'La razón social es obligatoria.',
+  'TAREA_NO_ENCONTRADA': 'No se encontró la solicitud de firma. Verifica el enlace.',
+  'TAREA_YA_COMPLETADA': 'Esta solicitud de firma ya fue completada.',
+  'TAREA_NO_ES_CONSENTIMIENTO': 'El enlace no corresponde a una solicitud de firma.'
 };
 
 var MENSAJE_FALLBACK = 'Ocurrió un error. Intenta de nuevo o contacta soporte.';

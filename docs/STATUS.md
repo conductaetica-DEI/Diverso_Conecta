@@ -31,11 +31,11 @@ Pendiente: pruebas con POST real (requiere API_KEY).
 | Archivo | Contenido |
 |---------|-----------|
 | appsscript.json | Timezone Bogotá, webapp ANYONE_ANONYMOUS |
-| Codigo.gs | Router: doPost (firmar, verificarFirma), doGet, respuesta_json |
-| Firma.gs | firmar, verificarFirma, verificar_token_otp, validar_firmante, validar_consentimientos |
+| Codigo.gs | Router: doPost (firmar, verificarFirma, obtenerDatosFirma), doGet, respuesta_json |
+| Firma.gs | firmar, verificarFirma, obtener_datos_firma, verificar_token_otp, validar_firmante, validar_consentimientos |
 | Folio.gs | generar_folio (DL-{codigo}-{año}-{secuencial}), generar_hash (SHA-256), bytes_a_hex |
 | Pdf.gs | generar_pdf_constancia, construir_encabezado/datos/tabla/evidencia, anexos legales (F-DATO-01, SICE-POL-01), estilos |
-| Supabase.gs | insertar_consentimientos, consultar_por_folio, registrar_log, obtener_carpeta_perfil |
+| Supabase.gs | insertar_consentimientos, consultar_por_folio, registrar_log, obtener_carpeta_perfil, consultar_tarea_firma, consultar_perfil |
 
 Script Properties configuradas (9):
 - API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
@@ -94,8 +94,8 @@ Cero colores hardcodeados en componentes. Variantes generadas con color-mix(in s
 |---------|-----------|
 | js/config.js | CONFIG con SUPABASE_URL, SUPABASE_ANON_KEY (placeholder), 3 URLs GAS (reales) |
 | js/supabase-client.js | iniciar_supabase, obtener_sesion, verificar_sesion, supabase_fetch (retry 401 + refresh), cerrar_sesion |
-| js/gas-client.js | gas_fetch, solicitar_otp, verificar_otp, firmar_consentimientos, verificar_firma, crear_carpeta |
-| js/utils.js | mostrar_error/exito (toast), mensaje_usuario (23 códigos), escapar_html, formatear_fecha, deshabilitar/habilitar_boton, validar_email/documento, obtener_ip |
+| js/gas-client.js | gas_fetch, solicitar_otp, verificar_otp, firmar_consentimientos, verificar_firma, obtener_datos_firma, crear_carpeta |
+| js/utils.js | mostrar_error/exito (toast), mensaje_usuario (26 códigos), escapar_html, formatear_fecha, deshabilitar/habilitar_boton, validar_email/documento, obtener_ip |
 
 Pendiente: reemplazar SUPABASE_ANON_KEY y GAS_API_KEYS con valores reales.
 
@@ -105,16 +105,25 @@ Pendiente: reemplazar SUPABASE_ANON_KEY y GAS_API_KEYS con valores reales.
 - SECURITY.md — flujo auth completo con Auth Admin API, tokens transitorios en tabla de secretos
 - SETUP.md — service_role para crear sesiones, eliminada mención de Edge Functions
 
+## Página firma standalone — Implementada
+
+| Archivo | Contenido |
+|---------|-----------|
+| pages/firma.html | Página standalone de firma de consentimientos (se abre desde link en email, sin sesión Supabase) |
+
+Flujo: carga datos via GAS obtenerDatosFirma → muestra datos firmante + 7 consentimientos F-DATO-01 con textos legales completos siempre visibles → verificación OTP (6 dígitos, auto-advance, reenvío 60s) → firma via GAS → confirmación con folios + link PDF.
+
+Características: stepper 3 pasos, campo cargo dinámico para persona jurídica, obligatorios configurables por analista (C1+C2 siempre + C3-C7 según tarea.detalle), CSP meta tag, accesibilidad (skip link, aria-labels, focus management, keyboard nav), responsive 480px.
+
 ## Pendiente por construir
 
 | Prioridad | Componente | Archivos |
 |-----------|-----------|----------|
 | 1 | Login | pages/login.html |
 | 2 | Registro | pages/registro.html |
-| 3 | Firma standalone | pages/firma.html |
-| 4 | Mi expediente | pages/mi-expediente.html |
-| 5 | Dashboard | pages/dashboard.html |
-| 6 | Gestión accesos | pages/accesos.html |
+| 3 | Mi expediente | pages/mi-expediente.html |
+| 4 | Dashboard | pages/dashboard.html |
+| 5 | Gestión accesos | pages/accesos.html |
 
 ## Preguntas arquitectónicas resueltas
 

@@ -280,6 +280,9 @@ Firma electrónica de consentimientos y documentos. Servicio transversal reutili
 |----------|-----------|---------|
 | firmar | ver abajo | { ok, folios: [...], pdf_url } |
 | verificarFirma | folio | { ok, datos_firma } |
+| obtenerDatosFirma | token (uuid tarea) | { ok, tarea_id, perfil_id, tipo_firma, firmante, programa, obligatorios } |
+
+**obtenerDatosFirma** — endpoint intermediario para la página standalone `/firma.html`. Consulta tareas y profiles con service_role (el frontend no tiene sesión Supabase en este flujo). Valida que la tarea exista, esté pendiente y sea tipo "consentimiento". Retorna datos del firmante y configuración de obligatorios desde `tarea.detalle` (JSON).
 
 **Parámetros de firmar — dos líneas según tipo:**
 

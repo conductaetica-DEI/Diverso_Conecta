@@ -61,6 +61,13 @@ async function verificar_firma(folio) {
   });
 }
 
+async function obtener_datos_firma(token) {
+  return gas_fetch(CONFIG.GAS_FIRMA_URL, GAS_API_KEYS.FIRMA, {
+    action: 'obtenerDatosFirma',
+    token: token
+  });
+}
+
 // --- Drive ---
 
 async function crear_carpeta(datos) {

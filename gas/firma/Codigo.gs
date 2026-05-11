@@ -17,6 +17,9 @@ function doPost(e) {
       case 'verificarFirma':
         resultado = verificarFirma(body.folio);
         break;
+      case 'obtenerDatosFirma':
+        resultado = obtener_datos_firma(body.token);
+        break;
       default:
         resultado = { ok: false, error: 'ACCION_INVALIDA' };
     }
