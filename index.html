@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DiversoLab Conecta — Testing</title>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/componentes.css">
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-crema);
+      padding: var(--space-lg);
+    }
+
+    .index-header {
+      text-align: center;
+      margin-bottom: var(--space-xl);
+    }
+
+    .index-header h1 {
+      font-family: var(--font-titulos);
+      color: var(--color-violeta);
+      font-size: var(--text-2xl);
+      margin: 0 0 var(--space-xs);
+    }
+
+    .index-header p {
+      color: var(--color-texto-muted);
+      font-size: var(--text-sm);
+      margin: 0;
+    }
+
+    .index-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--space-md);
+      max-width: 860px;
+      width: 100%;
+    }
+
+    .index-card {
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .index-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--sombra-elevada);
+    }
+
+    .index-card .card {
+      height: 100%;
+    }
+
+    .index-card h2 {
+      font-family: var(--font-titulos);
+      font-size: var(--text-lg);
+      color: var(--color-violeta);
+      margin: 0 0 var(--space-xs);
+    }
+
+    .index-card p {
+      font-size: var(--text-sm);
+      color: var(--color-texto-muted);
+      margin: 0 0 var(--space-sm);
+    }
+
+    .index-card .badge {
+      font-size: var(--text-xs);
+    }
+
+    .index-footer {
+      margin-top: var(--space-xl);
+      text-align: center;
+      color: var(--color-texto-muted);
+      font-size: var(--text-xs);
+    }
+  </style>
+</head>
+<body>
+  <div class="index-header">
+    <h1>DiversoLab Conecta</h1>
+    <p>Entorno de pruebas — selecciona una página</p>
+  </div>
+
+  <div class="index-grid">
+    <a href="pages/login.html" class="index-card">
+      <div class="card">
+        <h2>Login</h2>
+        <p>Inicio de sesión con OTP por email</p>
+        <span class="badge badge--neutro">Todos</span>
+      </div>
+    </a>
+
+    <a href="pages/registro.html" class="index-card">
+      <div class="card">
+        <h2>Registro</h2>
+        <p>Auto-registro para perfiles externos (beneficiario, aliado, contratista, proveedor)</p>
+        <span class="badge badge--neutro">Sin sesión</span>
+      </div>
+    </a>
+
+    <a href="pages/firma.html" class="index-card">
+      <div class="card">
+        <h2>Firma standalone</h2>
+        <p>Firma de consentimientos desde link en email. Requiere ?token={tarea_id}</p>
+        <span class="badge badge--neutro">Sin sesión</span>
+      </div>
+    </a>
+
+    <a href="pages/mi-expediente.html" class="index-card">
+      <div class="card">
+        <h2>Mi expediente</h2>
+        <p>Dashboard del perfil externo: tareas, documentos, consentimientos</p>
+        <span class="badge badge--exito">Perfil externo</span>
+      </div>
+    </a>
+
+    <a href="pages/dashboard.html" class="index-card">
+      <div class="card">
+        <h2>Dashboard</h2>
+        <p>Panel del miembro interno: expedientes, tareas, solicitar firma</p>
+        <span class="badge badge--progreso">Miembro</span>
+      </div>
+    </a>
+
+    <a href="pages/accesos.html" class="index-card">
+      <div class="card">
+        <h2>Gestión accesos</h2>
+        <p>Perfiles pendientes, miembros del equipo, asignaciones</p>
+        <span class="badge badge--alerta">Admin</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="index-footer">
+    DiversoLab Members Conecta — Entorno de pruebas
+  </div>
+</body>
+</html>
