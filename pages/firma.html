@@ -10,6 +10,7 @@
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     font-src https://fonts.gstatic.com;
     img-src 'self' data:;
+    frame-src https://docs.google.com;
   ">
   <title>Firma de Consentimientos — DiversoLab</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -84,10 +85,7 @@
       margin-top: var(--spacing-lg);
     }
 
-    .firma-indicador {
-      margin-bottom: var(--spacing-xl);
-      justify-content: center;
-    }
+    /* --- Firmante card --- */
 
     .firmante-tarjeta {
       margin-bottom: var(--spacing-lg);
@@ -100,6 +98,14 @@
       margin-bottom: var(--spacing-md);
     }
 
+    .firmante-subtitulo {
+      font-weight: 700;
+      font-size: var(--text-sm);
+      margin-top: var(--spacing-md);
+      margin-bottom: var(--spacing-sm);
+      color: var(--color-texto);
+    }
+
     .firmante-dato {
       display: flex;
       gap: var(--spacing-sm);
@@ -108,24 +114,37 @@
     }
 
     .firmante-dato strong {
-      min-width: 100px;
+      min-width: 110px;
       color: var(--color-texto);
     }
 
-    .campo-label {
-      display: block;
-      font-family: var(--font-cuerpo);
-      font-weight: 700;
-      font-size: var(--text-sm);
-      margin-top: var(--spacing-md);
-      margin-bottom: var(--spacing-xs);
-      color: var(--color-texto);
+    /* --- Documents --- */
+
+    .documento-seccion {
+      margin-bottom: var(--spacing-xl);
     }
+
+    .documento-iframe {
+      width: 100%;
+      height: 400px;
+      border: 1px solid var(--color-lavanda);
+      border-radius: var(--radius-md);
+    }
+
+    .documento-enlace {
+      display: inline-block;
+      margin-top: var(--spacing-sm);
+      font-size: var(--text-sm);
+      color: var(--color-violeta);
+    }
+
+    /* --- Consent titles --- */
 
     .consentimientos-titulo {
       font-family: var(--font-titulos);
       font-weight: 700;
       font-size: var(--text-xl);
+      margin-top: var(--spacing-xl);
       margin-bottom: var(--spacing-sm);
     }
 
@@ -136,242 +155,16 @@
       line-height: 1.5;
     }
 
-    .consentimiento {
-      border: 1px solid var(--color-lavanda);
-      border-radius: var(--radius-md);
-      margin-bottom: var(--spacing-sm);
-      overflow: hidden;
-      background-color: white;
-    }
-
-    .consentimiento-cabecera {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-sm);
-      padding: var(--spacing-md);
-    }
-
-    .consentimiento-check {
-      flex-shrink: 0;
-      width: 20px;
-      height: 20px;
-      accent-color: var(--color-violeta);
-      cursor: pointer;
-    }
-
-    .consentimiento-check:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-
-    .consentimiento-titulo-texto {
-      flex: 1;
-      font-family: var(--font-cuerpo);
-      font-weight: 700;
-      font-size: var(--text-base);
-      color: var(--color-texto);
-      cursor: pointer;
-    }
-
-    .consentimiento-detalle {
-      padding: var(--spacing-sm) var(--spacing-md) var(--spacing-md);
-      background-color: var(--color-crema);
-      font-size: var(--text-sm);
-      line-height: 1.6;
-    }
-
-    .consentimiento-ref {
-      font-family: var(--font-datos);
-      font-weight: 700;
-      color: var(--color-texto-muted);
-      font-size: var(--text-xs);
-      margin-bottom: var(--spacing-sm);
-      padding-top: var(--spacing-md);
-    }
-
-    .consentimiento-detalle ul {
-      padding-left: var(--spacing-lg);
-      margin: var(--spacing-sm) 0;
-    }
-
-    .consentimiento-detalle li {
-      margin-bottom: var(--spacing-xs);
-    }
-
-    .consentimiento-nota {
-      font-weight: 700;
-      margin-top: var(--spacing-sm);
-    }
-
-    .consentimiento-nota.obligatorio {
-      color: var(--color-coral);
-    }
-
-    .consentimiento-nota.voluntario {
-      color: var(--color-texto-muted);
-    }
-
     .firma-acciones {
       margin-top: var(--spacing-xl);
       text-align: center;
-    }
-
-    .firma-nota-legal {
-      font-size: var(--text-xs);
-      color: var(--color-texto-muted);
-      margin-top: var(--spacing-sm);
-    }
-
-    .otp-seccion {
-      text-align: center;
-    }
-
-    .otp-titulo {
-      font-family: var(--font-titulos);
-      font-weight: 700;
-      font-size: var(--text-xl);
-      margin-bottom: var(--spacing-sm);
-    }
-
-    .otp-descripcion {
-      font-size: var(--text-sm);
-      color: var(--color-texto-muted);
-      margin-bottom: var(--spacing-lg);
-    }
-
-    .otp-grupo {
-      display: flex;
-      justify-content: center;
-      gap: var(--spacing-sm);
-      margin-bottom: var(--spacing-lg);
-    }
-
-    .otp-digito {
-      width: 48px;
-      height: 56px;
-      text-align: center;
-      font-family: var(--font-titulos);
-      font-size: var(--text-2xl);
-      font-weight: 700;
-      border: 2px solid var(--color-lavanda);
-      border-radius: var(--radius-sm);
-      color: var(--color-texto);
-      background-color: white;
-      transition: border-color 0.2s;
-    }
-
-    .otp-digito:focus {
-      border-color: var(--color-violeta);
-      outline: 2px solid color-mix(in srgb, var(--color-sol) 50%, transparent);
-      outline-offset: 0;
-    }
-
-    .otp-acciones {
-      margin-bottom: var(--spacing-md);
-    }
-
-    .otp-reenvio {
-      font-size: var(--text-sm);
-      color: var(--color-texto-muted);
-      margin-bottom: var(--spacing-lg);
-    }
-
-    .otp-temporizador {
-      font-family: var(--font-datos);
-      font-weight: 700;
-    }
-
-    .btn-reenviar {
-      background: none;
-      border: none;
-      color: var(--color-violeta);
-      font-family: var(--font-cuerpo);
-      font-weight: 700;
-      font-size: var(--text-sm);
-      cursor: pointer;
-      text-decoration: underline;
-      min-height: 44px;
-    }
-
-    .btn-reenviar:disabled {
-      color: var(--color-texto-muted);
-      cursor: not-allowed;
-      text-decoration: none;
-    }
-
-    .otp-volver {
-      margin-top: var(--spacing-sm);
-    }
-
-    .confirmacion-seccion {
-      text-align: center;
-    }
-
-    .confirmacion-icono {
-      width: 64px;
-      height: 64px;
-      border-radius: var(--radius-full);
-      background-color: var(--color-aqua);
-      color: var(--color-violeta);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: var(--text-3xl);
-      font-weight: 700;
-      margin: 0 auto var(--spacing-md);
-    }
-
-    .confirmacion-titulo {
-      font-family: var(--font-titulos);
-      font-weight: 700;
-      font-size: var(--text-2xl);
-      color: var(--color-violeta);
-      margin-bottom: var(--spacing-sm);
-    }
-
-    .confirmacion-mensaje {
-      font-size: var(--text-base);
-      color: var(--color-texto-muted);
-      margin-bottom: var(--spacing-lg);
-    }
-
-    .folios-tarjeta {
-      text-align: left;
-      margin-bottom: var(--spacing-lg);
-    }
-
-    .folios-titulo {
-      font-family: var(--font-titulos);
-      font-weight: 700;
-      font-size: var(--text-lg);
-      margin-bottom: var(--spacing-sm);
-    }
-
-    .folios-lista {
-      list-style: none;
-      padding: 0;
-    }
-
-    .folios-lista li {
-      font-family: var(--font-datos);
-      font-weight: 700;
-      font-size: var(--text-sm);
-      padding: var(--spacing-xs) 0;
-      border-bottom: 1px solid var(--color-borde-tabla);
     }
 
     .confirmacion-pdf {
       margin-bottom: var(--spacing-lg);
     }
 
-    .confirmacion-nota {
-      font-size: var(--text-xs);
-      color: var(--color-texto-muted);
-    }
-
-    .confirmacion-nota a {
-      color: var(--color-violeta);
-    }
+    /* --- Footer --- */
 
     .firma-pie {
       background-color: var(--color-violeta);
@@ -385,27 +178,9 @@
       color: var(--color-sol);
     }
 
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
     @media (max-width: 480px) {
       .firma-contenedor {
         padding: var(--spacing-md) var(--spacing-sm);
-      }
-
-      .otp-digito {
-        width: 40px;
-        height: 48px;
-        font-size: var(--text-xl);
       }
 
       .firmante-dato {
@@ -415,10 +190,6 @@
 
       .firmante-dato strong {
         min-width: auto;
-      }
-
-      .consentimiento-cabecera {
-        flex-wrap: wrap;
       }
     }
   </style>
@@ -450,109 +221,116 @@
 
     <div id="seccion-contenido" hidden>
 
-      <nav class="indicador-pasos firma-indicador" aria-label="Progreso de firma">
-        <div class="paso paso-activo" id="paso-circulo-1" aria-current="step" aria-label="Paso 1: Consentimientos">1</div>
-        <div class="paso-linea" id="paso-linea-1" aria-hidden="true"></div>
-        <div class="paso" id="paso-circulo-2" aria-label="Paso 2: Verificación">2</div>
-        <div class="paso-linea" id="paso-linea-2" aria-hidden="true"></div>
-        <div class="paso" id="paso-circulo-3" aria-label="Paso 3: Confirmación">3</div>
-      </nav>
-
-      <section id="paso-consentimientos" aria-label="Consentimientos">
-
-        <div class="tarjeta firmante-tarjeta">
-          <h2 class="firmante-titulo">Datos del firmante</h2>
-          <div class="firmante-dato">
-            <strong>Nombre:</strong>
-            <span id="firmante-nombre"></span>
-          </div>
-          <div class="firmante-dato">
-            <strong>Email:</strong>
-            <span id="firmante-email"></span>
-          </div>
-          <div class="firmante-dato">
-            <strong>Documento:</strong>
-            <span id="firmante-documento"></span>
-          </div>
-          <div id="info-empresa" hidden>
-            <div class="firmante-dato">
-              <strong>Empresa:</strong>
-              <span id="firmante-empresa"></span>
-            </div>
-            <div class="firmante-dato">
-              <strong>NIT:</strong>
-              <span id="firmante-nit"></span>
-            </div>
-          </div>
-          <div id="campo-cargo" hidden>
-            <label for="input-cargo" class="campo-label">Cargo del firmante <span aria-hidden="true">*</span></label>
+      <!-- a) Datos del firmante -->
+      <div class="tarjeta firmante-tarjeta">
+        <h2 class="firmante-titulo">Datos del firmante</h2>
+        <div id="resumen-natural">
+          <div class="firmante-dato"><strong>Nombre:</strong><span id="firmante-nombre"></span></div>
+          <div class="firmante-dato"><strong>Apellido:</strong><span id="firmante-apellido"></span></div>
+          <div class="firmante-dato"><strong>Documento:</strong><span id="firmante-documento"></span></div>
+          <div class="firmante-dato"><strong>Email:</strong><span id="firmante-email"></span></div>
+        </div>
+        <div id="resumen-juridica" hidden>
+          <p class="firmante-subtitulo">Datos de la empresa</p>
+          <div class="firmante-dato"><strong>Razón social:</strong><span id="firmante-razon-social"></span></div>
+          <div class="firmante-dato"><strong>NIT:</strong><span id="firmante-nit"></span></div>
+          <p class="firmante-subtitulo">Contacto de la empresa</p>
+          <div class="firmante-dato"><strong>Email:</strong><span id="firmante-email-empresa"></span></div>
+          <div class="firmante-dato"><strong>Teléfono:</strong><span id="firmante-telefono-empresa"></span></div>
+          <p class="firmante-subtitulo">Datos del firmante</p>
+          <div class="firmante-dato"><strong>Nombre:</strong><span id="firmante-nombre-rep"></span></div>
+          <div class="firmante-dato"><strong>Apellido:</strong><span id="firmante-apellido-rep"></span></div>
+          <div class="firmante-dato" id="firmante-cargo-texto" hidden><strong>Cargo:</strong><span id="firmante-cargo-rep"></span></div>
+          <div id="firmante-cargo-input" hidden>
+            <label for="input-cargo" class="campo-label">Cargo del firmante <span class="campo-obligatorio" aria-hidden="true">*</span></label>
             <input type="text" id="input-cargo" class="campo-texto" placeholder="Ej: Representante Legal" aria-required="true">
           </div>
-          <div id="info-programa" hidden>
-            <div class="firmante-dato">
-              <strong>Programa:</strong>
-              <span id="firmante-programa"></span>
+          <div class="firmante-dato"><strong>Documento:</strong><span id="firmante-doc-rep"></span></div>
+        </div>
+        <div id="info-programa" hidden>
+          <div class="firmante-dato"><strong>Programa:</strong><span id="firmante-programa"></span></div>
+        </div>
+        <div id="info-solicitado-por" hidden>
+          <div class="firmante-dato"><strong>Solicitado por:</strong><span id="firmante-solicitado-por"></span></div>
+        </div>
+        <div class="firmante-dato"><strong>Fecha:</strong><span id="firmante-fecha"></span></div>
+      </div>
+
+      <!-- b) Política SICE-POL-01 -->
+      <div class="documento-seccion">
+        <h2 class="consentimientos-titulo">Política de Protección y Uso de Datos Personales — SICE-POL-01 v1.0</h2>
+        <iframe class="documento-iframe" src="https://docs.google.com/document/d/1M0FS_HbQJRtC6lKdO6PNf5bHJcyfzmfg/preview" title="Política SICE-POL-01"></iframe>
+        <a href="https://docs.google.com/document/d/1M0FS_HbQJRtC6lKdO6PNf5bHJcyfzmfg" target="_blank" rel="noopener" class="documento-enlace">Abrir documento completo en nueva pestaña ↗</a>
+      </div>
+
+      <!-- c) Consentimiento F-DATO-01 -->
+      <div class="documento-seccion">
+        <h2 class="consentimientos-titulo">Consentimiento Informado Integral — F-DATO-01 v1.0</h2>
+        <iframe class="documento-iframe" src="https://docs.google.com/document/d/1_ieX-FOVOf_giL3bXKQQHbWWPd3JpzcR/preview" title="Consentimiento F-DATO-01"></iframe>
+        <a href="https://docs.google.com/document/d/1_ieX-FOVOf_giL3bXKQQHbWWPd3JpzcR" target="_blank" rel="noopener" class="documento-enlace">Abrir documento completo en nueva pestaña ↗</a>
+      </div>
+
+      <!-- d) Declaración de consentimiento -->
+      <h2 class="consentimientos-titulo">Declaración de consentimiento</h2>
+      <p class="consentimientos-subtitulo">Habiendo leído la Política SICE-POL-01 y el documento F-DATO-01, manifiesto mi voluntad frente a cada uno de los siguientes consentimientos:</p>
+      <div id="lista-consentimientos" role="group" aria-label="Lista de consentimientos"></div>
+
+      <!-- e) Verificación de identidad y firma -->
+      <div id="seccion-verificacion">
+        <h2 class="consentimientos-titulo">Verificación de identidad y firma</h2>
+        <p class="consentimientos-subtitulo">Para completar tu firma, verifica tu identidad con el código que enviaremos a tu correo electrónico.</p>
+
+        <div id="sub-enviar-otp" class="firma-acciones">
+          <button type="button" id="btn-enviar-codigo" class="btn-primario" disabled>Enviar código de verificación</button>
+        </div>
+
+        <div id="sub-ingresar-otp" hidden>
+          <div class="tarjeta otp-seccion">
+            <p class="otp-descripcion">Código enviado a <strong id="otp-email-confirmado"></strong></p>
+
+            <div class="otp-grupo" role="group" aria-label="Código de verificación">
+              <input type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" class="otp-digito" aria-label="Dígito 1" autocomplete="one-time-code">
+              <input type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" class="otp-digito" aria-label="Dígito 2">
+              <input type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" class="otp-digito" aria-label="Dígito 3">
+              <input type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" class="otp-digito" aria-label="Dígito 4">
+              <input type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" class="otp-digito" aria-label="Dígito 5">
+              <input type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" class="otp-digito" aria-label="Dígito 6">
+            </div>
+
+            <div class="otp-acciones">
+              <button type="button" id="btn-verificar-otp" class="btn-primario" disabled>Firmar</button>
+            </div>
+
+            <div class="otp-reenvio">
+              <span id="otp-timer" class="otp-temporizador">60s</span>
+              <button type="button" id="btn-reenviar" class="btn-reenviar" hidden>Reenviar código</button>
             </div>
           </div>
         </div>
+      </div>
 
-        <h2 class="consentimientos-titulo">Consentimientos</h2>
-        <p class="consentimientos-subtitulo">Lea cada consentimiento y marque los que acepta. Los marcados como OBLIGATORIO deben ser aceptados para continuar.</p>
-
-        <div id="lista-consentimientos" role="group" aria-label="Lista de consentimientos"></div>
-
-        <div class="firma-acciones">
-          <button type="button" id="btn-firmar" class="btn-primario" disabled>Firmar consentimientos</button>
-          <p class="firma-nota-legal">Al firmar, se enviará un código de verificación a su correo electrónico.</p>
-        </div>
-
-      </section>
-
-      <section id="paso-verificacion" hidden aria-label="Verificación">
-        <div class="tarjeta otp-seccion">
-          <h2 class="otp-titulo">Verificación de identidad</h2>
-          <p class="otp-descripcion">Ingresa el código de 6 dígitos enviado a <strong id="otp-email-destino"></strong></p>
-
-          <div class="otp-grupo" role="group" aria-label="Código de verificación">
-            <input type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" class="otp-digito" aria-label="Dígito 1" autocomplete="one-time-code">
-            <input type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" class="otp-digito" aria-label="Dígito 2">
-            <input type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" class="otp-digito" aria-label="Dígito 3">
-            <input type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" class="otp-digito" aria-label="Dígito 4">
-            <input type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" class="otp-digito" aria-label="Dígito 5">
-            <input type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" class="otp-digito" aria-label="Dígito 6">
-          </div>
-
-          <div class="otp-acciones">
-            <button type="button" id="btn-verificar-otp" class="btn-primario" disabled>Verificar y firmar</button>
-          </div>
-
-          <div class="otp-reenvio">
-            <span id="otp-timer" class="otp-temporizador">60s</span>
-            <button type="button" id="btn-reenviar" class="btn-reenviar" hidden>Reenviar código</button>
-          </div>
-
-          <button type="button" id="btn-volver" class="btn-ghost otp-volver">Volver a consentimientos</button>
-        </div>
-      </section>
-
-      <section id="paso-confirmacion" hidden aria-label="Confirmación">
+      <!-- f) Confirmación -->
+      <div id="seccion-confirmacion" hidden>
         <div class="tarjeta tarjeta-exito confirmacion-seccion">
           <div class="confirmacion-icono" aria-hidden="true">&#10003;</div>
-          <h2 class="confirmacion-titulo">Firma registrada</h2>
-          <p class="confirmacion-mensaje">Sus consentimientos han sido registrados exitosamente. Recibirá una constancia por correo electrónico.</p>
+          <h2 class="confirmacion-titulo">Firma registrada exitosamente</h2>
 
           <div class="tarjeta folios-tarjeta">
             <h3 class="folios-titulo">Folios de registro</h3>
             <ul id="folios-lista" class="folios-lista" aria-label="Folios generados"></ul>
           </div>
 
+          <div class="firmante-dato"><strong>Fecha y hora:</strong><span id="confirmacion-fecha"></span></div>
+          <div class="firmante-dato"><strong>IP:</strong><span id="confirmacion-ip"></span></div>
+
           <div class="confirmacion-pdf">
             <a id="link-pdf" class="btn-secundario" href="#" target="_blank" rel="noopener" hidden>Descargar constancia PDF</a>
           </div>
 
-          <p class="confirmacion-nota">Puede verificar la autenticidad de su firma en cualquier momento usando los folios de registro.<br>Para consultas: <a href="mailto:conducta.etica@diversolab.org">conducta.etica@diversolab.org</a></p>
+          <p class="confirmacion-nota">Se envió copia a <strong id="confirmacion-email"></strong></p>
+          <p class="confirmacion-nota">Para consultas: <a href="mailto:conducta.etica@diversolab.org">conducta.etica@diversolab.org</a></p>
         </div>
-      </section>
+      </div>
 
     </div>
   </main>
@@ -565,136 +343,17 @@
   <script src="../js/config.js"></script>
   <script src="../js/gas-client.js"></script>
   <script src="../js/utils.js"></script>
+  <script src="../js/consentimientos.js"></script>
   <script>
-    // --- Catálogo F-DATO-01 v1.0 ---
-
-    var CONSENTIMIENTOS = [
-      {
-        codigo: 'C1',
-        titulo: 'General obligatorio',
-        referencia: 'Artículo 12 — SICE-POL-01',
-        version: '1.0',
-        obligatorio_sistema: true,
-        texto_html:
-          '<p>El titular autoriza a DiversoLAB para recolectar y tratar sus datos básicos y de contacto (nombre, correo electrónico, teléfono, dirección) con las siguientes finalidades:</p>' +
-          '<ul>' +
-          '<li>Inscripción y registro en actividades, programas, webinars, formaciones, consultorías y experiencias de DiversoLAB.</li>' +
-          '<li>Verificación de identidad y gestión operativa del servicio contratado o asignado.</li>' +
-          '<li>Cumplimiento de obligaciones legales, contractuales y de rendición de cuentas ante donantes y financiadores.</li>' +
-          '<li>Registro de asistencia, participación y progreso en las actividades.</li>' +
-          '</ul>' +
-          '<p class="consentimiento-nota obligatorio"><strong>OBLIGATORIO.</strong> La negativa imposibilita la prestación del servicio.</p>'
-      },
-      {
-        codigo: 'C2',
-        titulo: 'Identificación mínima',
-        referencia: 'Artículo 13 — SICE-POL-01',
-        version: '1.0',
-        obligatorio_sistema: true,
-        texto_html:
-          '<p>El titular autoriza a DiversoLAB para recolectar sus datos de identificación (tipo y número de documento, país de expedición) con las siguientes finalidades:</p>' +
-          '<ul>' +
-          '<li>Evitar duplicidades en registros y bases de datos.</li>' +
-          '<li>Trazabilidad en procesos críticos y reportes de impacto.</li>' +
-          '<li>Cumplimiento de requisitos legales cuando aplique.</li>' +
-          '</ul>' +
-          '<p>El acceso a estos datos estará restringido a personal autorizado. Las copias de documentos se almacenarán en carpetas con controles de seguridad reforzados.</p>' +
-          '<p class="consentimiento-nota obligatorio"><strong>OBLIGATORIO.</strong> Necesario para la prestación del servicio.</p>'
-      },
-      {
-        codigo: 'C3',
-        titulo: 'Datos sensibles',
-        referencia: 'Artículo 14 — SICE-POL-01',
-        version: '1.0',
-        obligatorio_sistema: false,
-        texto_html:
-          '<p>El titular autoriza a DiversoLAB para recolectar y tratar datos sensibles únicamente cuando sean necesarios para la intervención o servicio específico. Estos datos pueden incluir:</p>' +
-          '<ul>' +
-          '<li>Discapacidad (tipo, grado, necesidades específicas de accesibilidad).</li>' +
-          '<li>Salud (diagnósticos, tratamientos o condiciones médicas relevantes para la intervención).</li>' +
-          '<li>Identidad de género y orientación sexual.</li>' +
-          '<li>Origen étnico o racial.</li>' +
-          '</ul>' +
-          '<p>Estos datos se recolectan en formularios de caracterización, diagnósticos DEI, encuestas de clima organizacional y otros instrumentos de medición, tanto para personas/familias como para colaboradores de empresas clientes.</p>' +
-          '<p class="consentimiento-nota voluntario"><strong>VOLUNTARIO.</strong> Su negativa no afectará su participación, salvo cuando la información sea estrictamente necesaria para la intervención específica.</p>'
-      },
-      {
-        codigo: 'C4',
-        titulo: 'Analítica, modelos predictivos e IA',
-        referencia: 'Artículo 15 — SICE-POL-01',
-        version: '1.0',
-        obligatorio_sistema: false,
-        texto_html:
-          '<p>El titular autoriza a DiversoLAB para utilizar sus datos (sensibles o no sensibles) en procesos de analítica avanzada con las siguientes finalidades:</p>' +
-          '<ul>' +
-          '<li>Generación de reportes empresariales con análisis asistido por inteligencia artificial.</li>' +
-          '<li>Modelos predictivos o estadísticos para medición de impacto.</li>' +
-          '<li>Análisis de resultados de diagnósticos, evaluaciones de formaciones, escalas de calidad de vida y experiencias.</li>' +
-          '<li>Generación de indicadores agregados, dashboards de progreso y benchmarks sectoriales.</li>' +
-          '</ul>' +
-          '<p>DiversoLAB garantiza que:</p>' +
-          '<ul>' +
-          '<li>Ningún dato personal identificable será enviado a modelos de IA externos.</li>' +
-          '<li>Se aplicará anonimización o seudonimización antes de cualquier procesamiento analítico.</li>' +
-          '<li>Las interpretaciones generadas por IA son orientativas y siempre serán revisadas por un profesional calificado.</li>' +
-          '<li>No se realizará perfilamiento individual sin consentimiento adicional explícito.</li>' +
-          '</ul>' +
-          '<p class="consentimiento-nota voluntario"><strong>VOLUNTARIO.</strong> Los datos del titular serán excluidos de los procesos analíticos.</p>'
-      },
-      {
-        codigo: 'C5',
-        titulo: 'Comunicaciones',
-        referencia: 'Artículo 16 — SICE-POL-01',
-        version: '1.0',
-        obligatorio_sistema: false,
-        texto_html:
-          '<p>El titular autoriza a DiversoLAB para enviarle comunicaciones informativas, promocionales o institucionales por correo electrónico, mensajería, redes sociales u otros canales disponibles. Esto incluye invitaciones a webinars, formaciones abiertas, eventos del ecosistema, publicaciones y boletines.</p>' +
-          '<p class="consentimiento-nota voluntario"><strong>VOLUNTARIO.</strong> En caso de negativa, DiversoLAB solo enviará comunicaciones estrictamente operativas relacionadas con servicios contratados o actividades en las que el titular esté inscrito.</p>'
-      },
-      {
-        codigo: 'C6',
-        titulo: 'Imagen, voz y testimonios',
-        referencia: 'Artículo 17 — SICE-POL-01',
-        version: '1.0',
-        obligatorio_sistema: false,
-        texto_html:
-          '<p>El titular autoriza a DiversoLAB para capturar y utilizar su imagen (fotografía y/o video), voz y/o testimonios obtenidos durante la participación en actividades, formaciones, consultorías, webinars y experiencias, con las siguientes finalidades:</p>' +
-          '<ul>' +
-          '<li>Uso interno: informes de ejecución, presentaciones, capacitación interna.</li>' +
-          '<li>Uso externo: redes sociales, sitio web, materiales de comunicación y marketing.</li>' +
-          '<li>Informes a donantes, financiadores y aliados estratégicos.</li>' +
-          '<li>Publicaciones académicas o de investigación (con anonimización cuando corresponda).</li>' +
-          '</ul>' +
-          '<p>Plazo de autorización: tres (3) años a partir de la fecha de aceptación, renovable con nuevo consentimiento. Para menores de edad se requiere autorización del representante legal.</p>' +
-          '<p class="consentimiento-nota voluntario"><strong>VOLUNTARIO</strong> y revocable en cualquier momento. La revocatoria no afecta la licitud del uso realizado antes de la misma.</p>'
-      },
-      {
-        codigo: 'C7',
-        titulo: 'Psicosocial y educativo',
-        referencia: 'Artículo 18 — SICE-POL-01',
-        version: '1.0',
-        obligatorio_sistema: false,
-        texto_html:
-          '<p>El titular autoriza a DiversoLAB para realizar seguimiento individual que implique:</p>' +
-          '<ul>' +
-          '<li>Elaboración de notas técnicas psicosociales o educativas.</li>' +
-          '<li>Diseño de planes individualizados de intervención.</li>' +
-          '<li>Almacenamiento en archivos restringidos con acceso exclusivo a profesionales asignados.</li>' +
-          '</ul>' +
-          '<p>Aplica principalmente a participantes del segmento Personas y Familias. Para colaboradores de empresas clientes, aplica únicamente cuando la empresa contrate programas de bienestar o acompañamiento individualizado.</p>' +
-          '<p class="consentimiento-nota voluntario"><strong>VOLUNTARIO.</strong> Su negativa no afectará la participación en programas que no requieran seguimiento individualizado.</p>'
-      }
-    ];
-
     // --- Estado ---
 
     var estado = {
       datos: null,
       ip_cliente: null,
       token_verificacion: null,
-      paso_actual: 0,
       temporizador_id: null,
-      segundos_reenvio: 0
+      segundos_reenvio: 0,
+      reloj_id: null
     };
 
     // --- Inicialización ---
@@ -722,7 +381,10 @@
         poblar_firmante();
         poblar_consentimientos();
         vincular_eventos();
-        mostrar_paso(1);
+        iniciar_reloj();
+
+        document.getElementById('seccion-cargando').hidden = true;
+        document.getElementById('seccion-contenido').hidden = false;
       } catch (error) {
         mostrar_error_fatal(mensaje_usuario(error.message));
       }
@@ -732,24 +394,64 @@
 
     function poblar_firmante() {
       var f = estado.datos.firmante;
-      document.getElementById('firmante-nombre').textContent = f.nombre;
-      document.getElementById('firmante-email').textContent = f.email;
-      document.getElementById('firmante-documento').textContent = f.tipo_documento + ' ' + f.numero_documento;
 
       if (estado.datos.tipo_firma === 'persona_juridica') {
-        document.getElementById('firmante-empresa').textContent = f.empresa || '';
+        document.getElementById('resumen-natural').hidden = true;
+        document.getElementById('resumen-juridica').hidden = false;
+        document.getElementById('firmante-razon-social').textContent = f.empresa || '';
         document.getElementById('firmante-nit').textContent = f.nit_empresa || '';
-        document.getElementById('info-empresa').hidden = false;
+        document.getElementById('firmante-email-empresa').textContent = f.email || '';
+        document.getElementById('firmante-telefono-empresa').textContent = f.telefono || '';
+        document.getElementById('firmante-nombre-rep').textContent = f.nombre || '';
+        document.getElementById('firmante-apellido-rep').textContent = f.apellido || '';
+        document.getElementById('firmante-doc-rep').textContent = f.tipo_documento + ' ' + f.numero_documento;
 
-        if (!f.cargo) {
-          document.getElementById('campo-cargo').hidden = false;
+        if (f.cargo) {
+          document.getElementById('firmante-cargo-rep').textContent = f.cargo;
+          document.getElementById('firmante-cargo-texto').hidden = false;
+        } else {
+          document.getElementById('firmante-cargo-input').hidden = false;
         }
+      } else {
+        document.getElementById('resumen-natural').hidden = false;
+        document.getElementById('resumen-juridica').hidden = true;
+        document.getElementById('firmante-nombre').textContent = f.nombre || '';
+        document.getElementById('firmante-apellido').textContent = f.apellido || '';
+        document.getElementById('firmante-documento').textContent = f.tipo_documento + ' ' + f.numero_documento;
+        document.getElementById('firmante-email').textContent = f.email || '';
       }
 
       if (estado.datos.programa) {
         document.getElementById('firmante-programa').textContent = estado.datos.programa;
         document.getElementById('info-programa').hidden = false;
       }
+
+      if (estado.datos.solicitado_por) {
+        document.getElementById('firmante-solicitado-por').textContent = estado.datos.solicitado_por;
+        document.getElementById('info-solicitado-por').hidden = false;
+      }
+    }
+
+    function formatear_fecha_cot() {
+      var ahora = new Date();
+      return ahora.toLocaleString('es-CO', {
+        timeZone: 'America/Bogota',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      }) + ' (COT)';
+    }
+
+    function iniciar_reloj() {
+      if (estado.reloj_id) clearInterval(estado.reloj_id);
+      var el = document.getElementById('firmante-fecha');
+      el.textContent = formatear_fecha_cot();
+      estado.reloj_id = setInterval(function() {
+        el.textContent = formatear_fecha_cot();
+      }, 1000);
     }
 
     // --- Consentimientos ---
@@ -762,7 +464,6 @@
       for (var i = 0; i < CONSENTIMIENTOS.length; i++) {
         var c = CONSENTIMIENTOS[i];
         var es_obligatorio = c.obligatorio_sistema || obligatorios.indexOf(c.codigo) !== -1;
-        var es_sistema = c.obligatorio_sistema;
         var id = c.codigo.toLowerCase();
 
         html += '<div class="consentimiento" data-codigo="' + c.codigo + '">' +
@@ -770,7 +471,6 @@
           '<input type="checkbox" id="check-' + id + '" class="consentimiento-check"' +
           ' data-codigo="' + c.codigo + '"' +
           ' data-obligatorio="' + (es_obligatorio ? 'true' : 'false') + '"' +
-          (es_sistema ? ' checked disabled' : '') +
           ' aria-describedby="detalle-' + id + '">' +
           '<label for="check-' + id + '" class="consentimiento-titulo-texto">' +
           escapar_html(c.codigo + ' — ' + c.titulo) + '</label>' +
@@ -811,16 +511,15 @@
         }
       }
 
-      document.getElementById('btn-firmar').disabled = !todos_marcados;
+      document.getElementById('btn-enviar-codigo').disabled = !todos_marcados;
     }
 
     // --- Eventos ---
 
     function vincular_eventos() {
-      document.getElementById('btn-firmar').addEventListener('click', al_iniciar_verificacion);
+      document.getElementById('btn-enviar-codigo').addEventListener('click', al_enviar_otp);
       document.getElementById('btn-verificar-otp').addEventListener('click', al_verificar_otp);
       document.getElementById('btn-reenviar').addEventListener('click', al_reenviar_otp);
-      document.getElementById('btn-volver').addEventListener('click', function() { mostrar_paso(1); });
 
       var cargo_input = document.getElementById('input-cargo');
       if (cargo_input) {
@@ -828,56 +527,11 @@
       }
     }
 
-    // --- Pasos ---
-
-    function mostrar_paso(numero) {
-      estado.paso_actual = numero;
-
-      document.getElementById('seccion-cargando').hidden = true;
-      document.getElementById('seccion-contenido').hidden = false;
-
-      var secciones = ['paso-consentimientos', 'paso-verificacion', 'paso-confirmacion'];
-      for (var i = 0; i < secciones.length; i++) {
-        document.getElementById(secciones[i]).hidden = (i !== numero - 1);
-      }
-
-      actualizar_indicador(numero);
-
-      var seccion = document.getElementById(secciones[numero - 1]);
-      var heading = seccion.querySelector('h2');
-      if (heading) {
-        heading.setAttribute('tabindex', '-1');
-        heading.focus();
-      }
-
-      window.scrollTo(0, 0);
-    }
-
-    function actualizar_indicador(numero) {
-      for (var i = 1; i <= 3; i++) {
-        var circulo = document.getElementById('paso-circulo-' + i);
-        circulo.className = 'paso';
-        circulo.removeAttribute('aria-current');
-
-        if (i < numero) {
-          circulo.className = 'paso paso-completo';
-        } else if (i === numero) {
-          circulo.className = 'paso paso-activo';
-          circulo.setAttribute('aria-current', 'step');
-        }
-
-        if (i < 3) {
-          var linea = document.getElementById('paso-linea-' + i);
-          linea.className = i < numero ? 'paso-linea paso-linea-completa' : 'paso-linea';
-        }
-      }
-    }
-
     // --- OTP ---
 
-    async function al_iniciar_verificacion() {
-      var btn = document.getElementById('btn-firmar');
-      deshabilitar_boton(btn, 'Enviando código...');
+    async function al_enviar_otp() {
+      var btn = document.getElementById('btn-enviar-codigo');
+      deshabilitar_boton(btn, 'Enviando...');
 
       try {
         var email = estado.datos.firmante.email;
@@ -886,14 +540,15 @@
 
         await solicitar_otp(email, nombre, empresa);
 
-        document.getElementById('otp-email-destino').textContent = email;
-        mostrar_paso(2);
+        document.getElementById('otp-email-confirmado').textContent = email;
+        document.getElementById('sub-enviar-otp').hidden = true;
+        document.getElementById('sub-ingresar-otp').hidden = false;
         configurar_otp_inputs();
         iniciar_temporizador();
       } catch (error) {
         mostrar_error(mensaje_usuario(error.message));
       } finally {
-        habilitar_boton(btn, 'Firmar consentimientos');
+        habilitar_boton(btn, 'Enviar código de verificación');
       }
     }
 
@@ -1036,17 +691,21 @@
           consentimientos: consentimientos,
           ip_address: estado.ip_cliente,
           user_agent: navigator.userAgent,
-          programa: estado.datos.programa
+          programa: estado.datos.programa,
+          tarea_id: estado.datos.tarea_id || null
         });
 
+        if (estado.reloj_id) clearInterval(estado.reloj_id);
+
         poblar_confirmacion(resultado);
-        mostrar_paso(3);
+        document.getElementById('seccion-verificacion').hidden = true;
+        document.getElementById('seccion-confirmacion').hidden = false;
 
       } catch (error) {
         mostrar_error(mensaje_usuario(error.message));
         limpiar_otp_inputs();
       } finally {
-        habilitar_boton(btn, 'Verificar y firmar');
+        habilitar_boton(btn, 'Firmar');
       }
     }
 
@@ -1096,6 +755,10 @@
         li.textContent = resultado.folios[i];
         lista.appendChild(li);
       }
+
+      document.getElementById('confirmacion-fecha').textContent = formatear_fecha_cot();
+      document.getElementById('confirmacion-ip').textContent = estado.ip_cliente || '';
+      document.getElementById('confirmacion-email').textContent = estado.datos.firmante.email;
 
       var link_pdf = document.getElementById('link-pdf');
       if (resultado.pdf_url) {

@@ -90,7 +90,12 @@ function firmar(datos) {
     // PDF ya se generó y subió a Drive — el email es best-effort
   }
 
-  // 8. Registrar en logs
+  // 8. Completar tarea si viene de firma solicitada
+  if (datos.tarea_id) {
+    completar_tarea(datos.tarea_id);
+  }
+
+  // 9. Registrar en logs
   registrar_log(datos.perfil_id, 'FIRMA_CONSENTIMIENTOS', 'firma', {
     folios: folios,
     tipo_firma: datos.tipo_firma,

@@ -127,6 +127,33 @@ function consultar_tarea_firma(token) {
   return null;
 }
 
+function completar_tarea(tarea_id) {
+  if (!tarea_id) return { ok: false };
+
+  var props = PropertiesService.getScriptProperties();
+  var url = props.getProperty('SUPABASE_URL') +
+    '/rest/v1/tareas?id=eq.' + encodeURIComponent(tarea_id);
+  var key = props.getProperty('SUPABASE_SERVICE_ROLE_KEY');
+
+  var respuesta = UrlFetchApp.fetch(url, {
+    method: 'patch',
+    contentType: 'application/json',
+    headers: {
+      'apikey': key,
+      'Authorization': 'Bearer ' + key,
+      'Prefer': 'return=minimal'
+    },
+    payload: JSON.stringify({
+      estado: 'completada',
+      fecha_completada: new Date().toISOString()
+    }),
+    muteHttpExceptions: true
+  });
+
+  var codigo_http = respuesta.getResponseCode();
+  return { ok: codigo_http >= 200 && codigo_http < 300 };
+}
+
 function consultar_perfil(perfil_id) {
   if (!perfil_id) return null;
 
