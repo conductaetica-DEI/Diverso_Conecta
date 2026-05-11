@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DiversoLab Conecta — Testing</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self';">
+  <title>DiversoLab Conecta</title>
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/componentes.css">
   <style>
-    body {
+    .entrada-pagina {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -17,126 +18,97 @@
       padding: var(--spacing-lg);
     }
 
-    .index-header {
-      text-align: center;
-      margin-bottom: var(--spacing-xl);
-    }
-
-    .index-header h1 {
-      font-family: var(--font-titulos);
-      color: var(--color-violeta);
-      font-size: var(--text-2xl);
-      margin: 0 0 var(--spacing-xs);
-    }
-
-    .index-header p {
-      color: var(--color-texto-muted);
-      font-size: var(--text-sm);
-      margin: 0;
-    }
-
-    .index-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: var(--spacing-md);
-      max-width: 860px;
+    .entrada-contenido {
+      max-width: 600px;
       width: 100%;
+      text-align: center;
     }
 
-    .index-card {
-      text-decoration: none;
-      color: inherit;
-      transition: transform 0.15s, box-shadow 0.15s;
+    .entrada-logo {
+      max-width: 280px;
+      margin: 0 auto var(--spacing-md);
+      display: block;
     }
 
-    .index-card:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
-    }
-
-    .index-card .tarjeta {
-      height: 100%;
-    }
-
-    .index-card h2 {
-      font-family: var(--font-titulos);
-      font-size: var(--text-lg);
-      color: var(--color-violeta);
-      margin: 0 0 var(--spacing-xs);
-    }
-
-    .index-card p {
+    .entrada-tagline {
+      font-family: var(--font-cuerpo);
       font-size: var(--text-sm);
       color: var(--color-texto-muted);
+      margin: 0 0 var(--spacing-xl);
+    }
+
+    .entrada-acronimo {
+      font-family: var(--font-titulos);
+      font-weight: 900;
+      font-size: var(--text-3xl);
+      letter-spacing: 0.05em;
       margin: 0 0 var(--spacing-sm);
     }
 
-    .index-footer {
-      margin-top: var(--spacing-xl);
-      text-align: center;
-      color: var(--color-texto-muted);
+    .entrada-acronimo-separador {
+      color: var(--color-lavanda);
+      margin: 0 2px;
+    }
+
+    .entrada-subtitulo {
+      font-family: var(--font-cuerpo);
+      font-weight: 700;
+      font-size: var(--text-sm);
+      color: var(--color-violeta);
+      margin: 0 0 var(--spacing-xl);
+    }
+
+    .entrada-separador {
+      border: none;
+      border-top: 1px solid var(--color-lavanda);
+      max-width: 200px;
+      margin: var(--spacing-xl) auto;
+    }
+
+    .entrada-acciones {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+      max-width: 320px;
+      margin: 0 auto;
+    }
+
+    .entrada-acciones .btn-primario,
+    .entrada-acciones .btn-secundario {
+      width: 100%;
+    }
+
+    .entrada-footer {
+      font-family: var(--font-datos);
       font-size: var(--text-xs);
+      color: color-mix(in srgb, var(--color-violeta) 50%, transparent);
+      margin-top: var(--spacing-2xl);
     }
   </style>
 </head>
-<body>
-  <div class="index-header">
-    <h1>DiversoLab Conecta</h1>
-    <p>Entorno de pruebas — selecciona una página</p>
-  </div>
+<body class="entrada-pagina">
+  <a href="#contenido-principal" class="saltar-contenido">Ir al contenido principal</a>
+  <div class="marca-barra" aria-hidden="true"><span class="marca-barra-sol"></span><span class="marca-barra-aqua"></span><span class="marca-barra-coral"></span><span class="marca-barra-lavanda"></span><span class="marca-barra-violeta"></span></div>
 
-  <div class="index-grid">
-    <a href="pages/login.html" class="index-card">
-      <div class="tarjeta">
-        <h2>Login</h2>
-        <p>Inicio de sesión con OTP por email</p>
-        <span class="insignia insignia-neutra">Todos</span>
-      </div>
-    </a>
+  <main id="contenido-principal" class="entrada-contenido" role="main">
+    <img src="DiversoLab_Logo.gif" alt="DiversoLab" class="entrada-logo">
 
-    <a href="pages/registro.html" class="index-card">
-      <div class="tarjeta">
-        <h2>Registro</h2>
-        <p>Auto-registro para perfiles externos (beneficiario, aliado, contratista, proveedor)</p>
-        <span class="insignia insignia-neutra">Sin sesión</span>
-      </div>
-    </a>
+    <p class="entrada-tagline">Transformación desde el Potencial Humano Diverso</p>
 
-    <a href="pages/firma.html" class="index-card">
-      <div class="tarjeta">
-        <h2>Firma standalone</h2>
-        <p>Firma de consentimientos desde link en email. Requiere ?token={tarea_id}</p>
-        <span class="insignia insignia-neutra">Sin sesión</span>
-      </div>
-    </a>
+    <p class="entrada-acronimo" aria-label="CONECTA">
+      <span style="color: var(--color-sol);">C</span><span class="entrada-acronimo-separador">·</span><span style="color: var(--color-aqua);">O</span><span class="entrada-acronimo-separador">·</span><span style="color: var(--color-coral);">N</span><span class="entrada-acronimo-separador">·</span><span style="color: var(--color-lavanda);">E</span><span class="entrada-acronimo-separador">·</span><span style="color: var(--color-violeta);">C</span><span class="entrada-acronimo-separador">·</span><span style="color: var(--color-sol);">T</span><span class="entrada-acronimo-separador">·</span><span style="color: var(--color-aqua);">A</span>
+    </p>
 
-    <a href="pages/mi-expediente.html" class="index-card">
-      <div class="tarjeta">
-        <h2>Mi expediente</h2>
-        <p>Dashboard del perfil externo: tareas, documentos, consentimientos</p>
-        <span class="insignia insignia-exito">Perfil externo</span>
-      </div>
-    </a>
+    <p class="entrada-subtitulo">centro de observación, evaluación y coordinación para la transformación accesible</p>
 
-    <a href="pages/dashboard.html" class="index-card">
-      <div class="tarjeta">
-        <h2>Dashboard</h2>
-        <p>Panel del miembro interno: expedientes, tareas, solicitar firma</p>
-        <span class="insignia insignia-progreso">Miembro</span>
-      </div>
-    </a>
+    <hr class="entrada-separador" aria-hidden="true">
 
-    <a href="pages/accesos.html" class="index-card">
-      <div class="tarjeta">
-        <h2>Gestión accesos</h2>
-        <p>Perfiles pendientes, miembros del equipo, asignaciones</p>
-        <span class="insignia insignia-alerta">Admin</span>
-      </div>
-    </a>
-  </div>
+    <nav class="entrada-acciones" aria-label="Acceso a la plataforma">
+      <a href="pages/login.html" class="btn-primario">Iniciar sesión</a>
+      <a href="pages/registro.html" class="btn-secundario">Registrarse</a>
+    </nav>
 
-  <div class="index-footer">
-    DiversoLab Members Conecta — Entorno de pruebas
-  </div>
+    <p class="entrada-footer">DiversoLab · diversolab.org · conducta.etica@diversolab.org</p>
+  </main>
 </body>
 </html>
