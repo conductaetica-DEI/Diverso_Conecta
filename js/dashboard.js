@@ -657,7 +657,7 @@ async function al_enviar_firma() {
   } else {
     var perfil = buscar_expediente(perfil_id);
     if (!perfil) {
-      mostrar_error('Perfil no encontrado.');
+      mostrar_error(mensaje_usuario('PERFIL_NO_ENCONTRADO'));
       return;
     }
     email_destino = perfil.email_principal;

@@ -39,7 +39,8 @@ var MENSAJES_USUARIO = {
   'SELECCIONAR_PERFIL_TIPO': 'Selecciona un perfil y un tipo de tarea.',
   'SELECCIONAR_PERFIL': 'Busca y selecciona un perfil.',
   'PROGRAMA_REQUERIDO': 'Ingresa el programa.',
-  'EXTERNO_CAMPOS_OBLIGATORIOS': 'Completa todos los campos obligatorios del firmante externo.'
+  'EXTERNO_CAMPOS_OBLIGATORIOS': 'Completa todos los campos obligatorios del firmante externo.',
+  'PERFIL_NO_ENCONTRADO': 'Perfil no encontrado.'
 };
 
 var MENSAJE_FALLBACK = 'Ocurrió un error. Intenta de nuevo o contacta soporte.';
