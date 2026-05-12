@@ -299,6 +299,7 @@ Verificar identidad por email. Código de 6 dígitos.
 |----------|-----------|---------|
 | solicitarOTP | email, nombre, empresa (si aplica) | { ok: true } |
 | verificarOTP | email, codigo | { ok: true, access_token, refresh_token, token_verificacion } |
+| verificarTokenVerificacion | email, token | { ok: true, valido: boolean } |
 | notificarEmail | destinatario, asunto, cuerpo | { ok: true } |
 
 - Rate limit: 20 solicitudes/10 min por email (temporal para desarrollo, reducir en producción)

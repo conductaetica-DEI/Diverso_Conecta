@@ -14,7 +14,7 @@ Derivado del Manual de Marca oficial de DiversoLab. TODO elemento visual usa est
 | --color-lavanda | #cad2e9 | Neutro, bordes, hover |
 | --color-violeta | #3f2b56 | Texto principal, headers |
 | --color-crema | #fffaef | Fondo principal |
-| --color-media-noche | #1f1845 | Fondo oscuro (modals, tooltips) |
+| --color-mn | #1f1845 | Fondo oscuro — modals, tooltips (mn = media-noche) |
 
 ### Variantes (generadas con opacidad, no hardcodeadas)
 
@@ -110,7 +110,7 @@ Afecta: mensajes de error de formularios (`.campo-mensaje-error`), secciones de 
 - Font: --font-titulos, weight 700
 - Padding: --spacing-sm --spacing-lg
 - Border-radius: --radius-md
-- Hover: oscurecer fondo 10%
+- Hover: oscurecer fondo 15% (`color-mix(in srgb, sol 85%, black)`)
 - Disabled: opacidad 0.5, cursor not-allowed
 - Durante carga: texto cambia a "Guardando..." + spinner, disabled
 

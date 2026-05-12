@@ -25,7 +25,7 @@
 | Email.gs | enviar_otp_email, notificarEmail, generar_html_otp, escapar_html — replyTo via EMAIL_REPLY_TO property |
 | Supabase.gs | llamar_edge_function (proxy otp-admin), obtener_o_crear_usuario_auth, buscar_usuario_por_email, vincular_auth_user_id, generar_sesion_supabase (password temporal via Edge Function + POST /token con publishable key) |
 
-Script Properties configuradas: API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_PUBLISHABLE_KEY, GAS_SHARED_SECRET, EMAIL_REPLY_TO.
+Script Properties configuradas (5): API_KEY, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, GAS_SHARED_SECRET, EMAIL_REPLY_TO.
 
 Login OTP funcionando end-to-end (2026-05-12): email → OTP → Edge Function crear usuario → password temporal → sesión → setSession → redirect.
 
@@ -50,11 +50,11 @@ Auth: `x-gas-secret` header, `verify_jwt: false`. Versión desplegada: v3.
 | Auth.gs | verificar_jwt (valida contra Supabase Auth API), autenticar (JWT o api_key) |
 | Firma.gs | firmar (incluye completar_tarea si tarea_id presente), verificarFirma, obtener_datos_firma, verificar_token_otp, validar_firmante, validar_consentimientos |
 | Folio.gs | generar_folio (DL-{codigo}-{año}-{secuencial}), generar_hash (SHA-256), bytes_a_hex |
-| Pdf.gs | generar_pdf_constancia, construir_encabezado/datos/tabla/evidencia, anexos legales (F-DATO-01, SICE-POL-01), estilos |
+| Pdf.gs | generar_pdf_constancia (plantilla Google Docs → makeCopy → replaceText → getAs PDF), obtener_carpeta_destino, reemplazar |
 | Supabase.gs | insertar_consentimientos, consultar_por_folio, registrar_log, obtener_carpeta_perfil, consultar_tarea_firma, completar_tarea, consultar_perfil |
 
-Script Properties configuradas (9):
-- API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, EMAIL_REPLY_TO
+Script Properties configuradas (10):
+- API_KEY, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, GAS_SHARED_SECRET, EMAIL_REPLY_TO
 - OTP_URL, OTP_API_KEY (inter-servicio con GAS OTP)
 - DRIVE_CARPETA_FIRMAS, FOLIO_PREFIJO (DL)
 - DOC_ID_PLANTILLA_FIRMA (Google Doc plantilla para PDF de constancia)
@@ -79,8 +79,8 @@ Los originales viven en Google Docs y se referencian via config.js (frontend ifr
 | Drive.gs | crear_carpeta_expediente, obtener_o_crear_subcarpeta, obtener_subcarpetas_por_tipo, validar_datos_carpeta |
 | Supabase.gs | actualizar_carpeta_perfil (PATCH profiles SET carpeta_drive_id) |
 
-Script Properties configuradas (4):
-- API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, CARPETA_RAIZ_ID
+Script Properties configuradas (5):
+- API_KEY, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, GAS_SHARED_SECRET, CARPETA_RAIZ_ID
 
 Pendiente: pruebas con POST real (tablas ya creadas en Supabase).
 

@@ -28,7 +28,7 @@ En Project Settings → API:
 3. Pegar y ejecutar
 4. Repetir con migraciones adicionales en orden: `003_rls_accesos.sql`, `004_nombre_apellido.sql`, `005_check_tipo_documento.sql`, `006_fix_auth_token_defaults.sql`, `007_folios_secuencial.sql`
 5. Verificar que se crearon las tablas en Table Editor (8 tablas con todas las migraciones)
-6. Verificar que se crearon las 5 funciones en Database → Functions (get_profile_id, es_miembro, tiene_permiso, es_miembro_de, siguiente_folio)
+6. Verificar que se crearon las 7 funciones en Database → Functions (get_profile_id, es_miembro, tiene_permiso, es_miembro_de, actualizar_updated_at, fix_auth_user_token_defaults, siguiente_folio)
 
 ### Configurar Auth
 
@@ -84,11 +84,10 @@ INSERT INTO permisos_miembro (perfil_id, permiso) VALUES
 ### Configurar Script Properties
 
 1. En el editor de GAS → Project Settings → Script Properties
-2. Agregar:
+2. Agregar (5 propiedades):
    - `API_KEY`: generar string aleatorio de 32+ caracteres (usar `openssl rand -hex 32`) — solo para llamadas server-to-server GAS↔GAS
    - `SUPABASE_URL`: el URL del proyecto Supabase
-   - `SUPABASE_SERVICE_ROLE_KEY`: la service_role key de Supabase (`sb_secret_*`) — usada por Auth.gs para verificar JWTs
-   - `SUPABASE_PUBLISHABLE_KEY`: la publishable key de Supabase (`sb_publishable_*`) — usada como apikey en requests a Supabase y Edge Functions
+   - `SUPABASE_PUBLISHABLE_KEY`: la publishable key de Supabase (`sb_publishable_*`) — usada como apikey en requests a Supabase y Edge Functions, y por Auth.gs para verificar JWTs
    - `GAS_SHARED_SECRET`: secreto compartido con la Edge Function otp-admin — generar con `openssl rand -hex 32`
    - `EMAIL_REPLY_TO`: correo público para Reply-To en emails de salida (ej. `info@diversolab.org`)
 
@@ -154,17 +153,18 @@ verify_jwt = false
 
 Mismo proceso que OTP pero con nombre "DiversoLab Firma" y directorio `gas/firma`.
 
-### Script Properties
+### Script Properties (10 propiedades)
 
 - `API_KEY`: para llamadas server-to-server (diferente al de OTP)
 - `SUPABASE_URL`: mismo
-- `SUPABASE_SERVICE_ROLE_KEY`: mismo (también usado por Auth.gs para verificar JWTs)
+- `SUPABASE_PUBLISHABLE_KEY`: mismo — usada como apikey y por Auth.gs para verificar JWTs
+- `GAS_SHARED_SECRET`: mismo — secreto compartido con Edge Functions
+- `EMAIL_REPLY_TO`: correo público para Reply-To en emails de salida (ej. `info@diversolab.org`)
 - `OTP_URL`: URL del deployment de GAS OTP
 - `OTP_API_KEY`: API key del servicio OTP (para llamadas Firma→OTP server-to-server)
 - `DRIVE_CARPETA_FIRMAS`: ID de carpeta Drive para PDFs de constancia
 - `FOLIO_PREFIJO`: "DL" (o el prefijo del proyecto)
 - `DOC_ID_PLANTILLA_FIRMA`: ID del Google Doc plantilla para PDF de constancia
-- `EMAIL_REPLY_TO`: correo público para Reply-To en emails de salida (ej. `info@diversolab.org`)
 
 ---
 
@@ -174,11 +174,12 @@ Mismo proceso que OTP pero con nombre "DiversoLab Firma" y directorio `gas/firma
 
 Mismo proceso, nombre "DiversoLab Drive", directorio `gas/drive`.
 
-### Script Properties
+### Script Properties (5 propiedades)
 
 - `API_KEY`: para llamadas server-to-server (diferente a los otros)
 - `SUPABASE_URL`: mismo
-- `SUPABASE_SERVICE_ROLE_KEY`: mismo (también usado por Auth.gs para verificar JWTs)
+- `SUPABASE_PUBLISHABLE_KEY`: mismo — usada como apikey y por Auth.gs para verificar JWTs
+- `GAS_SHARED_SECRET`: mismo — secreto compartido con Edge Functions
 - `CARPETA_RAIZ_ID`: ID de la carpeta "DiversoLab_Expedientes" en Drive (crearla manualmente primero)
 
 ### Crear carpeta raíz en Drive
@@ -282,14 +283,14 @@ Puedes crear un segundo proyecto Supabase para dev, o usar el mismo con datos de
 
 | Secreto | Dónde configurar | Dónde se usa |
 |---------|-----------------|-------------|
-| SUPABASE_URL | config.js (frontend) + GAS Script Properties | Frontend + GAS |
-| SUPABASE_PUBLISHABLE_KEY | config.js (frontend, como SUPABASE_ANON_KEY) + GAS OTP Script Properties | Frontend + GAS OTP (apikey header) |
-| SUPABASE_SERVICE_ROLE_KEY | Edge Function env (auto) + GAS Script Properties (verificar JWT) | Edge Function (Admin API) + GAS (verificar JWT) |
-| GAS_SHARED_SECRET | GAS OTP Script Properties + Edge Function env | GAS OTP ↔ Edge Function otp-admin |
+| SUPABASE_URL | config.js (frontend) + GAS Script Properties (3 servicios) | Frontend + GAS |
+| SUPABASE_PUBLISHABLE_KEY | config.js (frontend, como SUPABASE_ANON_KEY) + GAS Script Properties (3 servicios) | Frontend (fetch), GAS (apikey header + verificar JWT) |
+| SUPABASE_SERVICE_ROLE_KEY | Edge Function env (auto) | Edge Function otp-admin (Admin API) — NO va en GAS |
+| GAS_SHARED_SECRET | GAS Script Properties (3 servicios) + Edge Function env | GAS ↔ Edge Functions (x-gas-secret header) |
+| API_KEY | GAS Script Properties (cada servicio tiene la suya) | GAS↔GAS server-to-server (autenticación inter-servicio) |
+| OTP_API_KEY | GAS Firma Script Properties | Firma→OTP server-to-server (verificar token_verificacion) |
 | GAS_OTP_URL | config.js (frontend) | Frontend |
-| GAS_OTP_API_KEY | GAS OTP Script Properties + GAS Firma Script Properties | Solo GAS↔GAS server-to-server |
 | GAS_FIRMA_URL | config.js (frontend) | Frontend |
-| GAS_FIRMA_API_KEY | GAS Firma Script Properties | Solo GAS Firma (server-to-server) |
 | GAS_DRIVE_URL | config.js (frontend) | Frontend |
-| GAS_DRIVE_API_KEY | GAS Drive Script Properties | Solo GAS Drive (server-to-server) |
+| OTP_URL | GAS Firma Script Properties | Firma→OTP server-to-server |
 | EMAIL_REPLY_TO | GAS OTP + GAS Firma Script Properties | Reply-To en emails de salida |

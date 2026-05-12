@@ -135,7 +135,7 @@ Plazo de autorización: tres (3) años a partir de la fecha de aceptación, reno
 
 ---
 
-### C7 — Psicosocial y educativo
+### C7 — Seguimiento psicosocial y educativo
 **Referencia:** Artículo 18 — SICE-POL-01
 
 El titular autoriza a DiversoLAB para realizar seguimiento individual que implique:

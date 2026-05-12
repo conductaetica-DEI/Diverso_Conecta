@@ -166,7 +166,7 @@ Son headers independientes. El gateway lee `apikey` para routing. GoTrue/PostgRE
 |----------|-------|----------|
 | `SUPABASE_PUBLISHABLE_KEY` | GAS Script Properties | apikey header en requests a Supabase |
 | `GAS_SHARED_SECRET` | GAS Script Properties + Edge Function env | Autenticación GAS ↔ Edge Function |
-| `SUPABASE_SERVICE_ROLE_KEY` | GAS Script Properties + Edge Function env | Admin API dentro del Edge Function |
+| `SUPABASE_SERVICE_ROLE_KEY` | Edge Function env (auto) — NO va en GAS | Admin API dentro del Edge Function |
 | `SUPABASE_URL` | GAS Script Properties + Edge Function env (auto) | URL del proyecto |
 
 ---

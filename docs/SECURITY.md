@@ -73,7 +73,7 @@ La seguridad está en Supabase (RLS) y GAS (validación), NO en el frontend. El 
 | Secreto | Dónde vive | Quién lo usa | Expuesto al frontend |
 |---------|-----------|-------------|---------------------|
 | Supabase publishable key (`sb_publishable_*`) | JS en GitHub Pages + GAS Script Properties | Frontend (fetch + JWT), GAS (apikey header) | ✅ Sí — es público por diseño |
-| Supabase service_role key (`sb_secret_*`) | Edge Function env + GAS Script Properties (legacy) | Edge Function otp-admin (Admin API) | ❌ NUNCA |
+| Supabase service_role key (`sb_secret_*`) | Edge Function env (auto) | Edge Function otp-admin (Admin API) — NO va en GAS | ❌ NUNCA |
 | GAS shared secret | GAS Script Properties + Edge Function env | GAS OTP ↔ Edge Function (x-gas-secret header) | ❌ NUNCA |
 | GAS API keys | GAS Script Properties | Solo GAS↔GAS (server-to-server) | ❌ NUNCA |
 | JWT Supabase (access_token) | Frontend → GAS en body.jwt | Frontend autenticado → GAS valida contra Supabase Auth | ⚡ Transitorio (1 hora, HTTPS) |
@@ -155,10 +155,14 @@ No hay servidor que configure headers HTTP. Se usan meta tags en cada HTML:
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
   font-src https://fonts.gstatic.com;
   img-src 'self' data:;
+  frame-src https://docs.google.com;
 ">
 ```
 
-Páginas que llaman a `obtener_ip()` (registro, firma) agregan `https://api.ipify.org` en `connect-src`. GAS Web Apps redirigen de `script.google.com` a `script.googleusercontent.com` — ambos dominios son necesarios.
+Variaciones por página:
+- Páginas con iframes de documentos legales (registro, firma) agregan `frame-src https://docs.google.com`
+- Páginas que llaman a `obtener_ip()` (registro, firma) agregan `https://api.ipify.org` en `connect-src`
+- GAS Web Apps redirigen de `script.google.com` a `script.googleusercontent.com` — ambos dominios son necesarios
 
 ### Supabase
 
