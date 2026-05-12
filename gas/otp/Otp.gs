@@ -84,14 +84,14 @@ function verificarOTP(email, codigo) {
 
   var usuario_auth = obtener_o_crear_usuario_auth(email);
   if (!usuario_auth) {
-    return { ok: false, error: 'ERROR_SERVIDOR' };
+    return { ok: false, error: 'ERROR_CREAR_USUARIO' };
   }
 
   vincular_auth_user_id(email, usuario_auth.id);
 
-  var sesion = generar_sesion_supabase(email);
+  var sesion = generar_sesion_supabase(email, usuario_auth.id);
   if (!sesion) {
-    return { ok: false, error: 'ERROR_SERVIDOR' };
+    return { ok: false, error: 'ERROR_GENERAR_SESION' };
   }
 
   var token = generar_token_verificacion();

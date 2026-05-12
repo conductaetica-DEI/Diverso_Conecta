@@ -7,10 +7,10 @@ function obtener_o_crear_usuario_auth(email) {
 
   var respuesta = UrlFetchApp.fetch(url + '/auth/v1/admin/users', {
     method: 'post',
+    contentType: 'application/json',
     headers: {
       'apikey': key,
-      'Authorization': 'Bearer ' + key,
-      'Content-Type': 'application/json'
+      'Authorization': 'Bearer ' + key
     },
     payload: JSON.stringify({
       email: email,
@@ -24,7 +24,7 @@ function obtener_o_crear_usuario_auth(email) {
     return JSON.parse(respuesta.getContentText());
   }
 
-  if (codigo === 422) {
+  if (codigo === 422 || codigo === 400) {
     return buscar_usuario_por_email(email);
   }
 
@@ -64,10 +64,10 @@ function vincular_auth_user_id(email, auth_user_id) {
     url + '/rest/v1/profiles?email_principal=eq.' + encodeURIComponent(email) + '&auth_user_id=is.null',
     {
       method: 'patch',
+      contentType: 'application/json',
       headers: {
         'apikey': key,
         'Authorization': 'Bearer ' + key,
-        'Content-Type': 'application/json',
         'Prefer': 'return=minimal'
       },
       payload: JSON.stringify({
@@ -79,38 +79,38 @@ function vincular_auth_user_id(email, auth_user_id) {
   );
 }
 
-function generar_sesion_supabase(email) {
+function generar_sesion_supabase(email, auth_user_id) {
   var props = PropertiesService.getScriptProperties();
   var url = props.getProperty('SUPABASE_URL');
   var key = props.getProperty('SUPABASE_SERVICE_ROLE_KEY');
 
-  var resp_enlace = UrlFetchApp.fetch(url + '/auth/v1/admin/generate_link', {
-    method: 'post',
+  // Contraseña temporal aleatoria — solo vive durante este request
+  var clave_temporal = Utilities.getUuid() + Utilities.getUuid();
+
+  var resp_clave = UrlFetchApp.fetch(url + '/auth/v1/admin/users/' + auth_user_id, {
+    method: 'put',
+    contentType: 'application/json',
     headers: {
       'apikey': key,
-      'Authorization': 'Bearer ' + key,
-      'Content-Type': 'application/json'
+      'Authorization': 'Bearer ' + key
     },
     payload: JSON.stringify({
-      type: 'magiclink',
-      email: email
+      password: clave_temporal
     }),
     muteHttpExceptions: true
   });
 
-  if (resp_enlace.getResponseCode() !== 200) return null;
+  if (resp_clave.getResponseCode() !== 200) return null;
 
-  var enlace = JSON.parse(resp_enlace.getContentText());
-
-  var resp_sesion = UrlFetchApp.fetch(url + '/auth/v1/verify', {
+  var resp_sesion = UrlFetchApp.fetch(url + '/auth/v1/token?grant_type=password', {
     method: 'post',
+    contentType: 'application/json',
     headers: {
-      'apikey': key,
-      'Content-Type': 'application/json'
+      'apikey': key
     },
     payload: JSON.stringify({
-      type: 'magiclink',
-      token_hash: enlace.hashed_token
+      email: email,
+      password: clave_temporal
     }),
     muteHttpExceptions: true
   });
