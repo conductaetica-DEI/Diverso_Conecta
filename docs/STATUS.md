@@ -141,7 +141,9 @@ Características: página continua sin stepper (Vista 3), campo cargo editable s
 |---------|-----------|
 | pages/registro.html | Página de auto-registro para perfiles externos (3 pasos) |
 
-Flujo: selección tipo perfil (4 cards: beneficiario/aliado/contratista/proveedor) → datos básicos (natural vs jurídica dinámico, validación inline blur) → paso 3 "Consentimiento y firma" (acto indivisible): tarjeta firmante readonly (tipo_documento legible via formatear_tipo_documento) con reloj COT en vivo → iframe SICE-POL-01 + iframe F-DATO-01 (Google Docs embebidos) → 7 consentimientos F-DATO-01 (ninguno pre-seleccionado, checkbox "Leí y acepto" al final de cada uno, Ley 1581/2012) → verificación OTP inline → firma via GAS → perfil INSERT en Supabase (estado pendiente, auth_user_id null) → confirmación con tabla resumen (código/decisión/folio/hash), fecha, IP (PDF enviado por email, no descargable).
+Flujo: selección tipo perfil (4 cards: beneficiario/aliado/contratista/proveedor) → datos básicos (natural vs jurídica dinámico, validación inline blur) → paso 3 "Consentimiento y firma" (acto indivisible): tarjeta firmante readonly (tipo_documento legible via formatear_tipo_documento) con reloj COT en vivo → iframe SICE-POL-01 + iframe F-DATO-01 (Google Docs embebidos) → 7 consentimientos F-DATO-01 (ninguno pre-seleccionado, checkbox "Leí y acepto" al final de cada uno, Ley 1581/2012) → verificación OTP inline → perfil INSERT en Supabase (estado pendiente, return=representation para capturar id) → firma via GAS con perfil_id → confirmación con tabla resumen (código/decisión/folio/hash), fecha, IP (PDF enviado por email, no descargable).
+
+Defecto conocido: perfil se crea sin auth_user_id (vincular_perfil de OTP corre antes de que el perfil exista). Si firma falla post-creación del perfil, queda perfil huérfano sin consentimientos ni auth_user_id. Sin rollback automático (consentimientos es inmutable, perfil sin auth_user_id no puede ser modificado por el usuario vía RLS). Ver ARCHITECTURE.md § Registro para detalles y resolución futura.
 
 Características: stepper 3 pasos (fusión consentimiento+verificación como acto indivisible), campos dinámicos (natural: nombre+apellido+documento personal, jurídica: razón social+NIT+representante+cargo), tipos documento CC/CE/NIT/PA/PEP/PPT/TI (nombres legibles, PEP y PPT completos), detección duplicados (idx_profiles_doc + email_principal), CSP frame-src https://docs.google.com + *.supabase.co, accesibilidad (skip link, aria-labels, focus management, keyboard nav), responsive 480px.
 
@@ -198,8 +200,8 @@ Migración `005_check_tipo_documento.sql` ejecutada en BD remota (2026-05-11 via
 Flujo: verificar_sesion → obtener perfil (redirect miembro → dashboard) → Promise.all(tareas, documentos, consentimientos).
 
 Secciones:
-1. Perfil: nombre/razón social + badge tipo + badge estado + documento + email
-2. Progreso: stepper 4 pasos (Registro ✓, Consentimientos ✓/pendiente, Ubicación pendiente, Documentación pendiente)
+1. Perfil: nombre/razón social + badge tipo + badge estado + documento + teléfono + email
+2. Progreso: stepper 3 pasos (Registro ✓ — incluye datos básicos + consentimientos, KYC pendiente, Documentación pendiente)
 3. Tareas pendientes: lista con tipo, detalle, urgencia, fecha límite. Botón "Firmar" en tareas tipo consentimiento → /firma.html?token={tarea_id}
 4. Documentos: tabla con tipo, categoría, estado (badge semántico), fecha
 5. Consentimientos firmados: tabla con código, fecha, folio
@@ -225,7 +227,7 @@ Secciones:
 2. KPIs: perfiles asignados, tareas activas, docs pendientes revision
 3. Expedientes: tabla con nombre, tipo (badge), estado (badge), completitud por capas (C0/F/C1/C2), ultima actividad
 4. Tareas recientes: tabla con tipo, perfil, detalle, estado, fecha
-5. Modal "Nueva tarea": selector perfil, tipo, detalle, fecha limite, urgencia → INSERT tareas
+5. Modal "Nueva tarea": búsqueda perfil (nombre/email/doc + chip selección), tipo, detalle, fecha limite, urgencia → INSERT tareas
 6. Modal "Solicitar firma": toggle Perfil existente (búsqueda nombre/email/doc + chip selección) | Externo (formulario: tipo persona, nombre, apellido, doc, email, teléfono; si jurídica: empresa, NIT, cargo), programa, C3-C7 obligatorios (C1+C2 disabled checked) → CREATE tarea consentimiento (perfil_id o null + firmante_externo en detalle) + notificar_email con link /firma.html?token={tarea_id}
 
 Caracteristicas: filtrado por permisos + asignaciones, batch query consentimientos para completitud, event delegation, CSP, accesibilidad, responsive 480px.

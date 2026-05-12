@@ -449,8 +449,6 @@
       document.getElementById('contenido-tareas').addEventListener('click', al_click_tarea);
     }
 
-    // --- Encabezado ---
-
     // --- Perfil ---
 
     function poblar_perfil() {
@@ -478,11 +476,8 @@
     // --- Progreso ---
 
     function poblar_progreso() {
-      var tiene_consentimientos = estado.consentimientos.length > 0;
-
       var pasos = [
         { etiqueta: 'Registro', completo: true },
-        { etiqueta: 'Consentimientos', completo: tiene_consentimientos },
         { etiqueta: 'KYC', completo: false },
         { etiqueta: 'Documentación', completo: false }
       ];

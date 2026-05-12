@@ -432,11 +432,17 @@ DiversoLab_Expedientes/
 2. Selecciona tipo de perfil
 3. Llena datos Capa 0 (nombre/razón social, documento, email, teléfono)
 4. Ve los 7 consentimientos, marca los que acepta (C1+C2 obligatorios)
-5. Solicita OTP → verifica
-6. Frontend llama GAS Firma con token_verificacion
-7. Frontend crea perfil en Supabase (estado: pendiente, auth_user_id: null)
+5. Solicita OTP → verifica → recibe access_token + token_verificacion
+6. Frontend crea perfil en Supabase (estado: pendiente, auth_user_id: null) → retorna perfil con id
+7. Frontend llama GAS Firma con token_verificacion + perfil_id → consentimientos se insertan con perfil_id
 8. Confirmación: "Tu solicitud fue recibida"
 9. Miembro con gestion_accesos aprueba → GAS Drive crea carpeta → estado: activo
+
+**Defecto conocido — auth_user_id y perfil huérfano:**
+
+- `vincular_perfil` (paso 3 de verificarOTP) busca el perfil por email para asignar `auth_user_id`, pero en registro el perfil **aún no existe** en ese momento. El perfil se crea en paso 6 sin `auth_user_id`. Queda null hasta que el usuario haga login desde `/login.html` (donde `vincular_perfil` sí encuentra el perfil).
+- Si el paso 7 (firma) falla después de crear el perfil en paso 6, queda un perfil huérfano con `estado_perfil: 'pendiente'` y sin consentimientos. No hay rollback automático porque: (a) la tabla consentimientos es inmutable (sin UPDATE/DELETE en RLS), (b) el perfil no tiene `auth_user_id` así que `get_profile_id()` retorna null y el usuario no puede hacer UPDATE/DELETE de su propio perfil vía RLS. El perfil huérfano no puede hacer nada (está pendiente), pero un reintento del usuario fallará con DOCUMENTO_DUPLICADO.
+- **Resolución futura:** requiere cambio en GAS OTP para retornar `auth_user_id` al frontend, o crear el perfil desde GAS con service_role incluyendo auth_user_id. Ambos requieren redeploy de GAS.
 
 ### Login
 
