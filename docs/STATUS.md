@@ -9,7 +9,8 @@
 | Servicio | Estado | Detalle |
 |----------|--------|---------|
 | Supabase | Migrado | Proyecto `nrqmnaktnpcgqrqpoksi`, 7 tablas + RLS, CLI local en `supabase/` |
-| GAS OTP | Desplegado | Script `13lSaw-...`, deployment v1.9 @11 funcionando (GET OK) |
+| Edge Function otp-admin | Desplegado | v3, verify_jwt=false, proxy Admin API para GAS OTP |
+| GAS OTP | Desplegado | Script `13lSaw-...`, deployment v1.21 @24, login OTP funcionando |
 | GAS Firma | Desplegado | Script `16yZGc-...`, deployment v1.7 @10 funcionando (GET OK) |
 | GAS Drive | Desplegado | Script `1pMbDQ-...`, deployment v1.0 funcionando (GET OK) |
 
@@ -22,11 +23,23 @@
 | Auth.gs | verificar_jwt (valida contra Supabase Auth API), autenticar (JWT o api_key) |
 | Otp.gs | solicitarOTP, verificarOTP (crea auth user + genera sesión + token_verificacion), verificarTokenVerificacion, generar_token_verificacion — usa CacheService para datos efímeros con TTL |
 | Email.gs | enviar_otp_email, notificarEmail, generar_html_otp, escapar_html — replyTo via EMAIL_REPLY_TO property |
-| Supabase.gs | obtener_o_crear_usuario_auth, buscar_usuario_por_email, vincular_auth_user_id, generar_sesion_supabase (password temporal + POST /token) |
+| Supabase.gs | llamar_edge_function (proxy otp-admin), obtener_o_crear_usuario_auth, buscar_usuario_por_email, vincular_auth_user_id, generar_sesion_supabase (password temporal via Edge Function + POST /token con publishable key) |
 
-Script Properties configuradas: API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, EMAIL_REPLY_TO.
+Script Properties configuradas: API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_PUBLISHABLE_KEY, GAS_SHARED_SECRET, EMAIL_REPLY_TO.
 
-Pendiente: pruebas con POST real (requiere API_KEY).
+Login OTP funcionando end-to-end (2026-05-12): email → OTP → Edge Function crear usuario → password temporal → sesión → setSession → redirect.
+
+## Edge Function otp-admin — Desplegada
+
+Proxy para operaciones Admin API de Supabase Auth. GAS no puede usar sb_secret directamente (User-Agent restriction). Ver `docs/SUPABASE.md`.
+
+| Acción | Qué hace |
+|--------|---------|
+| crear_usuario | listUsers + createUser si no existe |
+| set_password | updateUserById con password temporal |
+| vincular_perfil | UPDATE profiles SET auth_user_id |
+
+Auth: `x-gas-secret` header, `verify_jwt: false`. Versión desplegada: v3.
 
 ## GAS Firma — Servicio implementado
 
@@ -162,6 +175,13 @@ Migración `003_rls_accesos.sql` ejecutada en BD remota (2026-05-11 via MCP exec
 - profiles SELECT: agregado `tiene_permiso('gestion_accesos')` — necesario para que Tab 1 y Tab 2 de accesos.html funcionen con gestion_accesos
 - profiles UPDATE: agregado `tiene_permiso('gestion_accesos')` — necesario para aprobar/rechazar perfiles
 
+## Migración 006 — Fix auth token defaults
+
+Migración `006_fix_auth_token_defaults.sql` ejecutada en BD remota (2026-05-12 via MCP apply_migration):
+- Trigger `BEFORE INSERT` en `auth.users`: convierte NULL a '' en `confirmation_token`, `recovery_token`, `email_change_token_new`
+- Previene crash de GoTrue "converting NULL to string is unsupported"
+- No se puede ALTER TABLE auth.users (owner: supabase_auth_admin), el trigger es la alternativa viable
+
 ## Migración 005 — CHECK tipo_documento
 
 Migración `005_check_tipo_documento.sql` ejecutada en BD remota (2026-05-11 via MCP execute_sql):
@@ -239,8 +259,9 @@ Secuencia de errores durante implementación de verificarOTP → sesión Supabas
 
 ## Preguntas arquitectónicas resueltas
 
-1. Sesión Supabase Auth: GAS crea auth user y genera tokens con service_role, frontend hace setSession()
+1. Sesión Supabase Auth: GAS crea auth user via Edge Function proxy, genera tokens con password temporal + /token, frontend hace setSession()
 2. auth_user_id: null hasta primer login post-aprobación
 3. GAS API keys: frontend envía JWT de sesión Supabase (no API keys). API keys solo para server-to-server GAS↔GAS
 4. referencia-corex.gs: existe en `docs/referencia-corex.gs` como referencia (actualizado: CacheService en vez de ScriptProperties)
 5. Monday.com: futuro, no entra en esta fase
+6. GAS ↔ Supabase Auth: Edge Function proxy obligatorio porque GAS UrlFetchApp envía User-Agent de browser y Supabase gateway bloquea sb_secret desde browsers. Ver `docs/SUPABASE.md`

@@ -1,112 +1,80 @@
-// Supabase Admin API — crear usuarios auth, vincular profiles, generar sesiones
+// Supabase via Edge Function proxy — evita restricción de sb_secret en User-Agent browser
+// GAS llama a otp-admin Edge Function, que usa service_role internamente
 
-function obtener_o_crear_usuario_auth(email) {
+function llamar_edge_function(accion, datos) {
   var props = PropertiesService.getScriptProperties();
   var url = props.getProperty('SUPABASE_URL');
-  var key = props.getProperty('SUPABASE_SERVICE_ROLE_KEY');
+  var pub = props.getProperty('SUPABASE_PUBLISHABLE_KEY');
+  var gasSecret = props.getProperty('GAS_SHARED_SECRET');
 
-  var respuesta = UrlFetchApp.fetch(url + '/auth/v1/admin/users', {
+  var payload = datos || {};
+  payload.action = accion;
+
+  var respuesta = UrlFetchApp.fetch(url + '/functions/v1/otp-admin', {
     method: 'post',
     contentType: 'application/json',
     headers: {
-      'apikey': key,
-      'Authorization': 'Bearer ' + key
+      'apikey': pub,
+      'x-gas-secret': gasSecret
     },
-    payload: JSON.stringify({
-      email: email,
-      email_confirm: true
-    }),
+    payload: JSON.stringify(payload),
     muteHttpExceptions: true
   });
 
   var codigo = respuesta.getResponseCode();
-  if (codigo === 200 || codigo === 201) {
-    return JSON.parse(respuesta.getContentText());
-  }
+  var body = respuesta.getContentText();
 
-  if (codigo === 422 || codigo === 400) {
-    return buscar_usuario_por_email(email);
+  try {
+    return JSON.parse(body);
+  } catch (e) {
+    return { ok: false, error: 'EDGE_PARSE_ERROR', status: codigo, detalle: body };
   }
+}
 
-  return null;
+function obtener_o_crear_usuario_auth(email) {
+  var resultado = llamar_edge_function('crear_usuario', { email: email });
+  if (resultado.ok && resultado.user) {
+    return resultado.user;
+  }
+  return { _error: true, detalle: resultado.error || JSON.stringify(resultado) };
 }
 
 function buscar_usuario_por_email(email) {
-  var props = PropertiesService.getScriptProperties();
-  var url = props.getProperty('SUPABASE_URL');
-  var key = props.getProperty('SUPABASE_SERVICE_ROLE_KEY');
-
-  var respuesta = UrlFetchApp.fetch(url + '/auth/v1/admin/users', {
-    method: 'get',
-    headers: {
-      'apikey': key,
-      'Authorization': 'Bearer ' + key
-    },
-    muteHttpExceptions: true
-  });
-
-  if (respuesta.getResponseCode() !== 200) return null;
-
-  var datos = JSON.parse(respuesta.getContentText());
-  var usuarios = datos.users || [];
-  for (var i = 0; i < usuarios.length; i++) {
-    if (usuarios[i].email === email) return usuarios[i];
+  var resultado = llamar_edge_function('crear_usuario', { email: email });
+  if (resultado.ok && resultado.user) {
+    return resultado.user;
   }
   return null;
 }
 
 function vincular_auth_user_id(email, auth_user_id) {
-  var props = PropertiesService.getScriptProperties();
-  var url = props.getProperty('SUPABASE_URL');
-  var key = props.getProperty('SUPABASE_SERVICE_ROLE_KEY');
-
-  UrlFetchApp.fetch(
-    url + '/rest/v1/profiles?email_principal=eq.' + encodeURIComponent(email) + '&auth_user_id=is.null',
-    {
-      method: 'patch',
-      contentType: 'application/json',
-      headers: {
-        'apikey': key,
-        'Authorization': 'Bearer ' + key,
-        'Prefer': 'return=minimal'
-      },
-      payload: JSON.stringify({
-        auth_user_id: auth_user_id,
-        updated_at: new Date().toISOString()
-      }),
-      muteHttpExceptions: true
-    }
-  );
+  llamar_edge_function('vincular_perfil', {
+    email: email,
+    auth_user_id: auth_user_id
+  });
 }
 
 function generar_sesion_supabase(email, auth_user_id) {
   var props = PropertiesService.getScriptProperties();
   var url = props.getProperty('SUPABASE_URL');
-  var key = props.getProperty('SUPABASE_SERVICE_ROLE_KEY');
+  var pub = props.getProperty('SUPABASE_PUBLISHABLE_KEY');
 
-  // Contraseña temporal aleatoria — solo vive durante este request
   var clave_temporal = Utilities.getUuid() + Utilities.getUuid();
 
-  var resp_clave = UrlFetchApp.fetch(url + '/auth/v1/admin/users/' + auth_user_id, {
-    method: 'put',
-    contentType: 'application/json',
-    headers: {
-      'apikey': key,
-      'Authorization': 'Bearer ' + key
-    },
-    payload: JSON.stringify({
-      password: clave_temporal
-    }),
-    muteHttpExceptions: true
+  var resp_set = llamar_edge_function('set_password', {
+    auth_user_id: auth_user_id,
+    password: clave_temporal
   });
 
-  if (resp_clave.getResponseCode() !== 200) return null;
+  if (!resp_set.ok) {
+    return { _error: true, paso: 'set_password', detalle: resp_set.error || JSON.stringify(resp_set) };
+  }
 
   var resp_sesion = UrlFetchApp.fetch(url + '/auth/v1/token?grant_type=password', {
     method: 'post',
     contentType: 'application/json',
     headers: {
-      'apikey': key
+      'apikey': pub
     },
     payload: JSON.stringify({
       email: email,
@@ -115,7 +83,9 @@ function generar_sesion_supabase(email, auth_user_id) {
     muteHttpExceptions: true
   });
 
-  if (resp_sesion.getResponseCode() !== 200) return null;
+  if (resp_sesion.getResponseCode() !== 200) {
+    return { _error: true, paso: 'token_exchange', status: resp_sesion.getResponseCode(), detalle: resp_sesion.getContentText() };
+  }
 
   return JSON.parse(resp_sesion.getContentText());
 }

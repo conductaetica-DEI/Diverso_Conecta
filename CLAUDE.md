@@ -18,7 +18,7 @@ No existe "cambio simple". No saltar pasos.
 | Tarea | Leer SIEMPRE | Leer según contexto |
 |-------|-------------|-------------------|
 | Cualquier código | `docs/CONVENTIONS.md` + `docs/QUALITY.md` | — |
-| BD, auth, roles, integración | — | `docs/ARCHITECTURE.md` |
+| BD, auth, roles, integración | — | `docs/ARCHITECTURE.md` + `docs/SUPABASE.md` |
 | Auth, datos sensibles, endpoints GAS | — | `docs/SECURITY.md` |
 | UI, frontend, HTML, CSS | — | `docs/DESIGN.md` |
 | Configuración inicial de servicios | — | `docs/SETUP.md` |
@@ -47,6 +47,7 @@ diversolab-app/
     DESIGN.md               ← paleta, tipografía, tokens, accesibilidad
     QUALITY.md              ← rendimiento, mantenibilidad, error handling, testing
     SETUP.md                ← configuración manual de Supabase, GAS (clasp), GitHub Pages, DNS
+    SUPABASE.md             ← integración GAS↔Supabase Auth, Edge Function proxy, keys sb_
   gas/
     otp/                    ← servicio OTP (Codigo.gs, Auth.gs, Otp.gs, Email.gs, Supabase.gs)
     firma/                  ← servicio firma electrónica (Codigo.gs, Auth.gs, Firma.gs, Folio.gs, Pdf.gs, Supabase.gs)

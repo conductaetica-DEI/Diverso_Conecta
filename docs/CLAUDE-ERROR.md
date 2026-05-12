@@ -263,3 +263,95 @@ Registro de errores cometidos por Claude durante el desarrollo. Propósito: evit
 **Qué debí hacer:** Diagnosticar UNA vez de forma completa — listar TODAS las diferencias entre login y registro — y proponer el fix completo en una sola iteración. La causa raíz (login tenía layout propio incompatible) era evidente desde la primera lectura.
 
 **Regla violada:** Eficiencia y respeto por el tiempo del usuario. El ciclo obligatorio dice DIAGNOSTICAR una vez con rigor, no diagnosticar tres veces a medias.
+
+---
+
+## Error 27 — Re-auditar información ya confirmada
+
+**Qué pasó:** Durante la depuración del login OTP, cuestioné repetidamente la validez del `SUPABASE_SERVICE_ROLE_KEY` después de que ya se había confirmado correcta en múltiples auditorías. El usuario tuvo que intervenir: "no cuantas auditorias van para que sepas y confirmes que supabase_service_role_key ESTA CORRECTO."
+
+**Qué debí hacer:** Una vez confirmado que un dato es correcto, marcarlo como verificado y no re-auditarlo. Cada re-auditoría innecesaria consume contexto, tiempo, y la paciencia del usuario.
+
+**Regla violada:** Eficiencia. Error 26 (diagnosticar el mismo problema repetidamente) aplicado a auditoría de configuración.
+
+---
+
+## Error 28 — Parchear la BD en vez de resolver causa raíz
+
+**Qué pasó:** Propuse `ALTER TABLE auth.users` para agregar defaults a columnas de token como solución al crash de GoTrue. El usuario preguntó: "estas parcheando la BD? crees que eso es una solucion integra para este proyecto?" El parche no resolvía el problema arquitectónico de fondo (GAS no podía comunicarse con Supabase Auth Admin API).
+
+**Qué debí hacer:** Identificar que el NULL crash era un síntoma, no la causa raíz. La causa raíz era la incompatibilidad GAS ↔ Supabase API gateway. Resolver la causa raíz (Edge Function proxy) y LUEGO el síntoma (trigger para NULLs).
+
+**Regla violada:** Ciclo obligatorio paso 2 (DIAGNOSTICAR): un diagnóstico que no llega a la causa raíz produce soluciones que no resuelven.
+
+---
+
+## Error 29 — Alucinar función de rotación JWT
+
+**Qué pasó:** Propuse "rotar las keys JWT" como solución, afirmando que Supabase tenía una función de rotación de keys. No existe tal función. El usuario verificó: "NO LO PUEDO ROTAR ESA FUNCION NO EXISTE ES ALUCINACION TUYA."
+
+**Qué debí hacer:** Verificar en la documentación de Supabase o via MCP antes de proponer funcionalidades. Si no estoy seguro de que algo existe, decir "no estoy seguro, verifico" en vez de afirmar con confianza.
+
+**Regla violada:** Regla de oro: "Si no está en los docs, pregunta. No inventes." Alucinación directa sobre funcionalidad de plataforma.
+
+---
+
+## Error 30 — Proponer re-habilitar legacy keys filtradas
+
+**Qué pasó:** Propuse re-habilitar las API keys legacy (formato JWT) para que GAS pudiera usarlas directamente. El usuario advirtió: "el service role secret tambien se habilitaria y ese ya esta filtrado y no se ha cambiado ES UN NO." El service_role JWT legacy estaba comprometido — re-habilitarlo expondría la BD completa.
+
+**Qué debí hacer:** Antes de proponer re-habilitar keys, verificar el estado de seguridad de TODAS las keys que se re-habilitarían. Una key comprometida invalida la opción completa.
+
+**Regla violada:** SECURITY.md: "service_role key NUNCA aparece en el frontend." Proponer una acción que expondría un secreto comprometido es un riesgo directo de seguridad.
+
+**Riesgo al que expuso al usuario:** Si se hubieran re-habilitado las keys legacy, cualquier persona con el service_role JWT filtrado tendría acceso total a la BD: leer, escribir, borrar cualquier tabla, crear usuarios admin, modificar consentimientos firmados.
+
+---
+
+## Error 31 — No entender la restricción User-Agent del API gateway
+
+**Qué pasó:** Puse `sb_secret_*` en el header `apikey` de GAS UrlFetchApp sin considerar que el gateway de Supabase bloquea keys secretas cuando detecta User-Agent de browser. GAS siempre envía `Mozilla/5.0` y no permite overridearlo. Resultado: `"Forbidden use of secret API key in browser"`. Luego intenté overridear el User-Agent — mismo error.
+
+**Qué debí hacer:** Investigar las restricciones del API gateway de Supabase antes de implementar. La restricción User-Agent está documentada. También debí investigar las limitaciones de GAS UrlFetchApp (no permite custom User-Agent).
+
+**Regla violada:** Ciclo obligatorio paso 1 (AUDITAR): no audité las restricciones de las plataformas involucradas.
+
+---
+
+## Error 32 — Confundir API keys con tokens de sesión
+
+**Qué pasó:** Intenté poner la publishable key en `apikey` y la service_role key (`sb_secret_*`) en `Authorization: Bearer`. Error: `"bad_jwt: invalid JWT: token contains an invalid number of segments"`. El usuario preguntó: "estas tratando las API keys como token de sesion de usuario?" Exactamente eso estaba haciendo.
+
+**Qué debí hacer:** Entender que `apikey` y `Authorization` son headers con propósitos distintos. `apikey` identifica el proyecto ante el gateway. `Authorization: Bearer` lleva JWTs de sesión. Las keys `sb_*` son opacas, no JWTs — no pueden ir en `Authorization: Bearer`.
+
+**Regla violada:** Ciclo obligatorio paso 2 (DIAGNOSTICAR): el diagnóstico confundió conceptos fundamentales de la autenticación de Supabase.
+
+---
+
+## Error 33 — Implementar sin aprobación (sesión OTP auth)
+
+**Qué pasó:** Empecé a implementar cambios en el flujo de autenticación OTP sin presentar plan ni pedir aprobación. El usuario frenó: "yo no autorice cambios porque tu auditoria de mierda es mediocre." Posteriormente recordó: "ciclo."
+
+**Qué debí hacer:** Seguir el ciclo obligatorio: AUDITAR → DIAGNOSTICAR → PLANIFICAR → PEDIR APROBACIÓN → IMPLEMENTAR → VERIFICAR. Especialmente en cambios de autenticación, que afectan la seguridad del sistema completo.
+
+**Regla violada:** CLAUDE.md: "No existe cambio simple. No saltar pasos." Ciclo obligatorio pasos 3-4.
+
+---
+
+## Error 34 — updateUser vs updateUserById en supabase-js v2
+
+**Qué pasó:** En la Edge Function, usé `supabaseAdmin.auth.admin.updateUser(id, { password })`. Error: `"TypeError: supabaseAdmin.auth.admin.updateUser is not a function"`. El método correcto en supabase-js v2 para actualizar un usuario por ID es `updateUserById()`. `updateUser()` es para el usuario autenticado actual (contexto de sesión).
+
+**Qué debí hacer:** Verificar la API de supabase-js v2 antes de implementar. Los nombres de métodos cambiaron entre v1 y v2.
+
+**Regla violada:** Ciclo obligatorio paso 1 (AUDITAR): no verifiqué la documentación de la librería antes de escribir código.
+
+---
+
+## Error 35 — Campo incorrecto en reporte de error
+
+**Qué pasó:** En `Otp.gs`, el error reporting de `generar_sesion_supabase` leía `sesion.status` en vez de `sesion.detalle`. El campo no existía, mostrando "undefined" al usuario en vez del error real. Esto dificultó la depuración porque el mensaje de error no contenía información útil.
+
+**Qué debí hacer:** Verificar que los campos referenciados en el error reporting coincidan con los campos que la función realmente retorna. `generar_sesion_supabase` retorna `{ _error, paso, detalle }`, no `status`.
+
+**Regla violada:** Ciclo obligatorio paso 6 (VERIFICAR): no verifiqué que el error reporting mostrara información útil.

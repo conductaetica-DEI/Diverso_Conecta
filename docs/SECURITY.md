@@ -13,11 +13,12 @@ La seguridad está en Supabase (RLS) y GAS (validación), NO en el frontend. El 
 1. Email en login → JS consulta Supabase (profiles por email, estado activo)
 2. JS llama GAS OTP → genera código 6 dígitos → Gmail envía
 3. Usuario ingresa código → JS llama GAS verificarOTP
-4. GAS verifica código → llama Supabase Auth Admin API (service_role):
-   - Busca auth user por email. Si no existe, lo crea (`admin.createUser`)
-   - Si es primer login: vincula `auth_user_id` al profile
-   - Genera `access_token` + `refresh_token` (`admin.generateLink` o token generation)
-   - Genera `token_verificacion` temporal (5 min) para firma
+4. GAS verifica código → llama Edge Function `otp-admin` (shared secret):
+   - Edge Function busca auth user por email. Si no existe, lo crea (`admin.createUser`)
+   - Edge Function establece password temporal (`admin.updateUserById`)
+   - GAS llama `/auth/v1/token?grant_type=password` con publishable key para obtener sesión
+   - GAS vincula `auth_user_id` al profile (Edge Function `vincular_perfil`)
+   - GAS genera `token_verificacion` temporal (5 min) para firma
 5. GAS retorna `{ ok, access_token, refresh_token, token_verificacion }` al frontend (HTTPS)
 6. JS hace `supabase.auth.setSession({ access_token, refresh_token })` → sesión activa
 7. JWT se usa para todas las llamadas a Supabase REST → RLS filtra
@@ -27,7 +28,7 @@ La seguridad está en Supabase (RLS) y GAS (validación), NO en el frontend. El 
 
 | Parámetro | Valor |
 |-----------|-------|
-| Solicitudes por email | 3 cada 10 minutos |
+| Solicitudes por email | 20 cada 10 minutos (temporal desarrollo, reducir en prod) |
 | Intentos de verificación | 5 máximo |
 | Vigencia del OTP | 10 minutos |
 | Token verificación post-OTP | 5 minutos |
@@ -38,6 +39,7 @@ La seguridad está en Supabase (RLS) y GAS (validación), NO en el frontend. El 
 - Supabase Auth NO envía emails. Solo gestiona sesión/JWT.
 - Gmail envía el OTP usando cuota de Google Workspace.
 - Si OTP falla 5 veces, se bloquea y se borra. El usuario debe solicitar uno nuevo (sujeto a rate limit).
+- GAS NO puede usar `sb_secret_*` directamente (User-Agent restriction). Toda operación Admin API pasa por Edge Function `otp-admin`. Ver `docs/SUPABASE.md`.
 
 ---
 
@@ -70,12 +72,17 @@ La seguridad está en Supabase (RLS) y GAS (validación), NO en el frontend. El 
 
 | Secreto | Dónde vive | Quién lo usa | Expuesto al frontend |
 |---------|-----------|-------------|---------------------|
-| Supabase anon key | JS en GitHub Pages | Frontend (fetch + JWT) | ✅ Sí — es público por diseño |
-| Supabase service_role key | GAS Script Properties | Solo GAS | ❌ NUNCA |
+| Supabase publishable key (`sb_publishable_*`) | JS en GitHub Pages + GAS Script Properties | Frontend (fetch + JWT), GAS (apikey header) | ✅ Sí — es público por diseño |
+| Supabase service_role key (`sb_secret_*`) | Edge Function env + GAS Script Properties (legacy) | Edge Function otp-admin (Admin API) | ❌ NUNCA |
+| GAS shared secret | GAS Script Properties + Edge Function env | GAS OTP ↔ Edge Function (x-gas-secret header) | ❌ NUNCA |
 | GAS API keys | GAS Script Properties | Solo GAS↔GAS (server-to-server) | ❌ NUNCA |
 | JWT Supabase (access_token) | Frontend → GAS en body.jwt | Frontend autenticado → GAS valida contra Supabase Auth | ⚡ Transitorio (1 hora, HTTPS) |
-| Token verificación OTP | Memoria temporal GAS | GAS OTP → GAS Firma | ❌ Transitorio (5 min) |
+| Token verificación OTP | Memoria temporal GAS (CacheService) | GAS OTP → GAS Firma | ❌ Transitorio (5 min) |
 | access_token + refresh_token | Transitan GAS → frontend (HTTPS) | Frontend (setSession) | ⚡ Transitorio (una vez, HTTPS) |
+
+### Keys formato sb_ vs JWT legacy
+
+Después de la rotación de seguridad, Supabase usa keys opacas (`sb_publishable_*`, `sb_secret_*`). El API gateway las traduce a JWTs internamente. Las keys legacy (formato JWT eyJ...) están deshabilitadas y NO deben re-habilitarse (el service_role legacy fue comprometido). Ver `docs/SUPABASE.md` para detalles.
 
 ### Regla absoluta
 

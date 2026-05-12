@@ -1,4 +1,4 @@
-# VISTAS-FIRMA.md — Vistas de firma de consentimientos
+esas o# VISTAS-FIRMA.md — Vistas de firma de consentimientos
 
 ## VISTA 1 — Auto-registro persona natural
 

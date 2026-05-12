@@ -11,13 +11,17 @@ Plataforma de gestión de expedientes digitales para DiversoLab — Transformaci
 ```
 GitHub Pages (HTML/CSS/JS) ──fetch()+JWT──→ Supabase (BD + Auth + RLS)
        │                                         ↑
-       └──fetch()+JWT──→ GAS (OTP + Firma + Drive)──fetch()+service_role──┘
+       │                                    Edge Function
+       │                                    (otp-admin)
+       │                                         ↑
+       └──fetch()+JWT──→ GAS (OTP + Firma + Drive)──fetch()+shared_secret──┘
 ```
 
 | Componente | Rol |
 |-----------|-----|
 | GitHub Pages | Frontend estático, app privada en app.diversolab.org |
 | Supabase | PostgreSQL, Auth (sesión/JWT), RLS, API REST automática |
+| Edge Function otp-admin | Proxy Admin API para GAS OTP (ver `docs/SUPABASE.md`) |
 | GAS OTP | Verificar identidad por email (código 6 dígitos) |
 | GAS Firma | Firma electrónica de consentimientos y documentos |
 | GAS Drive | Crear carpetas, gestionar permisos, subir archivos |
@@ -261,15 +265,16 @@ Verificar identidad por email. Código de 6 dígitos.
 | verificarOTP | email, codigo | { ok: true, access_token, refresh_token, token_verificacion } |
 | notificarEmail | destinatario, asunto, cuerpo | { ok: true } |
 
-- Rate limit: 3 solicitudes/10 min por email
+- Rate limit: 20 solicitudes/10 min por email (temporal para desarrollo, reducir en producción)
 - Máx 5 intentos de verificación
 - TTL: 10 minutos
 - Al verificar exitosamente:
-  1. Busca auth user en Supabase por email. Si no existe, lo crea vía Auth Admin API (service_role)
-  2. En primer login: vincula `auth_user_id` al profile
-  3. Genera `access_token` + `refresh_token` vía Auth Admin API
+  1. Llama Edge Function `otp-admin` (acción `crear_usuario`): busca auth user por email, si no existe lo crea
+  2. Genera sesión: Edge Function establece password temporal (`set_password`), GAS llama `/auth/v1/token?grant_type=password` para obtener tokens
+  3. Vincula `auth_user_id` al profile (Edge Function acción `vincular_perfil`)
   4. Genera `token_verificacion` temporal (5 min) que GAS Firma requiere
-  5. Retorna los 3 tokens al frontend
+  5. Retorna `access_token` + `refresh_token` + `token_verificacion` al frontend
+- GAS usa `sb_publishable_*` key en header `apikey` + `x-gas-secret` shared secret para Edge Function (ver `docs/SUPABASE.md`)
 - El email de OTP incluye contexto: "Código de verificación para [nombre]" (persona natural) o "Código de verificación para [nombre] en representación de [empresa]" (persona jurídica)
 - Referencia: `docs/referencia-corex.gs`
 
@@ -435,7 +440,7 @@ DiversoLab_Expedientes/
 4. Si no existe o inactivo → error amigable
 5. Si activo → solicita OTP via GAS
 6. Usuario ingresa código → frontend llama GAS verificarOTP
-7. GAS verifica OTP → busca/crea auth user (service_role) → si es primer login vincula auth_user_id al profile → genera tokens
+7. GAS verifica OTP → llama Edge Function `otp-admin` para crear/buscar auth user → genera sesión via password temporal + `/token` → vincula auth_user_id al profile
 8. GAS retorna { ok, access_token, refresh_token, token_verificacion }
 9. Frontend hace `supabase.auth.setSession({ access_token, refresh_token })` → sesión activa con JWT
 10. Redirect según profile_type (miembro → /dashboard, externo → /mi-expediente)

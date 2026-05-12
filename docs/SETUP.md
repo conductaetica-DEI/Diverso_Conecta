@@ -16,8 +16,10 @@ Pasos manuales que el desarrollador debe hacer en interfaces web. Claude Code NO
 
 En Project Settings → API:
 - **Project URL**: `https://xxxxx.supabase.co` → guardar como `SUPABASE_URL`
-- **anon public key**: la de `anon` → guardar como `SUPABASE_ANON_KEY` (esta va al frontend)
-- **service_role key**: la de `service_role` → guardar como `SUPABASE_SERVICE_ROLE_KEY` (esta SOLO va a GAS)
+- **Publishable key** (`sb_publishable_*`): va al frontend y a GAS OTP como `SUPABASE_PUBLISHABLE_KEY`
+- **Secret key** (`sb_secret_*`): va a Edge Function env como `SUPABASE_SERVICE_ROLE_KEY` — NUNCA al frontend
+
+**Nota:** Las keys con formato `sb_*` son opacas (no JWTs). El API gateway las traduce internamente. Ver `docs/SUPABASE.md` para detalles del formato.
 
 ### Ejecutar migración
 
@@ -84,7 +86,9 @@ INSERT INTO permisos_miembro (perfil_id, permiso) VALUES
 2. Agregar:
    - `API_KEY`: generar string aleatorio de 32+ caracteres (usar `openssl rand -hex 32`) — solo para llamadas server-to-server GAS↔GAS
    - `SUPABASE_URL`: el URL del proyecto Supabase
-   - `SUPABASE_SERVICE_ROLE_KEY`: la service_role key de Supabase (necesaria para crear auth users, generar sesiones y verificar JWTs)
+   - `SUPABASE_SERVICE_ROLE_KEY`: la service_role key de Supabase (`sb_secret_*`) — usada por Auth.gs para verificar JWTs
+   - `SUPABASE_PUBLISHABLE_KEY`: la publishable key de Supabase (`sb_publishable_*`) — usada como apikey en requests a Supabase y Edge Functions
+   - `GAS_SHARED_SECRET`: secreto compartido con la Edge Function otp-admin — generar con `openssl rand -hex 32`
    - `EMAIL_REPLY_TO`: correo público para Reply-To en emails de salida (ej. `info@diversolab.org`)
 
 ### Probar
@@ -100,7 +104,50 @@ Debe retornar: `{"ok":true}`
 
 ---
 
-## 3. Google Apps Script — Firma
+## 3. Supabase Edge Function — otp-admin
+
+### Propósito
+
+Proxy para operaciones Admin API de Supabase Auth que GAS no puede hacer directamente (ver `docs/SUPABASE.md` para el por qué).
+
+### Desplegar
+
+```bash
+supabase functions deploy otp-admin --project-ref nrqmnaktnpcgqrqpoksi
+```
+
+O via MCP tool `deploy_edge_function`.
+
+### Configurar variables de entorno
+
+En Supabase Dashboard → Edge Functions → otp-admin → Settings → Environment Variables:
+
+- `GAS_SHARED_SECRET`: el mismo valor configurado en GAS OTP Script Properties (generado con `openssl rand -hex 32`)
+
+Las variables `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` ya están disponibles automáticamente para todas las Edge Functions.
+
+### Configuración del function
+
+El archivo `supabase/functions/otp-admin/config.toml` (o flag en deploy) debe tener:
+
+```toml
+[functions.otp-admin]
+verify_jwt = false
+```
+
+`verify_jwt = false` permite que GAS llame sin JWT válido — la autenticación se hace via `x-gas-secret` header.
+
+### Acciones disponibles
+
+| Acción | Payload | Respuesta |
+|--------|---------|----------|
+| `crear_usuario` | `{ email }` | `{ ok: true, user: { id, email } }` |
+| `set_password` | `{ auth_user_id, password }` | `{ ok: true }` |
+| `vincular_perfil` | `{ email, auth_user_id }` | `{ ok: true }` |
+
+---
+
+## 5. Google Apps Script — Firma
 
 ### Crear proyecto
 
@@ -121,7 +168,7 @@ Mismo proceso que OTP pero con nombre "DiversoLab Firma" y directorio `gas/firma
 
 ---
 
-## 4. Google Apps Script — Drive
+## 6. Google Apps Script — Drive
 
 ### Crear proyecto
 
@@ -143,7 +190,7 @@ Mismo proceso, nombre "DiversoLab Drive", directorio `gas/drive`.
 
 ---
 
-## 5. GitHub Pages
+## 7. GitHub Pages
 
 ### Crear repositorio
 
@@ -165,7 +212,7 @@ Después de push, la app estará en `https://tu-usuario.github.io/diversolab-app
 
 ---
 
-## 6. Dominio personalizado (GoDaddy → GitHub Pages)
+## 8. Dominio personalizado (GoDaddy → GitHub Pages)
 
 ### En GoDaddy
 
@@ -185,7 +232,7 @@ Navegar a `https://app.diversolab.org` → debe mostrar el contenido del repo.
 
 ---
 
-## 7. Configuración del frontend
+## 9. Configuración del frontend
 
 ### Archivo de configuración
 
@@ -195,7 +242,7 @@ Crear `js/config.js` con las variables públicas (NO secretos):
 // Configuración pública — estos valores son visibles en el código fuente
 var CONFIG = {
   SUPABASE_URL: 'https://xxxxx.supabase.co',
-  SUPABASE_ANON_KEY: 'eyJhbGci....',
+  SUPABASE_ANON_KEY: 'sb_publishable_xxxx',  // publishable key (formato opaco, no JWT)
   GAS_OTP_URL: 'https://script.google.com/macros/s/xxxxx/exec',
   GAS_FIRMA_URL: 'https://script.google.com/macros/s/xxxxx/exec',
   GAS_DRIVE_URL: 'https://script.google.com/macros/s/xxxxx/exec'
@@ -208,7 +255,7 @@ Las GAS API keys van en `gas-client.js`. La seguridad real está en Supabase RLS
 
 ---
 
-## 8. Desarrollo local
+## 10. Desarrollo local
 
 ### Servir archivos estáticos
 
@@ -234,8 +281,9 @@ Puedes crear un segundo proyecto Supabase para dev, o usar el mismo con datos de
 | Secreto | Dónde configurar | Dónde se usa |
 |---------|-----------------|-------------|
 | SUPABASE_URL | config.js (frontend) + GAS Script Properties | Frontend + GAS |
-| SUPABASE_ANON_KEY | config.js (frontend) | Frontend (público por diseño) |
-| SUPABASE_SERVICE_ROLE_KEY | GAS Script Properties (3 proyectos) | Solo GAS (auth admin + verificar JWT) |
+| SUPABASE_PUBLISHABLE_KEY | config.js (frontend, como SUPABASE_ANON_KEY) + GAS OTP Script Properties | Frontend + GAS OTP (apikey header) |
+| SUPABASE_SERVICE_ROLE_KEY | Edge Function env (auto) + GAS Script Properties (verificar JWT) | Edge Function (Admin API) + GAS (verificar JWT) |
+| GAS_SHARED_SECRET | GAS OTP Script Properties + Edge Function env | GAS OTP ↔ Edge Function otp-admin |
 | GAS_OTP_URL | config.js (frontend) | Frontend |
 | GAS_OTP_API_KEY | GAS OTP Script Properties + GAS Firma Script Properties | Solo GAS↔GAS server-to-server |
 | GAS_FIRMA_URL | config.js (frontend) | Frontend |
