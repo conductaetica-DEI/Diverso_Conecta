@@ -140,10 +140,6 @@
       text-align: center;
     }
 
-    .confirmacion-pdf {
-      margin-bottom: var(--spacing-lg);
-    }
-
     /* --- Footer --- */
 
     .firma-pie {
@@ -317,10 +313,6 @@
 
           <div class="firmante-dato"><strong>Fecha y hora:</strong><span id="confirmacion-fecha"></span></div>
           <div class="firmante-dato"><strong>IP:</strong><span id="confirmacion-ip"></span></div>
-
-          <div class="confirmacion-pdf">
-            <a id="link-pdf" class="btn-secundario" href="#" target="_blank" rel="noopener" hidden>Descargar constancia PDF</a>
-          </div>
 
           <p class="confirmacion-nota">Se envió copia a <strong id="confirmacion-email"></strong></p>
           <p class="confirmacion-nota">Para consultas: <a href="mailto:info@diversolab.org">info@diversolab.org</a></p>
@@ -775,11 +767,6 @@
       document.getElementById('confirmacion-ip').textContent = estado.ip_cliente || '';
       document.getElementById('confirmacion-email').textContent = estado.datos.firmante.email;
 
-      var link_pdf = document.getElementById('link-pdf');
-      if (resultado.pdf_url) {
-        link_pdf.href = resultado.pdf_url;
-        link_pdf.hidden = false;
-      }
     }
 
     // --- Error fatal ---

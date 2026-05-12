@@ -202,10 +202,6 @@
       text-align: center;
     }
 
-    .confirmacion-pdf {
-      margin-bottom: var(--spacing-lg);
-    }
-
     /* --- Navigation --- */
 
     .paso-navegacion {
@@ -535,10 +531,6 @@
 
           <div class="firmante-dato"><strong>Fecha y hora:</strong><span id="confirmacion-fecha"></span></div>
           <div class="firmante-dato"><strong>IP:</strong><span id="confirmacion-ip"></span></div>
-
-          <div class="confirmacion-pdf">
-            <a id="link-pdf" class="btn-secundario" href="#" target="_blank" rel="noopener" hidden>Descargar constancia PDF</a>
-          </div>
 
           <p class="confirmacion-nota">Se envió copia de la constancia a <strong id="confirmacion-email"></strong></p>
           <p class="confirmacion-mensaje">Tu solicitud fue recibida. Un miembro de DiversoLab la revisará.</p>
@@ -1172,11 +1164,6 @@
       document.getElementById('confirmacion-ip').textContent = estado.ip_cliente || '';
       document.getElementById('confirmacion-email').textContent = obtener_email();
 
-      var link_pdf = document.getElementById('link-pdf');
-      if (resultado && resultado.pdf_url) {
-        link_pdf.href = resultado.pdf_url;
-        link_pdf.hidden = false;
-      }
     }
 
     // --- Helpers ---
