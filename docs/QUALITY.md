@@ -58,6 +58,32 @@ Matriz de requisitos de código. Todo código generado debe cumplir estos están
 - No dependencias circulares (A importa B, B importa A).
 - Minimizar dependencias externas. Si se puede hacer con JS nativo, no instalar librería.
 
+### Estructura frontend
+
+- Todo JavaScript va en archivos .js separados. NUNCA `<script>` inline con lógica dentro de HTML.
+- HTML solo contiene estructura y elementos del DOM. Cero lógica.
+- Cada página carga sus JS con `<script src="../js/archivo.js"></script>`
+- **Deuda técnica:** login.html, firma.html y mi-expediente.html aún tienen inline script (<330 líneas cada uno). Al tocar estas páginas, migrar su JS a archivo externo y quitar `'unsafe-inline'` de CSP.
+
+Clasificación de archivos JS:
+- **Compartido** (2+ páginas lo usan): `js/utils.js`, `js/labels.js`, `js/otp-ui.js`, `js/modales.js`, `js/consentimientos.js`
+- **De página** (1 sola página lo usa): `js/dashboard.js`, `js/accesos.js`, `js/registro.js`
+
+Antes de crear una función:
+- Buscar si ya existe en los JS compartidos
+- Si existe, usarla. No duplicar.
+- Si no existe y se usará en 2+ páginas, agregarla al archivo compartido correspondiente
+- Si no existe y es específica de una página, agregarla al JS de esa página
+
+Orden de carga (dependencias primero):
+1. Supabase CDN (si la página usa sesión)
+2. `config.js`
+3. `supabase-client.js` (si la página usa sesión)
+4. `gas-client.js`
+5. `utils.js`
+6. Compartidos específicos (`labels.js`, `otp-ui.js`, `modales.js`, `consentimientos.js`)
+7. JS de página (`dashboard.js`, `accesos.js`, etc.)
+
 ---
 
 ## 3. Error handling

@@ -70,6 +70,12 @@ diversolab-app/
     gas-client.js           ← helpers para llamar servicios GAS
     utils.js                ← toasts, mensajes, validación, formato, helpers UI
     consentimientos.js      ← catálogo F-DATO-01 v1.0 (C1-C7, textos aprobados)
+    labels.js               ← constantes LABELS_*, badges, formateo compartido
+    otp-ui.js               ← lógica OTP parametrizada (inputs, timer, paste)
+    modales.js              ← abrir/cerrar/vincular modales compartido
+    dashboard.js            ← lógica panel miembro interno
+    accesos.js              ← lógica gestión accesos (admin)
+    registro.js             ← lógica auto-registro perfiles externos
   pages/
     login.html              ← inicio de sesión OTP
     registro.html           ← auto-registro perfiles externos

@@ -147,19 +147,30 @@ Todo input se valida 3 veces: frontend (UX), GAS (lógica), Supabase (BD). Si al
 
 No hay servidor que configure headers HTTP. Se usan meta tags en cada HTML:
 
+Páginas con JS 100% externo (dashboard, accesos, registro):
 ```html
 <meta http-equiv="Content-Security-Policy" content="
   default-src 'self';
-  script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
+  script-src 'self' https://cdn.jsdelivr.net;
   connect-src 'self' https://*.supabase.co https://script.google.com https://script.googleusercontent.com;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
   font-src https://fonts.gstatic.com;
   img-src 'self' data:;
-  frame-src https://docs.google.com;
 ">
 ```
 
-Variaciones por página:
+Páginas con inline script residual (login, firma, mi-expediente):
+```html
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
+  ...
+">
+```
+
+`'unsafe-inline'` en `script-src` solo es necesario si la página tiene `<script>` inline. Páginas con todo el JS externalizado NO lo necesitan. Al migrar inline → .js externo, quitar `'unsafe-inline'` de `script-src`.
+
+Variaciones adicionales por página:
 - Páginas con iframes de documentos legales (registro, firma) agregan `frame-src https://docs.google.com`
 - Páginas que llaman a `obtener_ip()` (registro, firma) agregan `https://api.ipify.org` en `connect-src`
 - GAS Web Apps redirigen de `script.google.com` a `script.googleusercontent.com` — ambos dominios son necesarios

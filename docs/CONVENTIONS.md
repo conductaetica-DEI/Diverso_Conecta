@@ -29,10 +29,19 @@ css/
   tokens.css                  ← variables CSS del design system
   componentes.css             ← estilos de botones, inputs, cards, badges, tablas
 js/
-  config.js                   ← URLs Supabase + GAS (públicas)
+  # Compartidos (2+ páginas los usan)
+  config.js                   ← URLs Supabase + GAS + Doc IDs (públicas)
   supabase-client.js          ← init Supabase, auth helpers, fetch wrappers
   gas-client.js               ← helpers para llamar servicios GAS
   utils.js                    ← toasts, mensajes, validación, formato, helpers UI
+  consentimientos.js          ← catálogo F-DATO-01 v1.0 (C1-C7, textos aprobados)
+  labels.js                   ← constantes LABELS_*, badges, formateo compartido
+  otp-ui.js                   ← lógica OTP parametrizada (inputs, timer, paste)
+  modales.js                  ← abrir/cerrar/vincular modales
+  # De página (1 sola página lo usa)
+  dashboard.js                ← lógica panel miembro interno
+  accesos.js                  ← lógica gestión accesos (admin)
+  registro.js                 ← lógica auto-registro perfiles externos
 pages/
   login.html                  ← inicio de sesión OTP
   registro.html               ← auto-registro perfiles externos
