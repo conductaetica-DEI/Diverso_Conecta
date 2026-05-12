@@ -29,7 +29,17 @@ var MENSAJES_USUARIO = {
   'TAREA_NO_ENCONTRADA': 'No se encontró la solicitud de firma. Verifica el enlace.',
   'TAREA_YA_COMPLETADA': 'Esta solicitud de firma ya fue completada.',
   'TAREA_NO_ES_CONSENTIMIENTO': 'El enlace no corresponde a una solicitud de firma.',
-  'EMAIL_DUPLICADO': 'Ya existe una cuenta con ese correo electrónico.'
+  'EMAIL_DUPLICADO': 'Ya existe una cuenta con ese correo electrónico.',
+  'CAMPOS_OBLIGATORIOS': 'Todos los campos son obligatorios.',
+  'DOCUMENTO_INVALIDO': 'Número de documento no válido.',
+  'MIEMBRO_EMAIL_DUPLICADO': 'Ya existe un miembro con ese correo.',
+  'MIEMBRO_DOC_DUPLICADO': 'Ya existe un perfil con ese documento.',
+  'SELECCIONAR_PERFIL_ASIGNAR': 'Selecciona un perfil para asignar.',
+  'PERFIL_PROPIO_NO_ENCONTRADO': 'No se encontró tu perfil.',
+  'SELECCIONAR_PERFIL_TIPO': 'Selecciona un perfil y un tipo de tarea.',
+  'SELECCIONAR_PERFIL': 'Busca y selecciona un perfil.',
+  'PROGRAMA_REQUERIDO': 'Ingresa el programa.',
+  'EXTERNO_CAMPOS_OBLIGATORIOS': 'Completa todos los campos obligatorios del firmante externo.'
 };
 
 var MENSAJE_FALLBACK = 'Ocurrió un error. Intenta de nuevo o contacta soporte.';
