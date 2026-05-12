@@ -210,10 +210,9 @@ Flujo: verificar_sesion → obtener perfil (redirect miembro → dashboard) → 
 
 Secciones:
 1. Perfil: nombre/razón social + badge tipo + badge estado + documento + teléfono + email
-2. Progreso: stepper 3 pasos (Registro ✓ — incluye datos básicos + consentimientos, KYC pendiente, Documentación pendiente)
-3. Tareas pendientes: lista con tipo, detalle, urgencia, fecha límite. Botón "Firmar" en tareas tipo consentimiento → /firma.html?token={tarea_id}
-4. Documentos: tabla con tipo, categoría, estado (badge semántico), fecha
-5. Consentimientos firmados: tabla con código, fecha, folio
+2. Tareas pendientes: lista con tipo, detalle, urgencia, fecha límite. Botón "Firmar" en tareas tipo consentimiento → /firma.html?token={tarea_id}
+3. Documentos: tabla con tipo, categoría, estado (badge semántico), fecha
+4. Consentimientos firmados: tabla con código, fecha, folio
 
 Características: queries con columnas específicas (no SELECT *), LIMIT 50, event delegation, CSP, accesibilidad (skip link, aria-labels, focus), responsive 480px, cerrar sesión.
 

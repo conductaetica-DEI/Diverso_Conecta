@@ -467,7 +467,7 @@ DiversoLab_Expedientes/
 
 1. Usuario abre `/registro.html`
 2. Selecciona tipo de perfil
-3. Llena datos Capa 0 (nombre/razón social, documento, email, teléfono)
+3. Llena datos básicos (nombre/razón social, documento, email, teléfono)
 4. Ve los 7 consentimientos, marca los que acepta (C1+C2 obligatorios)
 5. Solicita OTP → verifica → recibe access_token + token_verificacion
 6. Frontend crea perfil en Supabase (estado: pendiente, auth_user_id: null) → retorna perfil con id
