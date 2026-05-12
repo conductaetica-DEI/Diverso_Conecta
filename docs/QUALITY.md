@@ -179,6 +179,7 @@ Antes de considerar cualquier tarea como completa:
 - [ ] ¿Los nombres de funciones/variables/archivos siguen CONVENTIONS.md?
 - [ ] ¿No hay verbos prohibidos (get_, set_, handle_, fetch_)?
 - [ ] ¿No hay colores hardcodeados? ¿Todo usa tokens de DESIGN.md?
+- [ ] ¿Los elementos ocultos usan atributo `hidden` (no `display:none` inline)? Ver regla `[hidden]` en DESIGN.md.
 - [ ] ¿Los inputs se validan en frontend Y en backend (GAS)?
 - [ ] ¿Los errores muestran mensajes amigables, no códigos técnicos?
 - [ ] ¿Los botones se deshabilitan durante carga?

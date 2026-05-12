@@ -90,6 +90,18 @@ Tamaño mínimo de texto: 14px (0.875rem) para body, 12px (0.75rem) para caption
 
 ---
 
+## Regla global `[hidden]`
+
+```css
+[hidden] { display: none !important; }
+```
+
+Definida en `componentes.css` (después del reset). Garantiza que el atributo HTML `hidden` siempre oculte el elemento, incluso cuando una clase CSS define `display: flex/grid/block`. Sin esta regla, los estilos de autor sobreescriben el `display: none` del user-agent stylesheet.
+
+Afecta: mensajes de error de formularios (`.campo-mensaje-error`), secciones de pasos, paneles OTP, confirmaciones — todo lo que usa `el.hidden = true/false` en JS.
+
+---
+
 ## Componentes base
 
 ### Botón primario

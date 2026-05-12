@@ -89,6 +89,20 @@ supabase/
 
 **PROHIBIDO**: campos genéricos: data, status, value, info, flag, type, result, temp, obj, item.
 
+### Tipos de documento — códigos estándar
+
+| Código | Label completo | Validación |
+|--------|---------------|------------|
+| CC | Cédula de Ciudadanía | Solo numérico, 5-15 dígitos |
+| CE | Cédula de Extranjería | Solo numérico, 5-15 dígitos |
+| PA | Pasaporte | Alfanumérico, 5-20 caracteres |
+| PEP | Permiso Especial de Permanencia | Mínimo 5 caracteres |
+| PPT | Permiso por Protección Temporal | Mínimo 5 caracteres |
+| TI | Tarjeta de Identidad | Solo numérico, 5-15 dígitos |
+| NIT | NIT (persona jurídica) | 6-12 dígitos, guion y dígito de verificación opcional |
+
+Estos códigos se usan en `<select>` HTML, en `validar_documento()` (utils.js) y en `TIPOS_DOCUMENTO` (utils.js). Los 6 selects de páginas deben tener las mismas opciones con labels completos.
+
 ---
 
 ## Nombres de archivos

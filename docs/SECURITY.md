@@ -141,13 +141,15 @@ No hay servidor que configure headers HTTP. Se usan meta tags en cada HTML:
 ```html
 <meta http-equiv="Content-Security-Policy" content="
   default-src 'self';
-  script-src 'self' https://cdn.jsdelivr.net;
-  connect-src 'self' https://*.supabase.co https://script.google.com;
+  script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
+  connect-src 'self' https://*.supabase.co https://script.google.com https://script.googleusercontent.com;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
   font-src https://fonts.gstatic.com;
   img-src 'self' data:;
 ">
 ```
+
+Páginas que llaman a `obtener_ip()` (registro, firma) agregan `https://api.ipify.org` en `connect-src`. GAS Web Apps redirigen de `script.google.com` a `script.googleusercontent.com` — ambos dominios son necesarios.
 
 ### Supabase
 
