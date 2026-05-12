@@ -76,68 +76,6 @@
       margin-bottom: var(--spacing-md);
     }
 
-    /* --- Progreso stepper --- */
-
-    .progreso-contenedor {
-      display: flex;
-      align-items: flex-start;
-      padding: var(--spacing-sm) 0;
-    }
-
-    .progreso-paso {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      flex: 0 0 auto;
-      min-width: 80px;
-    }
-
-    .progreso-circulo {
-      width: 40px;
-      height: 40px;
-      border-radius: var(--radius-full);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-titulos);
-      font-weight: 700;
-      font-size: var(--text-base);
-      border: 2px solid var(--color-lavanda);
-      background-color: white;
-      color: var(--color-texto-muted);
-    }
-
-    .progreso-circulo-completo {
-      background-color: var(--color-aqua);
-      border-color: var(--color-aqua);
-      color: var(--color-violeta);
-    }
-
-    .progreso-etiqueta {
-      font-family: var(--font-datos);
-      font-size: var(--text-xs);
-      color: var(--color-texto-muted);
-      text-align: center;
-      margin-top: var(--spacing-xs);
-      max-width: 90px;
-    }
-
-    .progreso-etiqueta-completa {
-      color: var(--color-violeta);
-    }
-
-    .progreso-linea {
-      flex: 1;
-      height: 2px;
-      background-color: var(--color-lavanda);
-      margin-top: var(--spacing-lg);
-      min-width: 24px;
-    }
-
-    .progreso-linea-completa {
-      background-color: var(--color-aqua);
-    }
-
     /* --- Tareas --- */
 
     .tarea-item {
@@ -258,11 +196,6 @@
         flex-direction: column;
         align-items: flex-start;
       }
-
-      .progreso-contenedor {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-      }
     }
   </style>
 </head>
@@ -281,13 +214,6 @@
   <main id="contenido-principal" class="expediente-contenedor">
     <section class="tarjeta" id="seccion-perfil" aria-label="Datos del perfil">
       <div id="contenido-perfil">
-        <p class="cargando-texto" aria-busy="true">Cargando...</p>
-      </div>
-    </section>
-
-    <section class="tarjeta" id="seccion-progreso" aria-label="Progreso del expediente">
-      <h2 class="seccion-titulo">Progreso del expediente</h2>
-      <div id="contenido-progreso">
         <p class="cargando-texto" aria-busy="true">Cargando...</p>
       </div>
     </section>

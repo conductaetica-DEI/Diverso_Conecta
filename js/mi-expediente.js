@@ -64,7 +64,6 @@ async function cargar_pagina() {
     estado.documentos = resultados[1] || [];
     estado.consentimientos = resultados[2] || [];
 
-    poblar_progreso();
     poblar_tareas();
     poblar_documentos();
     poblar_consentimientos();
@@ -101,43 +100,6 @@ function poblar_perfil() {
   '</div>';
 
   document.getElementById('contenido-perfil').innerHTML = html;
-}
-
-function poblar_progreso() {
-  var pasos = [
-    { etiqueta: 'Registro', completo: true },
-    { etiqueta: 'KYC', completo: false },
-    { etiqueta: 'Documentación', completo: false }
-  ];
-
-  var html = '<div class="progreso-contenedor">';
-
-  for (var i = 0; i < pasos.length; i++) {
-    var paso = pasos[i];
-    var clase_circulo = 'progreso-circulo';
-    var contenido = String(i + 1);
-    var clase_etiqueta = 'progreso-etiqueta';
-
-    if (paso.completo) {
-      clase_circulo += ' progreso-circulo-completo';
-      contenido = '✓';
-      clase_etiqueta += ' progreso-etiqueta-completa';
-    }
-
-    html += '<div class="progreso-paso">' +
-      '<div class="' + clase_circulo + '" aria-label="Paso ' + (i + 1) + ': ' + paso.etiqueta + (paso.completo ? ' completado' : ' pendiente') + '">' + contenido + '</div>' +
-      '<div class="' + clase_etiqueta + '">' + escapar_html(paso.etiqueta) + '</div>' +
-    '</div>';
-
-    if (i < pasos.length - 1) {
-      var clase_linea = 'progreso-linea';
-      if (paso.completo) clase_linea += ' progreso-linea-completa';
-      html += '<div class="' + clase_linea + '"></div>';
-    }
-  }
-
-  html += '</div>';
-  document.getElementById('contenido-progreso').innerHTML = html;
 }
 
 function poblar_tareas() {
