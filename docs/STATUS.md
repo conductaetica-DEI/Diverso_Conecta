@@ -9,7 +9,7 @@
 | Servicio | Estado | Detalle |
 |----------|--------|---------|
 | Supabase | Migrado | Proyecto `nrqmnaktnpcgqrqpoksi`, 7 tablas + RLS, CLI local en `supabase/` |
-| GAS OTP | Desplegado | Script `13lSaw-...`, deployment v1.6 @7 funcionando (GET OK) |
+| GAS OTP | Desplegado | Script `13lSaw-...`, deployment v1.9 @11 funcionando (GET OK) |
 | GAS Firma | Desplegado | Script `16yZGc-...`, deployment v1.7 @10 funcionando (GET OK) |
 | GAS Drive | Desplegado | Script `1pMbDQ-...`, deployment v1.0 funcionando (GET OK) |
 
@@ -20,8 +20,9 @@
 | appsscript.json | Timezone Bogotá, webapp ANYONE_ANONYMOUS |
 | Codigo.gs | Router: doPost (acciones públicas: solicitarOTP, verificarOTP; protegidas: verificarTokenVerificacion, notificarEmail), doGet, respuesta_json |
 | Auth.gs | verificar_jwt (valida contra Supabase Auth API), autenticar (JWT o api_key) |
-| Otp.gs | solicitarOTP, verificarOTP, verificarTokenVerificacion, generar_token_verificacion — usa CacheService (no ScriptProperties) para datos efímeros con TTL |
+| Otp.gs | solicitarOTP, verificarOTP (crea auth user + genera sesión + token_verificacion), verificarTokenVerificacion, generar_token_verificacion — usa CacheService para datos efímeros con TTL |
 | Email.gs | enviar_otp_email, notificarEmail, generar_html_otp, escapar_html — replyTo via EMAIL_REPLY_TO property |
+| Supabase.gs | obtener_o_crear_usuario_auth, buscar_usuario_por_email, vincular_auth_user_id, generar_sesion_supabase (password temporal + POST /token) |
 
 Script Properties configuradas: API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, EMAIL_REPLY_TO.
 
@@ -221,6 +222,20 @@ Caracteristicas: filtrado por permisos + asignaciones, batch query consentimient
 | Gestion accesos | pages/accesos.html | Miembros con gestion_accesos/plataforma |
 
 Header unificado: todas las páginas usan `.encabezado-app` (logo + título). Páginas con sesión (mi-expediente, dashboard, accesos) incluyen botón "Cerrar sesión". index.html (landing) mantiene su propio diseño.
+
+## Errores resueltos — Login OTP (2026-05-12)
+
+Secuencia de errores durante implementación de verificarOTP → sesión Supabase:
+
+| Error | Causa raíz | Fix |
+|-------|-----------|-----|
+| Error 25: `[hidden]` override | `.campo-mensaje-error { display: flex }` sobreescribe `hidden` del UA stylesheet | Regla global `[hidden] { display: none !important; }` en componentes.css |
+| Error 26: diagnóstico repetido | Re-auditar el mismo problema gasta contexto | Diagnosticar UNA vez, implementar, verificar |
+| Error 27: generate_link/verify no retorna tokens | `POST /auth/v1/verify` con `token_hash` no devuelve `access_token` + `refresh_token` como se esperaba | Cambiar a password temporal: `PUT /admin/users/{id}` + `POST /token?grant_type=password` |
+| Error 28: GAS ignora Content-Type en headers | En GAS UrlFetchApp, `'Content-Type': 'application/json'` dentro de `headers` puede ser ignorado, defaulting a `x-www-form-urlencoded` | Usar `contentType: 'application/json'` como propiedad top-level (patrón de gas/firma/Supabase.gs) |
+| Error 29: auth user creado via SQL malformado | INSERT manual en `auth.users` no incluye todos los campos requeridos por GoAuth (confirmed_at, etc.), causando `500: Database error querying schema` en sign-in | NUNCA insertar manualmente en auth.users/identities — usar Admin API (`POST /admin/users`) que genera usuario con todos los defaults correctos |
+
+**Regla**: los auth users SIEMPRE se crean vía Supabase Auth Admin API (service_role), NUNCA con INSERT SQL directo. GoAuth espera campos internos, triggers y relaciones que el INSERT manual no genera.
 
 ## Preguntas arquitectónicas resueltas
 
