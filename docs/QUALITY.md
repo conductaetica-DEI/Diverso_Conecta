@@ -82,7 +82,8 @@ try {
   mostrar_exito('Guardado correctamente');
 } catch (error) {
   mostrar_error(mensaje_usuario(error.message));
-  registrar_error('guardar_expediente', error);
+  // TODO: implementar registrar_error() para logging centralizado
+  // registrar_error('guardar_expediente', error);
 } finally {
   habilitar_boton(boton, 'Guardar');
 }

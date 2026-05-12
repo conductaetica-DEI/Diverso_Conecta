@@ -92,7 +92,9 @@ Después de la rotación de seguridad, Supabase usa keys opacas (`sb_publishable
 
 ## Row Level Security (RLS)
 
-RLS está activo en TODAS las tablas. Es la última línea de defensa — si el frontend tiene un bug, la BD no entrega datos no autorizados.
+RLS está activo en TODAS las tablas (8). Es la última línea de defensa — si el frontend tiene un bug, la BD no entrega datos no autorizados.
+
+**Nota migración 003:** `profiles` SELECT y UPDATE incluyen `tiene_permiso('gestion_accesos')` (agregado por `003_rls_accesos.sql`), necesario para que accesos.html funcione con el permiso `gestion_accesos`.
 
 ### Verificación pre-deploy
 
@@ -181,7 +183,7 @@ Acciones públicas (solicitarOTP, verificarOTP, firmar, obtenerDatosFirma) no re
 | Robar JWT de otro usuario | JWT expira en 1 hora. Solo se genera post-OTP al email del dueño. |
 | Modificar JS para hacer queries a otras tablas | RLS rechaza. La BD filtra, no el frontend. |
 | Llamar directo a GAS sin frontend | Acciones protegidas requieren JWT válido de Supabase. Acciones públicas (OTP, firma) tienen su propia protección (rate limit, token_verificacion). |
-| Fuerza bruta OTP | Rate limit: 3/10min, 5 intentos, TTL 10min. |
+| Fuerza bruta OTP | Rate limit: 20/10min (temporal dev), 5 intentos, TTL 10min. |
 | Crear perfil falso | Perfil queda en 'pendiente'. No puede hacer nada sin aprobación. |
 | Modificar consentimiento firmado | Tabla inmutable (no UPDATE, no DELETE). Hash detecta manipulación. |
 | XSS (inyectar HTML/JS) | CSP meta tag. Escapar todo contenido dinámico con escapar_html(). |

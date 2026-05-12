@@ -57,7 +57,7 @@ Primer miembro = seed manual en Supabase con los 4 permisos. Usa panel de gesti�
 
 ---
 
-## Schema SQL — 7 tablas
+## Schema SQL — 8 tablas
 
 ### profiles
 
@@ -201,6 +201,39 @@ CREATE TABLE logs_actividad (
 );
 ```
 
+### folios_secuencial (service_role only)
+
+```sql
+CREATE TABLE folios_secuencial (
+  codigo     text NOT NULL,
+  anio       integer NOT NULL,
+  secuencial integer NOT NULL DEFAULT 0,
+  PRIMARY KEY (codigo, anio)
+);
+
+ALTER TABLE folios_secuencial ENABLE ROW LEVEL SECURITY;
+
+-- Solo service_role puede leer/escribir (GAS via Edge Function)
+CREATE POLICY pol_folios_service_only
+  ON folios_secuencial FOR ALL
+  USING (false);
+```
+
+Función atómica para generar folios sin race condition:
+
+```sql
+CREATE OR REPLACE FUNCTION siguiente_folio(p_codigo text, p_anio integer)
+RETURNS integer AS $$
+  INSERT INTO folios_secuencial (codigo, anio, secuencial)
+  VALUES (p_codigo, p_anio, 1)
+  ON CONFLICT (codigo, anio)
+  DO UPDATE SET secuencial = folios_secuencial.secuencial + 1
+  RETURNING secuencial;
+$$ LANGUAGE sql SECURITY DEFINER;
+```
+
+Reemplaza Script Properties de GAS para conteo de folios. Genera secuenciales tipo `DL-C1-2026-00001`.
+
 ---
 
 ## Funciones RLS
@@ -243,13 +276,16 @@ $$ LANGUAGE sql SECURITY DEFINER STABLE;
 
 | Tabla | SELECT | INSERT | UPDATE | DELETE |
 |-------|--------|--------|--------|--------|
-| profiles | Propio OR miembro asignado OR gestion_accesos OR gestion_plataforma | Público (registro) | Propio OR gestion_accesos OR gestion_plataforma | gestion_plataforma |
+| profiles | Propio OR miembro asignado OR gestion_accesos OR gestion_plataforma (migración 003) | Público (registro) | Propio OR gestion_accesos OR gestion_plataforma (migración 003) | gestion_plataforma |
 | permisos_miembro | gestion_accesos OR gestion_plataforma | gestion_accesos | gestion_accesos | gestion_plataforma |
 | asignaciones | Miembro (suyas) OR gestion_plataforma | gestion_accesos | gestion_accesos | gestion_plataforma |
 | tareas | Perfil (suyas) OR miembro (asignados) OR gestion_plataforma | es_miembro() | Perfil (completar propias) OR miembro | gestion_plataforma |
 | catalogo_docs | Perfil (suyos) OR miembro (asignados) OR gestion_plataforma | Autenticado | Miembro (revisar) | gestion_plataforma |
 | consentimientos | Perfil (suyos) OR gestion_plataforma | Autenticado + service_role | NUNCA | NUNCA |
 | logs_actividad | gestion_plataforma | Autenticado + service_role | NUNCA | NUNCA |
+| folios_secuencial | NUNCA (RLS false) | NUNCA (RLS false) | NUNCA (RLS false) | NUNCA (RLS false) |
+
+**Nota:** `folios_secuencial` tiene `USING (false)` — solo accesible via `service_role` o la función `siguiente_folio()` (SECURITY DEFINER).
 
 ---
 

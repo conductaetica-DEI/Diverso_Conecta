@@ -40,6 +40,9 @@ No existe "cambio simple". No saltar pasos.
 ```
 diversolab-app/
   CLAUDE.md                 ← este archivo
+  index.html                ← landing page / entry point
+  DiversoLab_Logo.gif       ← logo institucional
+  referencia-corex.gs       ← referencia GAS (CacheService, no producción)
   docs/
     ARCHITECTURE.md         ← schema, roles, permisos, flujos, Drive, servicios GAS
     CONVENTIONS.md          ← nomenclatura, verbos, prefijos, idioma, estructura
@@ -48,6 +51,12 @@ diversolab-app/
     QUALITY.md              ← rendimiento, mantenibilidad, error handling, testing
     SETUP.md                ← configuración manual de Supabase, GAS (clasp), GitHub Pages, DNS
     SUPABASE.md             ← integración GAS↔Supabase Auth, Edge Function proxy, keys sb_
+    STATUS.md               ← estado actual de infraestructura y servicios
+    VISTAS-FIRMA.md         ← referencia visual de las 3 vistas de firma
+    CLAUDE-ERROR.md         ← registro de errores resueltos (35 errores documentados)
+    F-DATO-01_Consentimiento-Integral.md  ← textos aprobados 7 consentimientos
+    SICE-POL-01_Politica-Datos.md         ← política protección de datos (39 artículos)
+    mockups/                ← mockups HTML de referencia visual
   gas/
     otp/                    ← servicio OTP (Codigo.gs, Auth.gs, Otp.gs, Email.gs, Supabase.gs)
     firma/                  ← servicio firma electrónica (Codigo.gs, Auth.gs, Firma.gs, Folio.gs, Pdf.gs, Supabase.gs)
@@ -60,6 +69,7 @@ diversolab-app/
     supabase-client.js      ← init Supabase + auth helpers
     gas-client.js           ← helpers para llamar servicios GAS
     utils.js                ← toasts, mensajes, validación, formato, helpers UI
+    consentimientos.js      ← catálogo F-DATO-01 v1.0 (C1-C7, textos aprobados)
   pages/
     login.html              ← inicio de sesión OTP
     registro.html           ← auto-registro perfiles externos
@@ -72,4 +82,8 @@ diversolab-app/
       001_schema.sql
       002_seed.sql
       003_rls_accesos.sql
+      004_nombre_apellido.sql
+      005_check_tipo_documento.sql
+      006_fix_auth_token_defaults.sql
+      007_folios_secuencial.sql
 ```

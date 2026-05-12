@@ -26,8 +26,9 @@ En Project Settings → API:
 1. Ir a SQL Editor en el dashboard de Supabase
 2. Abrir `supabase/migrations/001_schema.sql` del repo
 3. Pegar y ejecutar
-4. Verificar que se crearon las 7 tablas en Table Editor
-5. Verificar que se crearon las 4 funciones en Database → Functions
+4. Repetir con migraciones adicionales en orden: `003_rls_accesos.sql`, `004_nombre_apellido.sql`, `005_check_tipo_documento.sql`, `006_fix_auth_token_defaults.sql`, `007_folios_secuencial.sql`
+5. Verificar que se crearon las tablas en Table Editor (8 tablas con todas las migraciones)
+6. Verificar que se crearon las 5 funciones en Database → Functions (get_profile_id, es_miembro, tiene_permiso, es_miembro_de, siguiente_folio)
 
 ### Configurar Auth
 

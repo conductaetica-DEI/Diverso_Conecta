@@ -8,7 +8,7 @@
 
 | Servicio | Estado | Detalle |
 |----------|--------|---------|
-| Supabase | Migrado | Proyecto `nrqmnaktnpcgqrqpoksi`, 7 tablas + RLS, CLI local en `supabase/` |
+| Supabase | Migrado | Proyecto `nrqmnaktnpcgqrqpoksi`, 8 tablas + RLS (7 migraciones), CLI local en `supabase/` |
 | Edge Function otp-admin | Desplegado | v3, verify_jwt=false, proxy Admin API para GAS OTP |
 | GAS OTP | Desplegado | Script `13lSaw-...`, deployment v1.21 @24, login OTP funcionando |
 | GAS Firma | Desplegado | Script `16yZGc-...`, deployment v1.7 @10 funcionando (GET OK) |
@@ -84,10 +84,10 @@ Script Properties configuradas (4):
 
 Pendiente: pruebas con POST real (tablas ya creadas en Supabase).
 
-## Supabase — Migración 001 ejecutada
+## Supabase — Migraciones ejecutadas (001-007)
 
 Migración `001_schema.sql` ejecutada en BD remota:
-- 7 tablas: profiles, permisos_miembro, asignaciones, tareas, catalogo_docs, consentimientos, logs_actividad
+- 7 tablas base: profiles, permisos_miembro, asignaciones, tareas, catalogo_docs, consentimientos, logs_actividad
 - 5 funciones: get_profile_id, es_miembro, tiene_permiso, es_miembro_de, actualizar_updated_at
 - 24 políticas RLS en las 7 tablas
 - RLS habilitado en todas las tablas
@@ -183,6 +183,15 @@ Migración `006_fix_auth_token_defaults.sql` ejecutada en BD remota (2026-05-12 
 - Trigger `BEFORE INSERT` en `auth.users`: convierte NULL a '' en `confirmation_token`, `recovery_token`, `email_change_token_new`
 - Previene crash de GoTrue "converting NULL to string is unsupported"
 - No se puede ALTER TABLE auth.users (owner: supabase_auth_admin), el trigger es la alternativa viable
+
+## Migración 007 — folios_secuencial
+
+Migración `007_folios_secuencial.sql` ejecutada en BD remota (2026-05-11 via MCP):
+- Tabla `folios_secuencial` (codigo, anio, secuencial) — contadores atómicos para folios
+- Función `siguiente_folio(p_codigo, p_anio)` — INSERT ON CONFLICT incrementa y retorna
+- RLS `USING (false)` — solo accesible via service_role o SECURITY DEFINER
+- Reemplaza Script Properties de GAS para conteo de folios (sin race condition)
+- Total BD: 8 tablas, 6 funciones
 
 ## Migración 005 — CHECK tipo_documento
 
