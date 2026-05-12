@@ -63,7 +63,6 @@ Matriz de requisitos de código. Todo código generado debe cumplir estos están
 - Todo JavaScript va en archivos .js separados. NUNCA `<script>` inline con lógica dentro de HTML.
 - HTML solo contiene estructura y elementos del DOM. Cero lógica.
 - Cada página carga sus JS con `<script src="../js/archivo.js"></script>`
-- **Deuda técnica:** login.html, firma.html y mi-expediente.html aún tienen inline script (<330 líneas cada uno). Al tocar estas páginas, migrar su JS a archivo externo y quitar `'unsafe-inline'` de CSP.
 
 Clasificación de archivos JS:
 - **Compartido** (2+ páginas lo usan): `js/utils.js`, `js/labels.js`, `js/otp-ui.js`, `js/modales.js`, `js/consentimientos.js`

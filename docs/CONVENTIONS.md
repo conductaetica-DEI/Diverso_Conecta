@@ -42,6 +42,9 @@ js/
   dashboard.js                ← lógica panel miembro interno
   accesos.js                  ← lógica gestión accesos (admin)
   registro.js                 ← lógica auto-registro perfiles externos
+  login.js                    ← lógica inicio de sesión OTP
+  firma.js                    ← lógica firma electrónica standalone
+  mi-expediente.js            ← lógica dashboard perfil externo
 pages/
   login.html                  ← inicio de sesión OTP
   registro.html               ← auto-registro perfiles externos

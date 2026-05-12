@@ -147,7 +147,7 @@ Todo input se valida 3 veces: frontend (UX), GAS (lógica), Supabase (BD). Si al
 
 No hay servidor que configure headers HTTP. Se usan meta tags en cada HTML:
 
-Páginas con JS 100% externo (dashboard, accesos, registro):
+Todas las páginas tienen JS 100% externalizado — no hay `<script>` inline:
 ```html
 <meta http-equiv="Content-Security-Policy" content="
   default-src 'self';
@@ -159,16 +159,7 @@ Páginas con JS 100% externo (dashboard, accesos, registro):
 ">
 ```
 
-Páginas con inline script residual (login, firma, mi-expediente):
-```html
-<meta http-equiv="Content-Security-Policy" content="
-  default-src 'self';
-  script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
-  ...
-">
-```
-
-`'unsafe-inline'` en `script-src` solo es necesario si la página tiene `<script>` inline. Páginas con todo el JS externalizado NO lo necesitan. Al migrar inline → .js externo, quitar `'unsafe-inline'` de `script-src`.
+`'unsafe-inline'` NO está en `script-src` (ninguna página lo necesita). Solo permanece en `style-src` por Google Fonts. NUNCA agregar `'unsafe-inline'` a `script-src` — toda lógica va en archivos .js externos.
 
 Variaciones adicionales por página:
 - Páginas con iframes de documentos legales (registro, firma) agregan `frame-src https://docs.google.com`
