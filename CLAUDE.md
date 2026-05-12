@@ -48,7 +48,7 @@ diversolab-app/
     QUALITY.md              ← rendimiento, mantenibilidad, error handling, testing
     SETUP.md                ← configuración manual de Supabase, GAS (clasp), GitHub Pages, DNS
   gas/
-    otp/                    ← servicio OTP (Codigo.gs, Auth.gs, Otp.gs, Email.gs)
+    otp/                    ← servicio OTP (Codigo.gs, Auth.gs, Otp.gs, Email.gs, Supabase.gs)
     firma/                  ← servicio firma electrónica (Codigo.gs, Auth.gs, Firma.gs, Folio.gs, Pdf.gs, Supabase.gs)
     drive/                  ← servicio Drive (Codigo.gs, Auth.gs, Drive.gs, Supabase.gs)
   css/

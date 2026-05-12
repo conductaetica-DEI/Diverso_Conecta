@@ -82,13 +82,30 @@ function verificarOTP(email, codigo) {
 
   cache.remove(clave_otp);
 
+  var usuario_auth = obtener_o_crear_usuario_auth(email);
+  if (!usuario_auth) {
+    return { ok: false, error: 'ERROR_SERVIDOR' };
+  }
+
+  vincular_auth_user_id(email, usuario_auth.id);
+
+  var sesion = generar_sesion_supabase(email);
+  if (!sesion) {
+    return { ok: false, error: 'ERROR_SERVIDOR' };
+  }
+
   var token = generar_token_verificacion();
   cache.put('tkn_' + email, JSON.stringify({
     token: token,
     creado: ahora
   }), TOKEN_TTL_SEG);
 
-  return { ok: true, token_verificacion: token };
+  return {
+    ok: true,
+    access_token: sesion.access_token,
+    refresh_token: sesion.refresh_token,
+    token_verificacion: token
+  };
 }
 
 function verificarTokenVerificacion(email, token) {

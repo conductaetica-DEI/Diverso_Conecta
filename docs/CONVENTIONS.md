@@ -20,6 +20,7 @@
 gas/
   otp/Codigo.gs              ← servicio OTP (router)
   otp/Auth.gs                ← verificar_jwt + autenticar
+  otp/Supabase.gs            ← crear auth user, vincular profile, generar sesión
   firma/Codigo.gs             ← servicio firma electrónica (router)
   firma/Auth.gs               ← verificar_jwt + autenticar
   drive/Codigo.gs             ← servicio Drive (router)
