@@ -265,10 +265,6 @@
       accent-color: var(--color-violeta);
     }
 
-    .campo-readonly {
-      background-color: var(--color-lavanda-10);
-    }
-
     /* --- Footer --- */
 
     .dashboard-pie {
@@ -433,24 +429,28 @@
       <h3 class="modal-titulo" id="modal-firma-titulo">Solicitar firma de consentimientos</h3>
 
       <div class="modal-campo">
-        <label for="firma-perfil" class="campo-label">Firmante <span class="campo-obligatorio">*</span></label>
-        <select id="firma-perfil" class="campo-select" aria-required="true">
-          <option value="">Seleccionar perfil...</option>
-          <option value="__externo__">— Firmante externo (sin perfil) —</option>
-        </select>
+        <label class="campo-label">Firmante <span class="campo-obligatorio">*</span></label>
+        <div class="toggle-grupo" role="group" aria-label="Tipo de firmante">
+          <button type="button" class="toggle-btn toggle-activo" id="firma-toggle-existente" aria-pressed="true">Perfil existente</button>
+          <button type="button" class="toggle-btn" id="firma-toggle-externo" aria-pressed="false">Externo</button>
+        </div>
       </div>
 
-      <div id="firma-datos-perfil">
-        <div class="modal-campo modal-campo-fila">
-          <div>
-            <label for="firma-email" class="campo-label">Email</label>
-            <input type="email" id="firma-email" class="campo-texto campo-readonly" readonly>
-          </div>
-          <div>
-            <label for="firma-documento" class="campo-label">Documento</label>
-            <input type="text" id="firma-documento" class="campo-texto campo-readonly" readonly>
+      <div id="firma-busqueda" class="modal-campo">
+        <label for="firma-buscar" class="campo-label">Buscar perfil</label>
+        <div class="buscar-contenedor">
+          <input type="text" id="firma-buscar" class="campo-texto" placeholder="Nombre, email o documento..." autocomplete="off">
+          <div id="firma-resultados" class="buscar-resultados" hidden role="listbox"></div>
+        </div>
+        <p id="firma-buscar-ayuda" class="buscar-ayuda">Escribe al menos 2 caracteres</p>
+        <div id="firma-seleccion" class="chip-contenedor" hidden>
+          <div class="chip">
+            <span id="firma-chip-nombre"></span>
+            <span class="insignia insignia-neutra" id="firma-chip-tipo"></span>
+            <button type="button" class="chip-quitar" id="firma-chip-quitar" aria-label="Quitar selección">&times;</button>
           </div>
         </div>
+        <input type="hidden" id="firma-perfil-id" value="">
       </div>
 
       <div id="firma-datos-externo" hidden>
@@ -894,7 +894,20 @@
       document.getElementById('btn-solicitar-firma').addEventListener('click', al_abrir_modal_firma);
       document.getElementById('btn-crear-tarea').addEventListener('click', al_crear_tarea);
       document.getElementById('btn-enviar-firma').addEventListener('click', al_enviar_firma);
-      document.getElementById('firma-perfil').addEventListener('change', al_cambiar_firmante);
+      document.getElementById('firma-toggle-existente').addEventListener('click', function() { al_toggle_firmante('existente'); });
+      document.getElementById('firma-toggle-externo').addEventListener('click', function() { al_toggle_firmante('externo'); });
+      document.getElementById('firma-buscar').addEventListener('input', al_buscar_firmante);
+      document.getElementById('firma-chip-quitar').addEventListener('click', limpiar_busqueda_firma);
+      document.getElementById('firma-resultados').addEventListener('click', function(e) {
+        var item = e.target.closest('.buscar-resultado-item');
+        if (item) al_seleccionar_perfil_firma(item.dataset.perfilId);
+      });
+      document.getElementById('firma-resultados').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          var item = e.target.closest('.buscar-resultado-item');
+          if (item) al_seleccionar_perfil_firma(item.dataset.perfilId);
+        }
+      });
       document.getElementById('firma-ext-tipo').addEventListener('change', al_cambiar_tipo_externo);
 
       var cerrar_btns = document.querySelectorAll('[data-cerrar-modal]');
@@ -970,13 +983,10 @@
     // --- Modal: Solicitar firma ---
 
     function al_abrir_modal_firma() {
-      poblar_selector_perfiles('firma-perfil');
-      document.getElementById('firma-email').value = '';
-      document.getElementById('firma-documento').value = '';
-      document.getElementById('firma-programa').value = '';
-      document.getElementById('firma-datos-perfil').hidden = false;
-      document.getElementById('firma-datos-externo').hidden = true;
+      al_toggle_firmante('existente');
+      limpiar_busqueda_firma();
       limpiar_campos_externo();
+      document.getElementById('firma-programa').value = '';
 
       var checks = document.querySelectorAll('#firma-consentimientos .firma-consent-check[value]');
       for (var i = 0; i < checks.length; i++) checks[i].checked = false;
@@ -984,28 +994,114 @@
       abrir_modal('modal-solicitar-firma');
     }
 
-    function al_cambiar_firmante() {
-      var valor = document.getElementById('firma-perfil').value;
-      var es_externo = valor === '__externo__';
+    function al_toggle_firmante(modo) {
+      var btn_existente = document.getElementById('firma-toggle-existente');
+      var btn_externo = document.getElementById('firma-toggle-externo');
 
-      document.getElementById('firma-datos-perfil').hidden = es_externo;
-      document.getElementById('firma-datos-externo').hidden = !es_externo;
+      if (modo === 'existente') {
+        btn_existente.classList.add('toggle-activo');
+        btn_existente.setAttribute('aria-pressed', 'true');
+        btn_externo.classList.remove('toggle-activo');
+        btn_externo.setAttribute('aria-pressed', 'false');
+        document.getElementById('firma-busqueda').hidden = false;
+        document.getElementById('firma-datos-externo').hidden = true;
+      } else {
+        btn_externo.classList.add('toggle-activo');
+        btn_externo.setAttribute('aria-pressed', 'true');
+        btn_existente.classList.remove('toggle-activo');
+        btn_existente.setAttribute('aria-pressed', 'false');
+        document.getElementById('firma-busqueda').hidden = true;
+        document.getElementById('firma-datos-externo').hidden = false;
+        limpiar_busqueda_firma();
+      }
+    }
 
-      if (es_externo) {
-        document.getElementById('firma-email').value = '';
-        document.getElementById('firma-documento').value = '';
+    var _firma_buscar_timeout = null;
+
+    function al_buscar_firmante() {
+      clearTimeout(_firma_buscar_timeout);
+      var termino = document.getElementById('firma-buscar').value.trim();
+
+      if (termino.length < 2) {
+        document.getElementById('firma-resultados').hidden = true;
         return;
       }
 
-      var perfil = buscar_expediente(valor);
-      if (perfil) {
-        document.getElementById('firma-email').value = perfil.email_principal;
-        document.getElementById('firma-documento').value =
-          perfil.tipo_documento + ' ' + perfil.numero_documento;
-      } else {
-        document.getElementById('firma-email').value = '';
-        document.getElementById('firma-documento').value = '';
+      _firma_buscar_timeout = setTimeout(function() {
+        var resultados = filtrar_perfiles_firma(termino);
+        mostrar_resultados_firma(resultados);
+      }, 200);
+    }
+
+    function filtrar_perfiles_firma(termino) {
+      var t = termino.toLowerCase();
+      var resultados = [];
+
+      for (var i = 0; i < estado.expedientes.length; i++) {
+        var e = estado.expedientes[i];
+        var nombre = nombre_display(e).toLowerCase();
+        var email = (e.email_principal || '').toLowerCase();
+        var doc = (e.numero_documento || '').toLowerCase();
+
+        if (nombre.indexOf(t) !== -1 || email.indexOf(t) !== -1 || doc.indexOf(t) !== -1) {
+          resultados.push(e);
+          if (resultados.length >= 5) break;
+        }
       }
+
+      return resultados;
+    }
+
+    function mostrar_resultados_firma(resultados) {
+      var contenedor = document.getElementById('firma-resultados');
+
+      if (resultados.length === 0) {
+        contenedor.innerHTML = '<div class="buscar-resultado-vacio">Sin resultados</div>';
+        contenedor.hidden = false;
+        return;
+      }
+
+      var html = '';
+      for (var i = 0; i < resultados.length; i++) {
+        var e = resultados[i];
+        var tipo_label = LABELS_TIPOS[e.profile_type] || e.profile_type;
+        var doc_display = (e.tipo_documento && e.numero_documento)
+          ? escapar_html(e.tipo_documento) + ' ' + escapar_html(e.numero_documento)
+          : '';
+
+        html += '<div class="buscar-resultado-item" role="option" tabindex="0" data-perfil-id="' + e.id + '">' +
+          '<span class="buscar-resultado-nombre">' + escapar_html(nombre_display(e)) + '</span> ' +
+          '<span class="insignia insignia-neutra">' + escapar_html(tipo_label) + '</span> ' +
+          (doc_display ? '<span class="buscar-resultado-detalle">' + doc_display + '</span> ' : '') +
+          '<span class="buscar-resultado-detalle">' + escapar_html(e.email_principal || '') + '</span>' +
+        '</div>';
+      }
+
+      contenedor.innerHTML = html;
+      contenedor.hidden = false;
+    }
+
+    function al_seleccionar_perfil_firma(perfil_id) {
+      var perfil = buscar_expediente(perfil_id);
+      if (!perfil) return;
+
+      document.getElementById('firma-perfil-id').value = perfil_id;
+      document.getElementById('firma-chip-nombre').textContent = nombre_display(perfil);
+      document.getElementById('firma-chip-tipo').textContent = LABELS_TIPOS[perfil.profile_type] || perfil.profile_type;
+
+      document.getElementById('firma-seleccion').hidden = false;
+      document.getElementById('firma-buscar').hidden = true;
+      document.getElementById('firma-resultados').hidden = true;
+      document.getElementById('firma-buscar-ayuda').hidden = true;
+    }
+
+    function limpiar_busqueda_firma() {
+      document.getElementById('firma-perfil-id').value = '';
+      document.getElementById('firma-buscar').value = '';
+      document.getElementById('firma-buscar').hidden = false;
+      document.getElementById('firma-resultados').hidden = true;
+      document.getElementById('firma-seleccion').hidden = true;
+      document.getElementById('firma-buscar-ayuda').hidden = false;
     }
 
     function al_cambiar_tipo_externo() {
@@ -1070,12 +1166,16 @@
     }
 
     async function al_enviar_firma() {
-      var perfil_id = document.getElementById('firma-perfil').value;
+      var es_externo = document.getElementById('firma-toggle-externo').classList.contains('toggle-activo');
+      var perfil_id = es_externo ? null : document.getElementById('firma-perfil-id').value;
       var programa = document.getElementById('firma-programa').value.trim();
-      var es_externo = perfil_id === '__externo__';
 
-      if (!perfil_id || !programa) {
-        mostrar_error('Selecciona un firmante e ingresa el programa.');
+      if (!es_externo && !perfil_id) {
+        mostrar_error('Busca y selecciona un perfil.');
+        return;
+      }
+      if (!programa) {
+        mostrar_error('Ingresa el programa.');
         return;
       }
 
@@ -1195,9 +1295,6 @@
     function poblar_selector_perfiles(selector_id) {
       var selector = document.getElementById(selector_id);
       var html = '<option value="">Seleccionar perfil...</option>';
-      if (selector_id === 'firma-perfil') {
-        html += '<option value="__externo__">— Firmante externo (sin perfil) —</option>';
-      }
       for (var i = 0; i < estado.expedientes.length; i++) {
         var e = estado.expedientes[i];
         var tipo_label = LABELS_TIPOS[e.profile_type] || e.profile_type;
