@@ -788,7 +788,7 @@
           '</div>' +
           '<div id="detalle-' + id + '" class="consentimiento-detalle">' +
           '<p class="consentimiento-ref">' + escapar_html(c.referencia) + '</p>' +
-          c.texto_html +
+          (c.texto_html || c.texto_voluntario) +
           '<div class="consentimiento-aceptacion">' +
           '<input type="checkbox" id="check-' + id + '" class="consentimiento-check"' +
           ' data-codigo="' + c.codigo + '"' +
@@ -1092,7 +1092,7 @@
         resultado.push({
           codigo: c.codigo,
           version: c.version,
-          texto: limpiar_html(c.texto_html),
+          texto: limpiar_html(c.texto_html || c.texto_voluntario),
           aceptado: checkbox ? checkbox.checked : false,
           es_obligatorio: c.obligatorio_sistema
         });

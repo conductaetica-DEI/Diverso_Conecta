@@ -23,7 +23,8 @@ var CONSENTIMIENTOS = [
     referencia: 'Art. 14 — SICE-POL-01',
     version: '1.0',
     obligatorio_sistema: false,
-    texto_html: '<p>Declaro que leí, acepto y autorizo voluntariamente a DiversoLAB la recolección y uso de datos sensibles (discapacidad, salud, género, etnia) necesarios para la gestión del servicio.</p><p><strong>VOLUNTARIO.</strong> Su negativa no afectará su participación, salvo cuando la información sea estrictamente necesaria para la intervención específica.</p>'
+    texto_voluntario: '<p>Declaro que leí, acepto y autorizo voluntariamente a DiversoLAB la recolección y uso de datos sensibles (discapacidad, salud, género, etnia) necesarios para la gestión del servicio.</p><p><strong>VOLUNTARIO.</strong> Su negativa no afectará su participación, salvo cuando la información sea estrictamente necesaria para la intervención específica.</p>',
+    texto_obligatorio: '<p>Declaro que leí, acepto y autorizo a DiversoLAB la recolección y uso de datos sensibles (discapacidad, salud, género, etnia) necesarios para la gestión del servicio.</p><p><strong>REQUERIDO para este programa.</strong> Este consentimiento es necesario para la intervención específica solicitada. Revocable en cualquier momento según Art. 14 — SICE-POL-01.</p>'
   },
   {
     codigo: 'C4',
@@ -31,7 +32,8 @@ var CONSENTIMIENTOS = [
     referencia: 'Art. 15 — SICE-POL-01',
     version: '1.0',
     obligatorio_sistema: false,
-    texto_html: '<p>Declaro que leí, acepto y autorizo voluntariamente a DiversoLAB el uso de mis datos (anonimizados) en procesos de analítica e inteligencia artificial.</p><p>DiversoLAB garantiza que:</p><ul><li>Ningún dato personal identificable será enviado a modelos de IA externos.</li><li>Se aplicará anonimización o seudonimización antes de cualquier procesamiento analítico.</li><li>Las interpretaciones generadas por IA son orientativas y siempre serán revisadas por un profesional calificado.</li><li>No se realizará perfilamiento individual sin consentimiento adicional explícito.</li></ul><p><strong>VOLUNTARIO.</strong> Los datos del titular serán excluidos de los procesos analíticos.</p>'
+    texto_voluntario: '<p>Declaro que leí, acepto y autorizo voluntariamente a DiversoLAB el uso de mis datos (anonimizados) en procesos de analítica e inteligencia artificial.</p><p>DiversoLAB garantiza que:</p><ul><li>Ningún dato personal identificable será enviado a modelos de IA externos.</li><li>Se aplicará anonimización o seudonimización antes de cualquier procesamiento analítico.</li><li>Las interpretaciones generadas por IA son orientativas y siempre serán revisadas por un profesional calificado.</li><li>No se realizará perfilamiento individual sin consentimiento adicional explícito.</li></ul><p><strong>VOLUNTARIO.</strong> Los datos del titular serán excluidos de los procesos analíticos.</p>',
+    texto_obligatorio: '<p>Declaro que leí, acepto y autorizo a DiversoLAB el uso de mis datos (anonimizados) en procesos de analítica e inteligencia artificial.</p><p>DiversoLAB garantiza que:</p><ul><li>Ningún dato personal identificable será enviado a modelos de IA externos.</li><li>Se aplicará anonimización o seudonimización antes de cualquier procesamiento analítico.</li><li>Las interpretaciones generadas por IA son orientativas y siempre serán revisadas por un profesional calificado.</li><li>No se realizará perfilamiento individual sin consentimiento adicional explícito.</li></ul><p><strong>REQUERIDO para este programa.</strong> El programa solicitado requiere procesamiento analítico de sus datos. Revocable en cualquier momento según Art. 15 — SICE-POL-01.</p>'
   },
   {
     codigo: 'C5',
@@ -39,7 +41,8 @@ var CONSENTIMIENTOS = [
     referencia: 'Art. 16 — SICE-POL-01',
     version: '1.0',
     obligatorio_sistema: false,
-    texto_html: '<p>Declaro que leí, acepto y autorizo a DiversoLAB el envío de comunicaciones informativas y promocionales.</p><p><strong>VOLUNTARIO.</strong> En caso de negativa, DiversoLAB solo enviará comunicaciones estrictamente operativas relacionadas con servicios contratados o actividades en las que el titular esté inscrito.</p>'
+    texto_voluntario: '<p>Declaro que leí, acepto y autorizo a DiversoLAB el envío de comunicaciones informativas y promocionales.</p><p><strong>VOLUNTARIO.</strong> En caso de negativa, DiversoLAB solo enviará comunicaciones estrictamente operativas relacionadas con servicios contratados o actividades en las que el titular esté inscrito.</p>',
+    texto_obligatorio: '<p>Declaro que leí, acepto y autorizo a DiversoLAB el envío de comunicaciones informativas y promocionales.</p><p><strong>REQUERIDO para este programa.</strong> El programa solicitado incluye comunicaciones como parte integral del servicio. Revocable en cualquier momento según Art. 16 — SICE-POL-01.</p>'
   },
   {
     codigo: 'C6',
@@ -47,7 +50,8 @@ var CONSENTIMIENTOS = [
     referencia: 'Art. 17 — SICE-POL-01',
     version: '1.0',
     obligatorio_sistema: false,
-    texto_html: '<p>Declaro que leí, acepto y autorizo voluntariamente a DiversoLAB el uso de mi imagen, voz y testimonios.</p><p>Plazo de autorización: tres (3) años a partir de la fecha de aceptación, renovable con nuevo consentimiento. Para menores de edad se requiere autorización del representante legal.</p><p><strong>VOLUNTARIO</strong> y revocable en cualquier momento. La revocatoria no afecta la licitud del uso realizado antes de la misma.</p>'
+    texto_voluntario: '<p>Declaro que leí, acepto y autorizo voluntariamente a DiversoLAB el uso de mi imagen, voz y testimonios.</p><p>Plazo de autorización: tres (3) años a partir de la fecha de aceptación, renovable con nuevo consentimiento. Para menores de edad se requiere autorización del representante legal.</p><p><strong>VOLUNTARIO</strong> y revocable en cualquier momento. La revocatoria no afecta la licitud del uso realizado antes de la misma.</p>',
+    texto_obligatorio: '<p>Declaro que leí, acepto y autorizo a DiversoLAB el uso de mi imagen, voz y testimonios.</p><p>Plazo de autorización: tres (3) años a partir de la fecha de aceptación, renovable con nuevo consentimiento. Para menores de edad se requiere autorización del representante legal.</p><p><strong>REQUERIDO para este programa</strong> y revocable en cualquier momento. La revocatoria no afecta la licitud del uso realizado antes de la misma. Art. 17 — SICE-POL-01.</p>'
   },
   {
     codigo: 'C7',
@@ -55,6 +59,7 @@ var CONSENTIMIENTOS = [
     referencia: 'Art. 18 — SICE-POL-01',
     version: '1.0',
     obligatorio_sistema: false,
-    texto_html: '<p>Declaro que leí, acepto y autorizo voluntariamente a DiversoLAB el registro y seguimiento de mi proceso de acompañamiento: notas de sesión, avances, plan de intervención y resultados de evaluaciones individuales.</p><p><strong>VOLUNTARIO.</strong> Su negativa no afectará la participación en programas que no requieran seguimiento individualizado.</p>'
+    texto_voluntario: '<p>Declaro que leí, acepto y autorizo voluntariamente a DiversoLAB el registro y seguimiento de mi proceso de acompañamiento: notas de sesión, avances, plan de intervención y resultados de evaluaciones individuales.</p><p><strong>VOLUNTARIO.</strong> Su negativa no afectará la participación en programas que no requieran seguimiento individualizado.</p>',
+    texto_obligatorio: '<p>Declaro que leí, acepto y autorizo a DiversoLAB el registro y seguimiento de mi proceso de acompañamiento: notas de sesión, avances, plan de intervención y resultados de evaluaciones individuales.</p><p><strong>REQUERIDO para este programa.</strong> El programa solicitado requiere seguimiento individualizado. Revocable en cualquier momento según Art. 18 — SICE-POL-01.</p>'
   }
 ];
