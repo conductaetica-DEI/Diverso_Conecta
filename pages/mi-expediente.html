@@ -325,45 +325,8 @@
   <script src="../js/supabase-client.js"></script>
   <script src="../js/gas-client.js"></script>
   <script src="../js/utils.js"></script>
+  <script src="../js/labels.js"></script>
   <script>
-    // --- Constantes ---
-
-    var LABELS_TIPOS = {
-      beneficiario: 'Beneficiario',
-      aliado: 'Aliado',
-      contratista: 'Contratista',
-      proveedor: 'Proveedor'
-    };
-
-    var LABELS_ESTADOS_PERFIL = {
-      pendiente: 'Pendiente',
-      activo: 'Activo',
-      suspendido: 'Suspendido',
-      inactivo: 'Inactivo'
-    };
-
-    var LABELS_ESTADOS_DOC = {
-      pendiente: 'Pendiente',
-      aprobado: 'Aprobado',
-      rechazado: 'Rechazado'
-    };
-
-    var LABELS_CONSENTIMIENTOS = {
-      C1: 'Datos básicos',
-      C2: 'Identificación',
-      C3: 'Datos sensibles',
-      C4: 'Analítica/IA',
-      C5: 'Comunicaciones',
-      C6: 'Imagen/voz',
-      C7: 'Seguimiento'
-    };
-
-    var LABELS_TIPO_TAREA = {
-      consentimiento: 'Firma de consentimientos',
-      documento: 'Subir documento',
-      revision: 'Revisión pendiente'
-    };
-
     // --- Estado ---
 
     var estado = {
@@ -453,7 +416,7 @@
 
     function poblar_perfil() {
       var p = estado.perfil;
-      var nombre = p.razon_social || ((p.nombre || '') + ' ' + (p.apellido || '')).trim() || '—';
+      var nombre = nombre_display(p);
 
       var html = '<div class="perfil-cabecera">' +
         '<div>' +
@@ -612,60 +575,6 @@
       contenedor.innerHTML = html;
     }
 
-    // --- Helpers: badges ---
-
-    function badge_tipo(tipo) {
-      var label = LABELS_TIPOS[tipo] || tipo;
-      var clase = 'insignia-neutra';
-      if (tipo === 'beneficiario' || tipo === 'contratista') clase = 'insignia-progreso';
-      return '<span class="insignia ' + clase + '">' + escapar_html(label) + '</span>';
-    }
-
-    function badge_estado_perfil(est) {
-      var label = LABELS_ESTADOS_PERFIL[est] || est;
-      var clase = 'insignia-neutra';
-      if (est === 'activo') clase = 'insignia-exito';
-      if (est === 'pendiente') clase = 'insignia-progreso';
-      if (est === 'suspendido') clase = 'insignia-alerta';
-      return '<span class="insignia ' + clase + '">' + escapar_html(label) + '</span>';
-    }
-
-    function badge_estado_tarea(est) {
-      var labels = { pendiente: 'Pendiente', en_curso: 'En curso' };
-      var label = labels[est] || est;
-      var clase = est === 'en_curso' ? 'insignia-progreso' : 'insignia-alerta';
-      return '<span class="insignia ' + clase + '">' + escapar_html(label) + '</span>';
-    }
-
-    function badge_estado_doc(est) {
-      var label = LABELS_ESTADOS_DOC[est] || est;
-      var clase = 'insignia-neutra';
-      if (est === 'aprobado') clase = 'insignia-exito';
-      if (est === 'pendiente') clase = 'insignia-progreso';
-      if (est === 'rechazado') clase = 'insignia-alerta';
-      return '<span class="insignia ' + clase + '">' + escapar_html(label) + '</span>';
-    }
-
-    // --- Helpers: formato ---
-
-    function extraer_detalle(detalle) {
-      if (!detalle) return '';
-      try {
-        var datos = JSON.parse(detalle);
-        if (datos.programa) return datos.programa;
-      } catch (e) {}
-      return detalle;
-    }
-
-    function formatear_fecha_corta(fecha_str) {
-      if (!fecha_str) return '—';
-      var fecha = new Date(fecha_str);
-      return fecha.toLocaleDateString('es-CO', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      });
-    }
   </script>
 </body>
 </html>
