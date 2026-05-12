@@ -229,6 +229,7 @@
   <script src="../js/supabase-client.js"></script>
   <script src="../js/gas-client.js"></script>
   <script src="../js/utils.js"></script>
+  <script src="../js/otp-ui.js"></script>
   <script>
     // --- Estado ---
 
@@ -266,11 +267,13 @@
 
       document.getElementById('campo-email').addEventListener('blur', al_blur_email);
 
+      configurar_otp('btn-verificar');
+
       var otp_inputs = document.querySelectorAll('.otp-digito');
       for (var i = 0; i < otp_inputs.length; i++) {
-        otp_inputs[i].addEventListener('input', al_input_otp);
-        otp_inputs[i].addEventListener('keydown', al_keydown_otp);
-        otp_inputs[i].addEventListener('paste', al_paste_otp);
+        otp_inputs[i].addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') al_verificar_codigo();
+        });
       }
     }
 
@@ -329,8 +332,8 @@
       document.getElementById('estado-email').hidden = true;
       document.getElementById('estado-otp').hidden = false;
       document.getElementById('otp-email').textContent = estado.email;
-      limpiar_otp_inputs();
-      iniciar_temporizador();
+      limpiar_otp_inputs('btn-verificar');
+      iniciar_temporizador(estado);
     }
 
     function mostrar_estado_email() {
@@ -345,90 +348,13 @@
       mostrar_estado_email();
     }
 
-    // --- OTP inputs ---
-
-    function al_input_otp(e) {
-      var valor = e.target.value.replace(/[^0-9]/g, '');
-      e.target.value = valor;
-      if (valor && e.target.nextElementSibling && e.target.nextElementSibling.classList.contains('otp-digito')) {
-        e.target.nextElementSibling.focus();
-      }
-      verificar_otp_completo();
-    }
-
-    function al_keydown_otp(e) {
-      if (e.key === 'Backspace' && !e.target.value) {
-        if (e.target.previousElementSibling && e.target.previousElementSibling.classList.contains('otp-digito')) {
-          e.target.previousElementSibling.focus();
-          e.target.previousElementSibling.value = '';
-        }
-      }
-      if (e.key === 'Enter') al_verificar_codigo();
-    }
-
-    function al_paste_otp(e) {
-      e.preventDefault();
-      var texto = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '');
-      var digitos = texto.split('');
-      var inputs = document.querySelectorAll('.otp-digito');
-      for (var i = 0; i < Math.min(digitos.length, inputs.length); i++) {
-        inputs[i].value = digitos[i];
-      }
-      var ultimo = Math.min(digitos.length, inputs.length) - 1;
-      if (ultimo >= 0) inputs[ultimo].focus();
-      verificar_otp_completo();
-    }
-
-    function verificar_otp_completo() {
-      document.getElementById('btn-verificar').disabled = obtener_codigo_otp().length !== 6;
-    }
-
-    function obtener_codigo_otp() {
-      var inputs = document.querySelectorAll('.otp-digito');
-      var codigo = '';
-      for (var i = 0; i < inputs.length; i++) codigo += inputs[i].value;
-      return codigo;
-    }
-
-    function limpiar_otp_inputs() {
-      var inputs = document.querySelectorAll('.otp-digito');
-      for (var i = 0; i < inputs.length; i++) inputs[i].value = '';
-      document.getElementById('btn-verificar').disabled = true;
-      inputs[0].focus();
-    }
-
-    // --- Timer ---
-
-    function iniciar_temporizador() {
-      estado.segundos_reenvio = 60;
-      var btn_reenviar = document.getElementById('btn-reenviar');
-      var span_timer = document.getElementById('otp-timer');
-
-      btn_reenviar.hidden = true;
-      span_timer.hidden = false;
-      span_timer.textContent = '60s';
-
-      if (estado.temporizador_id) clearInterval(estado.temporizador_id);
-
-      estado.temporizador_id = setInterval(function() {
-        estado.segundos_reenvio--;
-        span_timer.textContent = estado.segundos_reenvio + 's';
-        if (estado.segundos_reenvio <= 0) {
-          clearInterval(estado.temporizador_id);
-          span_timer.hidden = true;
-          btn_reenviar.hidden = false;
-          btn_reenviar.disabled = false;
-        }
-      }, 1000);
-    }
-
     async function al_reenviar_otp() {
       var btn = document.getElementById('btn-reenviar');
       btn.disabled = true;
       try {
         await solicitar_otp(estado.email, null, null);
         mostrar_exito('Código reenviado a ' + estado.email);
-        iniciar_temporizador();
+        iniciar_temporizador(estado);
       } catch (error) {
         mostrar_error(mensaje_usuario(error.message, error.detalle));
         btn.disabled = false;
@@ -460,7 +386,7 @@
 
       } catch (error) {
         mostrar_error(mensaje_usuario(error.message, error.detalle));
-        limpiar_otp_inputs();
+        limpiar_otp_inputs('btn-verificar');
         habilitar_boton(btn, 'Verificar');
       }
     }
