@@ -355,3 +355,23 @@ Registro de errores cometidos por Claude durante el desarrollo. Propósito: evit
 **Qué debí hacer:** Verificar que los campos referenciados en el error reporting coincidan con los campos que la función realmente retorna. `generar_sesion_supabase` retorna `{ _error, paso, detalle }`, no `status`.
 
 **Regla violada:** Ciclo obligatorio paso 6 (VERIFICAR): no verifiqué que el error reporting mostrara información útil.
+
+---
+
+## Error 36 — Fijación en JWT durante diagnóstico de "email no enviado"
+
+**Qué pasó:** El usuario reportó que "solicitar firma no envía correo después del refactoring". En vez de verificar los datos de la tarea en Supabase (lo primero que el usuario pidió), me obsesioné con el mecanismo de autenticación JWT en GAS: leí Auth.gs, analicé verificar_jwt, revisé si sb_ keys afectaban, revisé logs de Supabase, lancé 5 agentes para comparar código. Auditoría extensa e innecesaria. El email del firmante externo estaba mal escrito — el correo no llegó porque la dirección era incorrecta, no por un bug de código.
+
+**Qué debí hacer:** Paso 1 del ciclo (AUDITAR): revisar los datos de la tarea en Supabase, verificar que el email destino fuera correcto. El usuario dijo "ver supabase mickey mouse" — la pista estaba ahí. Diagnosticar el dato antes de diagnosticar el sistema.
+
+**Regla violada:** Ciclo obligatorio paso 2 (DIAGNOSTICAR): diagnóstico desenfocado. La documentación del proyecto (SUPABASE.md, SECURITY.md) ya explica que JWT funciona y que el sistema de auth fue migrado a sb_ APIs. Ignoré la documentación existente y re-audité un sistema que estaba resuelto. Además, el catch silencioso `catch (e) { /* email no bloquea */ }` en dashboard.js:689 impide ver errores de email — eso debió ser lo primero en señalar.
+
+---
+
+## Error 37 — Auditoría extensiva que no audita lo obvio
+
+**Qué pasó:** Lancé 5 agentes en paralelo, revisé logs de Supabase auth y API, leí 4 archivos GAS, comparé CSP de 6 páginas — todo para concluir que el refactoring no rompió nada. Correcto, pero irrelevante. El problema era un dato incorrecto en la tarea, visible con una sola query SQL que ya había ejecutado al inicio. No leí el resultado con la atención que merecía.
+
+**Qué debí hacer:** Cuando el resultado de la query mostró `"email":"carosm_1201@hotmail.com"`, debí preguntar al usuario si el email era correcto antes de asumir un bug sistémico. Regla de oro: "Si no está en los docs, pregunta. No inventes."
+
+**Regla violada:** Regla de oro: la BD gana. Los datos estaban ahí. No los leí con rigurosidad.
