@@ -287,7 +287,6 @@
   <header class="encabezado-app">
     <div class="encabezado-app-izquierda">
       <img src="../DiversoLab_Logo.gif" alt="DiversoLab" class="encabezado-logo">
-      <a href="dashboard.html" class="encabezado-btn-volver" aria-label="Volver al panel">&larr;</a>
       <span class="encabezado-titulo">Gestión de accesos</span>
     </div>
     <button type="button" id="btn-cerrar-sesion" class="encabezado-btn-salir">Cerrar sesión</button>
@@ -299,6 +298,7 @@
       <button role="tab" id="tab-pendientes" class="accesos-tab" aria-selected="true" aria-controls="panel-pendientes">Pendientes</button>
       <button role="tab" id="tab-miembros" class="accesos-tab" aria-selected="false" aria-controls="panel-miembros">Miembros</button>
       <button role="tab" id="tab-asignaciones" class="accesos-tab" aria-selected="false" aria-controls="panel-asignaciones">Asignaciones</button>
+      <a href="dashboard.html" class="btn-ghost" style="margin-left:auto">&larr; Volver al panel</a>
     </nav>
 
     <!-- TAB 1: Perfiles pendientes -->
@@ -387,11 +387,11 @@
         <div class="modal-permisos" id="nuevo-permisos">
           <label class="modal-permiso-item">
             <input type="checkbox" class="modal-permiso-check" value="gestion_beneficiarios">
-            <span class="modal-permiso-label">Beneficiarios</span>
+            <span class="modal-permiso-label">Beneficiarios y aliados</span>
           </label>
           <label class="modal-permiso-item">
             <input type="checkbox" class="modal-permiso-check" value="gestion_proveedores">
-            <span class="modal-permiso-label">Proveedores</span>
+            <span class="modal-permiso-label">Contratistas y proveedores</span>
           </label>
           <label class="modal-permiso-item">
             <input type="checkbox" class="modal-permiso-check" value="gestion_accesos">
@@ -424,11 +424,11 @@
         <div class="modal-permisos" id="editar-permisos">
           <label class="modal-permiso-item">
             <input type="checkbox" class="modal-permiso-check" value="gestion_beneficiarios">
-            <span class="modal-permiso-label">Beneficiarios</span>
+            <span class="modal-permiso-label">Beneficiarios y aliados</span>
           </label>
           <label class="modal-permiso-item">
             <input type="checkbox" class="modal-permiso-check" value="gestion_proveedores">
-            <span class="modal-permiso-label">Proveedores</span>
+            <span class="modal-permiso-label">Contratistas y proveedores</span>
           </label>
           <label class="modal-permiso-item">
             <input type="checkbox" class="modal-permiso-check" value="gestion_accesos">
@@ -482,8 +482,8 @@
     // --- Constantes ---
 
     var LABELS_PERMISOS = {
-      gestion_beneficiarios: 'Beneficiarios',
-      gestion_proveedores: 'Proveedores',
+      gestion_beneficiarios: 'Beneficiarios y aliados',
+      gestion_proveedores: 'Contratistas y proveedores',
       gestion_accesos: 'Accesos',
       gestion_plataforma: 'Plataforma'
     };
@@ -1197,7 +1197,7 @@
     }
 
     function badges_permisos(permisos_arr) {
-      if (!permisos_arr || permisos_arr.length === 0) return '<span style="color:var(--color-texto-muted)">Sin permisos</span>';
+      if (!permisos_arr || permisos_arr.length === 0) return '<span class="texto-muted">Sin permisos</span>';
       var html = '';
       for (var i = 0; i < permisos_arr.length; i++) {
         var label = LABELS_PERMISOS[permisos_arr[i].permiso] || permisos_arr[i].permiso;

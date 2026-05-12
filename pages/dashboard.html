@@ -412,9 +412,9 @@
         </div>
         <div>
           <label class="campo-label">&nbsp;</label>
-          <label style="display:flex;align-items:center;gap:var(--spacing-sm);min-height:44px;cursor:pointer;">
-            <input type="checkbox" id="tarea-urgente" style="width:18px;height:18px;accent-color:var(--color-violeta);">
-            <span style="font-family:var(--font-cuerpo);font-size:var(--text-sm);">Urgente</span>
+          <label class="campo-check-linea">
+            <input type="checkbox" id="tarea-urgente">
+            <span>Urgente</span>
           </label>
         </div>
       </div>
@@ -436,17 +436,86 @@
         <label for="firma-perfil" class="campo-label">Firmante <span class="campo-obligatorio">*</span></label>
         <select id="firma-perfil" class="campo-select" aria-required="true">
           <option value="">Seleccionar perfil...</option>
+          <option value="__externo__">— Firmante externo (sin perfil) —</option>
         </select>
       </div>
 
-      <div class="modal-campo modal-campo-fila">
-        <div>
-          <label for="firma-email" class="campo-label">Email</label>
-          <input type="email" id="firma-email" class="campo-texto campo-readonly" readonly>
+      <div id="firma-datos-perfil">
+        <div class="modal-campo modal-campo-fila">
+          <div>
+            <label for="firma-email" class="campo-label">Email</label>
+            <input type="email" id="firma-email" class="campo-texto campo-readonly" readonly>
+          </div>
+          <div>
+            <label for="firma-documento" class="campo-label">Documento</label>
+            <input type="text" id="firma-documento" class="campo-texto campo-readonly" readonly>
+          </div>
         </div>
-        <div>
-          <label for="firma-documento" class="campo-label">Documento</label>
-          <input type="text" id="firma-documento" class="campo-texto campo-readonly" readonly>
+      </div>
+
+      <div id="firma-datos-externo" hidden>
+        <div class="modal-campo">
+          <label for="firma-ext-tipo" class="campo-label">Tipo de persona <span class="campo-obligatorio">*</span></label>
+          <select id="firma-ext-tipo" class="campo-select">
+            <option value="persona_natural">Persona natural</option>
+            <option value="persona_juridica">Persona jurídica</option>
+          </select>
+        </div>
+        <div id="firma-ext-empresa" hidden>
+          <div class="modal-campo modal-campo-fila">
+            <div>
+              <label for="firma-ext-razon" class="campo-label">Empresa <span class="campo-obligatorio">*</span></label>
+              <input type="text" id="firma-ext-razon" class="campo-texto">
+            </div>
+            <div>
+              <label for="firma-ext-nit" class="campo-label">NIT <span class="campo-obligatorio">*</span></label>
+              <input type="text" id="firma-ext-nit" class="campo-texto">
+            </div>
+          </div>
+        </div>
+        <div class="modal-campo modal-campo-fila">
+          <div>
+            <label for="firma-ext-nombre" class="campo-label">Nombre <span class="campo-obligatorio">*</span></label>
+            <input type="text" id="firma-ext-nombre" class="campo-texto">
+          </div>
+          <div>
+            <label for="firma-ext-apellido" class="campo-label">Apellido <span class="campo-obligatorio">*</span></label>
+            <input type="text" id="firma-ext-apellido" class="campo-texto">
+          </div>
+        </div>
+        <div id="firma-ext-cargo-grupo" hidden>
+          <div class="modal-campo">
+            <label for="firma-ext-cargo" class="campo-label">Cargo <span class="campo-obligatorio">*</span></label>
+            <input type="text" id="firma-ext-cargo" class="campo-texto">
+          </div>
+        </div>
+        <div class="modal-campo modal-campo-fila">
+          <div>
+            <label for="firma-ext-tipo-doc" class="campo-label">Tipo documento <span class="campo-obligatorio">*</span></label>
+            <select id="firma-ext-tipo-doc" class="campo-select">
+              <option value="CC">Cédula de Ciudadanía</option>
+              <option value="CE">Cédula de Extranjería</option>
+              <option value="NIT">NIT</option>
+              <option value="PA">Pasaporte</option>
+              <option value="PEP">PEP</option>
+              <option value="PPT">PPT</option>
+              <option value="TI">Tarjeta de Identidad</option>
+            </select>
+          </div>
+          <div>
+            <label for="firma-ext-num-doc" class="campo-label">Número documento <span class="campo-obligatorio">*</span></label>
+            <input type="text" id="firma-ext-num-doc" class="campo-texto">
+          </div>
+        </div>
+        <div class="modal-campo modal-campo-fila">
+          <div>
+            <label for="firma-ext-email" class="campo-label">Email <span class="campo-obligatorio">*</span></label>
+            <input type="email" id="firma-ext-email" class="campo-texto">
+          </div>
+          <div>
+            <label for="firma-ext-telefono" class="campo-label">Teléfono <span class="campo-obligatorio">*</span></label>
+            <input type="tel" id="firma-ext-telefono" class="campo-texto">
+          </div>
         </div>
       </div>
 
@@ -788,7 +857,7 @@
 
       for (var i = 0; i < estado.tareas.length; i++) {
         var t = estado.tareas[i];
-        var nombre_perfil = mapa_nombres[t.perfil_id] || '—';
+        var nombre_perfil = mapa_nombres[t.perfil_id] || extraer_nombre_externo(t.detalle) || '—';
         var detalle = extraer_detalle(t.detalle);
 
         html += '<tr>' +
@@ -826,6 +895,7 @@
       document.getElementById('btn-crear-tarea').addEventListener('click', al_crear_tarea);
       document.getElementById('btn-enviar-firma').addEventListener('click', al_enviar_firma);
       document.getElementById('firma-perfil').addEventListener('change', al_cambiar_firmante);
+      document.getElementById('firma-ext-tipo').addEventListener('change', al_cambiar_tipo_externo);
 
       var cerrar_btns = document.querySelectorAll('[data-cerrar-modal]');
       for (var j = 0; j < cerrar_btns.length; j++) {
@@ -904,6 +974,9 @@
       document.getElementById('firma-email').value = '';
       document.getElementById('firma-documento').value = '';
       document.getElementById('firma-programa').value = '';
+      document.getElementById('firma-datos-perfil').hidden = false;
+      document.getElementById('firma-datos-externo').hidden = true;
+      limpiar_campos_externo();
 
       var checks = document.querySelectorAll('#firma-consentimientos .firma-consent-check[value]');
       for (var i = 0; i < checks.length; i++) checks[i].checked = false;
@@ -912,9 +985,19 @@
     }
 
     function al_cambiar_firmante() {
-      var perfil_id = document.getElementById('firma-perfil').value;
-      var perfil = buscar_expediente(perfil_id);
+      var valor = document.getElementById('firma-perfil').value;
+      var es_externo = valor === '__externo__';
 
+      document.getElementById('firma-datos-perfil').hidden = es_externo;
+      document.getElementById('firma-datos-externo').hidden = !es_externo;
+
+      if (es_externo) {
+        document.getElementById('firma-email').value = '';
+        document.getElementById('firma-documento').value = '';
+        return;
+      }
+
+      var perfil = buscar_expediente(valor);
       if (perfil) {
         document.getElementById('firma-email').value = perfil.email_principal;
         document.getElementById('firma-documento').value =
@@ -925,52 +1008,131 @@
       }
     }
 
+    function al_cambiar_tipo_externo() {
+      var es_juridica = document.getElementById('firma-ext-tipo').value === 'persona_juridica';
+      document.getElementById('firma-ext-empresa').hidden = !es_juridica;
+      document.getElementById('firma-ext-cargo-grupo').hidden = !es_juridica;
+    }
+
+    function limpiar_campos_externo() {
+      var ids = ['firma-ext-nombre', 'firma-ext-apellido', 'firma-ext-razon', 'firma-ext-nit',
+                 'firma-ext-cargo', 'firma-ext-num-doc', 'firma-ext-email', 'firma-ext-telefono'];
+      for (var i = 0; i < ids.length; i++) {
+        var el = document.getElementById(ids[i]);
+        if (el) el.value = '';
+      }
+      document.getElementById('firma-ext-tipo').value = 'persona_natural';
+      document.getElementById('firma-ext-tipo-doc').value = 'CC';
+      al_cambiar_tipo_externo();
+    }
+
+    function validar_externo() {
+      var tipo = document.getElementById('firma-ext-tipo').value;
+      var nombre = document.getElementById('firma-ext-nombre').value.trim();
+      var apellido = document.getElementById('firma-ext-apellido').value.trim();
+      var num_doc = document.getElementById('firma-ext-num-doc').value.trim();
+      var email = document.getElementById('firma-ext-email').value.trim();
+
+      if (!nombre || !apellido || !num_doc || !validar_email(email)) return false;
+
+      if (tipo === 'persona_juridica') {
+        var razon = document.getElementById('firma-ext-razon').value.trim();
+        var nit = document.getElementById('firma-ext-nit').value.trim();
+        var cargo = document.getElementById('firma-ext-cargo').value.trim();
+        if (!razon || !nit || !cargo) return false;
+      }
+
+      return true;
+    }
+
+    function construir_firmante_externo() {
+      var tipo = document.getElementById('firma-ext-tipo').value;
+      var datos = {
+        tipo_firma: tipo,
+        nombre: document.getElementById('firma-ext-nombre').value.trim(),
+        apellido: document.getElementById('firma-ext-apellido').value.trim(),
+        tipo_documento: document.getElementById('firma-ext-tipo-doc').value,
+        numero_documento: document.getElementById('firma-ext-num-doc').value.trim(),
+        email: document.getElementById('firma-ext-email').value.trim(),
+        telefono: document.getElementById('firma-ext-telefono').value.trim() || null,
+        empresa: null,
+        nit_empresa: null,
+        cargo: null
+      };
+
+      if (tipo === 'persona_juridica') {
+        datos.empresa = document.getElementById('firma-ext-razon').value.trim();
+        datos.nit_empresa = document.getElementById('firma-ext-nit').value.trim();
+        datos.cargo = document.getElementById('firma-ext-cargo').value.trim();
+      }
+
+      return datos;
+    }
+
     async function al_enviar_firma() {
       var perfil_id = document.getElementById('firma-perfil').value;
       var programa = document.getElementById('firma-programa').value.trim();
+      var es_externo = perfil_id === '__externo__';
 
       if (!perfil_id || !programa) {
         mostrar_error('Selecciona un firmante e ingresa el programa.');
         return;
       }
 
-      var perfil = buscar_expediente(perfil_id);
-      if (!perfil) {
-        mostrar_error('Perfil no encontrado.');
-        return;
-      }
+      var email_destino, nombre, detalle_obj;
 
-      var obligatorios = obtener_obligatorios_seleccionados();
+      if (es_externo) {
+        if (!validar_externo()) {
+          mostrar_error('Completa todos los campos obligatorios del firmante externo.');
+          return;
+        }
+        var firmante_ext = construir_firmante_externo();
+        email_destino = firmante_ext.email;
+        nombre = firmante_ext.nombre + ' ' + firmante_ext.apellido;
+        detalle_obj = {
+          programa: programa,
+          obligatorios: ['C1', 'C2'].concat(obtener_obligatorios_seleccionados()),
+          firmante_externo: firmante_ext
+        };
+      } else {
+        var perfil = buscar_expediente(perfil_id);
+        if (!perfil) {
+          mostrar_error('Perfil no encontrado.');
+          return;
+        }
+        email_destino = perfil.email_principal;
+        nombre = nombre_display(perfil);
+        detalle_obj = {
+          programa: programa,
+          obligatorios: ['C1', 'C2'].concat(obtener_obligatorios_seleccionados())
+        };
+      }
 
       var btn = document.getElementById('btn-enviar-firma');
       deshabilitar_boton(btn, 'Enviando...');
 
       try {
-        var detalle_json = JSON.stringify({
-          programa: programa,
-          obligatorios: ['C1', 'C2'].concat(obligatorios)
-        });
+        var cuerpo_tarea = {
+          perfil_id: es_externo ? null : perfil_id,
+          solicitado_por: estado.perfil.id,
+          tipo_tarea: 'consentimiento',
+          detalle: JSON.stringify(detalle_obj),
+          estado: 'pendiente'
+        };
 
         var resultado = await supabase_fetch('/tareas', estado.jwt, {
           metodo: 'POST',
-          cuerpo: {
-            perfil_id: perfil_id,
-            solicitado_por: estado.perfil.id,
-            tipo_tarea: 'consentimiento',
-            detalle: detalle_json,
-            estado: 'pendiente'
-          },
+          cuerpo: cuerpo_tarea,
           prefer: 'return=representation'
         });
 
         var tarea_id = resultado[0].id;
         var base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
         var enlace = base + 'firma.html?token=' + tarea_id;
-        var nombre = nombre_display(perfil);
 
         try {
           await notificar_email(
-            perfil.email_principal,
+            email_destino,
             'Solicitud de firma — DiversoLab',
             'Hola ' + nombre + ',\n\n' +
             'Tienes una solicitud de firma de consentimientos para el programa "' + programa + '".\n\n' +
@@ -1033,6 +1195,9 @@
     function poblar_selector_perfiles(selector_id) {
       var selector = document.getElementById(selector_id);
       var html = '<option value="">Seleccionar perfil...</option>';
+      if (selector_id === 'firma-perfil') {
+        html += '<option value="__externo__">— Firmante externo (sin perfil) —</option>';
+      }
       for (var i = 0; i < estado.expedientes.length; i++) {
         var e = estado.expedientes[i];
         var tipo_label = LABELS_TIPOS[e.profile_type] || e.profile_type;
@@ -1044,6 +1209,16 @@
     }
 
     // --- Helpers ---
+
+    function extraer_nombre_externo(detalle_str) {
+      try {
+        var d = JSON.parse(detalle_str);
+        if (d.firmante_externo) {
+          return ((d.firmante_externo.nombre || '') + ' ' + (d.firmante_externo.apellido || '')).trim();
+        }
+      } catch (e) {}
+      return null;
+    }
 
     function nombre_display(perfil) {
       return perfil.razon_social || ((perfil.nombre || '') + ' ' + (perfil.apellido || '')).trim() || '—';

@@ -165,16 +165,45 @@ function obtener_datos_firma(token) {
     return { ok: false, error: 'TAREA_NO_ES_CONSENTIMIENTO' };
   }
 
-  var perfil = consultar_perfil(tarea.perfil_id);
-  if (!perfil) {
-    return { ok: false, error: 'PERFIL_NO_ENCONTRADO' };
-  }
-
   var config = {};
   try {
     config = JSON.parse(tarea.detalle);
   } catch (e) {
     config = {};
+  }
+
+  // Firmante externo (sin perfil)
+  if (!tarea.perfil_id && config.firmante_externo) {
+    var ext = config.firmante_externo;
+    var firmante_ext = {
+      nombre: ((ext.nombre || '') + ' ' + (ext.apellido || '')).trim(),
+      email: ext.email,
+      tipo_documento: ext.tipo_documento,
+      numero_documento: ext.numero_documento,
+      telefono: ext.telefono || null
+    };
+
+    if (ext.tipo_firma === 'persona_juridica') {
+      firmante_ext.empresa = ext.empresa;
+      firmante_ext.nit_empresa = ext.nit_empresa;
+      firmante_ext.cargo = ext.cargo || null;
+    }
+
+    return {
+      ok: true,
+      tarea_id: tarea.id,
+      perfil_id: null,
+      tipo_firma: ext.tipo_firma || 'persona_natural',
+      firmante: firmante_ext,
+      programa: config.programa || null,
+      obligatorios: config.obligatorios || ['C1', 'C2']
+    };
+  }
+
+  // Firmante con perfil existente
+  var perfil = consultar_perfil(tarea.perfil_id);
+  if (!perfil) {
+    return { ok: false, error: 'PERFIL_NO_ENCONTRADO' };
   }
 
   var tipo_firma = config.tipo_firma || 'persona_natural';

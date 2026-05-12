@@ -242,15 +242,15 @@
       <!-- b) Política SICE-POL-01 -->
       <div class="documento-seccion">
         <h2 class="consentimientos-titulo">Política de Protección y Uso de Datos Personales — SICE-POL-01 v1.0</h2>
-        <iframe class="documento-iframe" src="https://docs.google.com/document/d/10YupgRmbOJSyT2etKyo2lMi7m9E8gkB_/preview" title="Política SICE-POL-01"></iframe>
-        <a href="https://docs.google.com/document/d/10YupgRmbOJSyT2etKyo2lMi7m9E8gkB_" target="_blank" rel="noopener" class="documento-enlace">Abrir documento completo en nueva pestaña ↗</a>
+        <iframe id="iframe-sice-pol-01" class="documento-iframe" src="" title="Política SICE-POL-01"></iframe>
+        <a id="link-sice-pol-01" href="#" target="_blank" rel="noopener" class="documento-enlace">Abrir documento completo en nueva pestaña ↗</a>
       </div>
 
       <!-- c) Consentimiento F-DATO-01 -->
       <div class="documento-seccion">
         <h2 class="consentimientos-titulo">Consentimiento Informado Integral — F-DATO-01 v1.0</h2>
-        <iframe class="documento-iframe" src="https://docs.google.com/document/d/1_ieX-FOVOf_giL3bXKQQHbWWPd3JpzcR/preview" title="Consentimiento F-DATO-01"></iframe>
-        <a href="https://docs.google.com/document/d/1_ieX-FOVOf_giL3bXKQQHbWWPd3JpzcR" target="_blank" rel="noopener" class="documento-enlace">Abrir documento completo en nueva pestaña ↗</a>
+        <iframe id="iframe-f-dato-01" class="documento-iframe" src="" title="Consentimiento F-DATO-01"></iframe>
+        <a id="link-f-dato-01" href="#" target="_blank" rel="noopener" class="documento-enlace">Abrir documento completo en nueva pestaña ↗</a>
       </div>
 
       <!-- d) Declaración de consentimiento -->
@@ -353,7 +353,18 @@
 
     // --- Inicialización ---
 
-    document.addEventListener('DOMContentLoaded', al_cargar_pagina);
+    document.addEventListener('DOMContentLoaded', function() {
+      inicializar_docs();
+      al_cargar_pagina();
+    });
+
+    function inicializar_docs() {
+      var base = 'https://docs.google.com/document/d/';
+      document.getElementById('iframe-sice-pol-01').src = base + CONFIG.DOC_SICE_POL_01 + '/preview';
+      document.getElementById('link-sice-pol-01').href = base + CONFIG.DOC_SICE_POL_01;
+      document.getElementById('iframe-f-dato-01').src = base + CONFIG.DOC_F_DATO_01 + '/preview';
+      document.getElementById('link-f-dato-01').href = base + CONFIG.DOC_F_DATO_01;
+    }
 
     async function al_cargar_pagina() {
       var params = new URLSearchParams(window.location.search);
@@ -754,8 +765,8 @@
           tr.innerHTML =
             '<td>' + escapar_html(r.codigo) + '</td>' +
             '<td>' + escapar_html(r.decision) + '</td>' +
-            '<td style="font-size:var(--text-xs)">' + escapar_html(r.folio) + '</td>' +
-            '<td style="font-size:var(--text-xs);word-break:break-all">' + escapar_html(r.hash) + '</td>';
+            '<td class="tabla-celda-xs">' + escapar_html(r.folio) + '</td>' +
+            '<td class="tabla-celda-hash">' + escapar_html(r.hash) + '</td>';
           tbody.appendChild(tr);
         }
       }

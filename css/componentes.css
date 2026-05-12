@@ -748,21 +748,49 @@ body {
   background-color: color-mix(in srgb, white 10%, transparent);
 }
 
-.encabezado-btn-volver {
-  color: white;
-  font-size: var(--text-xl);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  min-width: 44px;
-  border-radius: var(--radius-sm);
-  transition: background-color 0.2s;
+/* --- Utilidades de layout --- */
+
+.seccion-subtitulo-bold {
+  font-weight: 700;
+  margin-bottom: var(--spacing-sm);
 }
 
-.encabezado-btn-volver:hover {
-  background-color: color-mix(in srgb, white 10%, transparent);
+.tabla-celda-xs {
+  font-size: var(--text-xs);
+}
+
+.tabla-celda-hash {
+  font-size: var(--text-xs);
+  word-break: break-all;
+}
+
+.campo-check-linea {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.campo-check-linea input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-violeta);
+}
+
+.campo-check-linea span {
+  font-family: var(--font-cuerpo);
+  font-size: var(--text-sm);
+}
+
+.encabezado-subtitulo {
+  font-size: var(--text-sm);
+  color: var(--color-texto-muted);
+  margin-bottom: 0;
+}
+
+.texto-muted {
+  color: var(--color-texto-muted);
 }
 
 /* --- Utilidades --- */
