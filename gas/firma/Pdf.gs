@@ -41,10 +41,16 @@ function generar_pdf_constancia(datos, registros, timestamp) {
       reemplazar(cuerpo, prefijo + 'decision}}', r.aceptado ? 'ACEPTADO' : 'RECHAZADO');
       reemplazar(cuerpo, prefijo + 'folio}}', r.folio);
       reemplazar(cuerpo, prefijo + 'hash}}', r.hash_firma);
+      if (j >= 2) {
+        reemplazar(cuerpo, prefijo + 'tipo}}', r.es_obligatorio ? 'OBLIGATORIO' : 'VOLUNTARIO');
+      }
     } else {
       reemplazar(cuerpo, prefijo + 'decision}}', '—');
       reemplazar(cuerpo, prefijo + 'folio}}', '—');
       reemplazar(cuerpo, prefijo + 'hash}}', '—');
+      if (j >= 2) {
+        reemplazar(cuerpo, prefijo + 'tipo}}', 'VOLUNTARIO');
+      }
     }
   }
 

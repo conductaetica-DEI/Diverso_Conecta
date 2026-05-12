@@ -299,8 +299,20 @@
           <h2 class="confirmacion-titulo">Firma registrada exitosamente</h2>
 
           <div class="tarjeta folios-tarjeta">
-            <h3 class="folios-titulo">Folios de registro</h3>
-            <ul id="folios-lista" class="folios-lista" aria-label="Folios generados"></ul>
+            <h3 class="folios-titulo">Resumen de consentimientos</h3>
+            <div class="tabla-contenedor">
+              <table class="tabla-datos" id="tabla-consentimientos-resumen">
+                <thead>
+                  <tr>
+                    <th scope="col">Código</th>
+                    <th scope="col">Decisión</th>
+                    <th scope="col">Folio</th>
+                    <th scope="col">Hash SHA-256</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-consentimientos"></tbody>
+              </table>
+            </div>
           </div>
 
           <div class="firmante-dato"><strong>Fecha y hora:</strong><span id="confirmacion-fecha"></span></div>
@@ -733,13 +745,19 @@
     // --- Confirmación ---
 
     function poblar_confirmacion(resultado) {
-      var lista = document.getElementById('folios-lista');
-      lista.innerHTML = '';
-
-      for (var i = 0; i < resultado.folios.length; i++) {
-        var li = document.createElement('li');
-        li.textContent = resultado.folios[i];
-        lista.appendChild(li);
+      var tbody = document.getElementById('tbody-consentimientos');
+      tbody.innerHTML = '';
+      if (resultado && resultado.resumen) {
+        for (var i = 0; i < resultado.resumen.length; i++) {
+          var r = resultado.resumen[i];
+          var tr = document.createElement('tr');
+          tr.innerHTML =
+            '<td>' + escapar_html(r.codigo) + '</td>' +
+            '<td>' + escapar_html(r.decision) + '</td>' +
+            '<td style="font-size:var(--text-xs)">' + escapar_html(r.folio) + '</td>' +
+            '<td style="font-size:var(--text-xs);word-break:break-all">' + escapar_html(r.hash) + '</td>';
+          tbody.appendChild(tr);
+        }
       }
 
       document.getElementById('confirmacion-fecha').textContent = formatear_fecha_cot();

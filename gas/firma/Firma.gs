@@ -107,20 +107,21 @@ function firmar(datos) {
     programa: datos.programa
   });
 
-  var c1 = null;
+  var resumen = [];
   for (var r = 0; r < registros.length; r++) {
-    if (registros[r].codigo === 'C1') { c1 = registros[r]; break; }
+    resumen.push({
+      codigo: registros[r].codigo,
+      decision: registros[r].aceptado ? 'ACEPTADO' : 'RECHAZADO',
+      folio: registros[r].folio,
+      hash: registros[r].hash_firma
+    });
   }
 
   return {
     ok: true,
     folios: folios,
     pdf_url: pdf.url,
-    c1: c1 ? {
-      decision: c1.aceptado ? 'ACEPTADO' : 'RECHAZADO',
-      folio: c1.folio,
-      hash: c1.hash_firma
-    } : null
+    resumen: resumen
   };
 }
 

@@ -517,10 +517,20 @@
           <h2 class="confirmacion-titulo">Firma registrada exitosamente</h2>
 
           <div class="tarjeta folios-tarjeta">
-            <h3 class="folios-titulo">C1 — Consentimiento General</h3>
-            <div class="firmante-dato"><strong>Decisión:</strong><span id="confirmacion-c1-decision"></span></div>
-            <div class="firmante-dato"><strong>Folio:</strong><span id="confirmacion-c1-folio"></span></div>
-            <div class="firmante-dato" style="word-break:break-all"><strong>Hash SHA-256:</strong><span id="confirmacion-c1-hash"></span></div>
+            <h3 class="folios-titulo">Resumen de consentimientos</h3>
+            <div class="tabla-contenedor">
+              <table class="tabla-datos" id="tabla-consentimientos-resumen">
+                <thead>
+                  <tr>
+                    <th scope="col">Código</th>
+                    <th scope="col">Decisión</th>
+                    <th scope="col">Folio</th>
+                    <th scope="col">Hash SHA-256</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-consentimientos"></tbody>
+              </table>
+            </div>
           </div>
 
           <div class="firmante-dato"><strong>Fecha y hora:</strong><span id="confirmacion-fecha"></span></div>
@@ -1049,14 +1059,16 @@
           numero_documento: document.getElementById('campo-num-doc-firmante').value.trim(),
           empresa: document.getElementById('campo-razon-social').value.trim(),
           nit_empresa: document.getElementById('campo-nit-empresa').value.trim(),
-          cargo: document.getElementById('campo-cargo').value.trim()
+          cargo: document.getElementById('campo-cargo').value.trim(),
+          telefono: document.getElementById('campo-telefono').value.trim()
         };
       } else {
         firmante = {
           nombre: document.getElementById('campo-nombre').value.trim() + ' ' + document.getElementById('campo-apellido').value.trim(),
           email: obtener_email(),
           tipo_documento: document.getElementById('campo-tipo-doc').value,
-          numero_documento: document.getElementById('campo-num-doc').value.trim()
+          numero_documento: document.getElementById('campo-num-doc').value.trim(),
+          telefono: document.getElementById('campo-telefono').value.trim()
         };
       }
 
@@ -1132,10 +1144,19 @@
     }
 
     function poblar_confirmacion(resultado) {
-      if (resultado && resultado.c1) {
-        document.getElementById('confirmacion-c1-decision').textContent = resultado.c1.decision;
-        document.getElementById('confirmacion-c1-folio').textContent = resultado.c1.folio;
-        document.getElementById('confirmacion-c1-hash').textContent = resultado.c1.hash;
+      var tbody = document.getElementById('tbody-consentimientos');
+      tbody.innerHTML = '';
+      if (resultado && resultado.resumen) {
+        for (var i = 0; i < resultado.resumen.length; i++) {
+          var r = resultado.resumen[i];
+          var tr = document.createElement('tr');
+          tr.innerHTML =
+            '<td>' + escapar_html(r.codigo) + '</td>' +
+            '<td>' + escapar_html(r.decision) + '</td>' +
+            '<td style="font-size:var(--text-xs)">' + escapar_html(r.folio) + '</td>' +
+            '<td style="font-size:var(--text-xs);word-break:break-all">' + escapar_html(r.hash) + '</td>';
+          tbody.appendChild(tr);
+        }
       }
 
       document.getElementById('confirmacion-fecha').textContent = formatear_fecha_cot();
