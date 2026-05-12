@@ -1028,10 +1028,10 @@
         estado.access_token = otp_resultado.access_token;
 
         btn.textContent = 'Creando perfil...';
-        var perfil_nuevo = await crear_perfil_supabase();
+        var perfil_id = await crear_perfil_supabase();
 
         btn.textContent = 'Registrando firma...';
-        var firma_resultado = await firmar_consentimientos(preparar_payload_firma(perfil_nuevo.id));
+        var firma_resultado = await firmar_consentimientos(preparar_payload_firma(perfil_id));
 
         if (estado.reloj_id) clearInterval(estado.reloj_id);
 
@@ -1101,7 +1101,9 @@
     }
 
     async function crear_perfil_supabase() {
+      var perfil_id = crypto.randomUUID();
       var datos_perfil = {
+        id: perfil_id,
         profile_type: estado.tipo_perfil,
         email_principal: obtener_email(),
         telefono: document.getElementById('campo-telefono').value.trim(),
@@ -1128,7 +1130,7 @@
           'apikey': CONFIG.SUPABASE_ANON_KEY,
           'Authorization': 'Bearer ' + estado.access_token,
           'Content-Type': 'application/json',
-          'Prefer': 'return=representation'
+          'Prefer': 'return=minimal'
         },
         body: JSON.stringify(datos_perfil)
       });
@@ -1144,8 +1146,7 @@
         throw new Error('ERROR_REGISTRO_BD');
       }
 
-      var datos = await respuesta.json();
-      return datos[0];
+      return perfil_id;
     }
 
     function poblar_confirmacion(resultado) {
