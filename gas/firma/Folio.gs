@@ -1,13 +1,19 @@
-// Generación de folios secuenciales y hashes SHA-256
+// Generación de folios secuenciales (Supabase) y hashes SHA-256
 
 function generar_folio(codigo) {
   var props = PropertiesService.getScriptProperties();
   var prefijo = props.getProperty('FOLIO_PREFIJO') || 'DL';
   var anio = new Date().getFullYear();
-  var clave = 'folio_' + codigo + '_' + anio;
 
-  var secuencial = parseInt(props.getProperty(clave) || '0', 10) + 1;
-  props.setProperty(clave, String(secuencial));
+  var resultado = llamar_edge_function('siguiente_folio', {
+    codigo: codigo,
+    anio: anio
+  });
+
+  var secuencial = 1;
+  if (resultado.ok && resultado.secuencial) {
+    secuencial = resultado.secuencial;
+  }
 
   var secuencial_str = String(secuencial);
   while (secuencial_str.length < 4) {

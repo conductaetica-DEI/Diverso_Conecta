@@ -1,182 +1,85 @@
-// Comunicación con Supabase — inserts y consultas via REST API
+// Supabase via Edge Function proxy — evita restricción de sb_secret en User-Agent browser
+// GAS llama a db-admin Edge Function, que usa service_role internamente
 
-function insertar_consentimientos(registros) {
+function llamar_edge_function(accion, datos) {
   var props = PropertiesService.getScriptProperties();
-  var url = props.getProperty('SUPABASE_URL') + '/rest/v1/consentimientos';
-  var key = props.getProperty('SUPABASE_SERVICE_ROLE_KEY');
+  var url = props.getProperty('SUPABASE_URL');
+  var pub = props.getProperty('SUPABASE_PUBLISHABLE_KEY');
+  var gasSecret = props.getProperty('GAS_SHARED_SECRET');
 
-  var respuesta = UrlFetchApp.fetch(url, {
+  var payload = datos || {};
+  payload.action = accion;
+
+  var respuesta = UrlFetchApp.fetch(url + '/functions/v1/db-admin', {
     method: 'post',
     contentType: 'application/json',
     headers: {
-      'apikey': key,
-      'Authorization': 'Bearer ' + key,
-      'Prefer': 'return=minimal'
+      'apikey': pub,
+      'x-gas-secret': gasSecret
     },
-    payload: JSON.stringify(registros),
+    payload: JSON.stringify(payload),
     muteHttpExceptions: true
   });
 
-  var codigo_http = respuesta.getResponseCode();
-  if (codigo_http >= 200 && codigo_http < 300) {
-    return { ok: true };
+  try {
+    return JSON.parse(respuesta.getContentText());
+  } catch (e) {
+    return { ok: false, error: 'EDGE_PARSE_ERROR', detalle: respuesta.getContentText() };
   }
+}
 
-  return { ok: false, codigo: codigo_http };
+function insertar_consentimientos(registros) {
+  return llamar_edge_function('insertar_consentimientos', { registros: registros });
 }
 
 function consultar_por_folio(folio) {
-  var props = PropertiesService.getScriptProperties();
-  var url = props.getProperty('SUPABASE_URL') +
-    '/rest/v1/consentimientos?folio=eq.' + encodeURIComponent(folio) +
-    '&select=folio,tipo_firma,nombre_firmante,email_firmante,codigo,version,aceptado,programa,created_at' +
-    '&limit=1';
-  var key = props.getProperty('SUPABASE_SERVICE_ROLE_KEY');
-
-  var respuesta = UrlFetchApp.fetch(url, {
-    method: 'get',
-    headers: {
-      'apikey': key,
-      'Authorization': 'Bearer ' + key
-    },
-    muteHttpExceptions: true
-  });
-
-  var datos = JSON.parse(respuesta.getContentText());
-  if (datos && datos.length > 0) {
-    return datos[0];
+  var resultado = llamar_edge_function('consultar_por_folio', { folio: folio });
+  if (resultado.ok && resultado.data) {
+    return resultado.data;
   }
-
   return null;
 }
 
 function registrar_log(persona_id, accion, modulo, detalle) {
-  var props = PropertiesService.getScriptProperties();
-  var url = props.getProperty('SUPABASE_URL') + '/rest/v1/logs_actividad';
-  var key = props.getProperty('SUPABASE_SERVICE_ROLE_KEY');
-
-  UrlFetchApp.fetch(url, {
-    method: 'post',
-    contentType: 'application/json',
-    headers: {
-      'apikey': key,
-      'Authorization': 'Bearer ' + key,
-      'Prefer': 'return=minimal'
-    },
-    payload: JSON.stringify({
-      persona_id: persona_id || null,
-      accion: accion,
-      modulo: modulo,
-      detalle: detalle
-    }),
-    muteHttpExceptions: true
+  llamar_edge_function('registrar_log', {
+    persona_id: persona_id || null,
+    accion: accion,
+    modulo: modulo,
+    detalle: detalle
   });
 }
 
 function obtener_carpeta_perfil(perfil_id) {
   if (!perfil_id) return null;
 
-  var props = PropertiesService.getScriptProperties();
-  var url = props.getProperty('SUPABASE_URL') +
-    '/rest/v1/profiles?id=eq.' + encodeURIComponent(perfil_id) +
-    '&select=carpeta_drive_id' +
-    '&limit=1';
-  var key = props.getProperty('SUPABASE_SERVICE_ROLE_KEY');
-
-  var respuesta = UrlFetchApp.fetch(url, {
-    method: 'get',
-    headers: {
-      'apikey': key,
-      'Authorization': 'Bearer ' + key
-    },
-    muteHttpExceptions: true
-  });
-
-  var datos = JSON.parse(respuesta.getContentText());
-  if (datos && datos.length > 0 && datos[0].carpeta_drive_id) {
-    return datos[0].carpeta_drive_id;
+  var resultado = llamar_edge_function('consultar_perfil', { perfil_id: perfil_id });
+  if (resultado.ok && resultado.data && resultado.data.carpeta_drive_id) {
+    return resultado.data.carpeta_drive_id;
   }
-
   return null;
 }
 
 function consultar_tarea_firma(token) {
   if (!token) return null;
 
-  var props = PropertiesService.getScriptProperties();
-  var url = props.getProperty('SUPABASE_URL') +
-    '/rest/v1/tareas?id=eq.' + encodeURIComponent(token) +
-    '&select=id,perfil_id,tipo_tarea,detalle,estado' +
-    '&limit=1';
-  var key = props.getProperty('SUPABASE_SERVICE_ROLE_KEY');
-
-  var respuesta = UrlFetchApp.fetch(url, {
-    method: 'get',
-    headers: {
-      'apikey': key,
-      'Authorization': 'Bearer ' + key
-    },
-    muteHttpExceptions: true
-  });
-
-  var datos = JSON.parse(respuesta.getContentText());
-  if (datos && datos.length > 0) {
-    return datos[0];
+  var resultado = llamar_edge_function('consultar_tarea', { tarea_id: token });
+  if (resultado.ok && resultado.data) {
+    return resultado.data;
   }
-
   return null;
 }
 
 function completar_tarea(tarea_id) {
   if (!tarea_id) return { ok: false };
-
-  var props = PropertiesService.getScriptProperties();
-  var url = props.getProperty('SUPABASE_URL') +
-    '/rest/v1/tareas?id=eq.' + encodeURIComponent(tarea_id);
-  var key = props.getProperty('SUPABASE_SERVICE_ROLE_KEY');
-
-  var respuesta = UrlFetchApp.fetch(url, {
-    method: 'patch',
-    contentType: 'application/json',
-    headers: {
-      'apikey': key,
-      'Authorization': 'Bearer ' + key,
-      'Prefer': 'return=minimal'
-    },
-    payload: JSON.stringify({
-      estado: 'completada',
-      fecha_completada: new Date().toISOString()
-    }),
-    muteHttpExceptions: true
-  });
-
-  var codigo_http = respuesta.getResponseCode();
-  return { ok: codigo_http >= 200 && codigo_http < 300 };
+  return llamar_edge_function('completar_tarea', { tarea_id: tarea_id });
 }
 
 function consultar_perfil(perfil_id) {
   if (!perfil_id) return null;
 
-  var props = PropertiesService.getScriptProperties();
-  var url = props.getProperty('SUPABASE_URL') +
-    '/rest/v1/profiles?id=eq.' + encodeURIComponent(perfil_id) +
-    '&select=nombre,apellido,razon_social,email_principal,tipo_documento,numero_documento,profile_type' +
-    '&limit=1';
-  var key = props.getProperty('SUPABASE_SERVICE_ROLE_KEY');
-
-  var respuesta = UrlFetchApp.fetch(url, {
-    method: 'get',
-    headers: {
-      'apikey': key,
-      'Authorization': 'Bearer ' + key
-    },
-    muteHttpExceptions: true
-  });
-
-  var datos = JSON.parse(respuesta.getContentText());
-  if (datos && datos.length > 0) {
-    return datos[0];
+  var resultado = llamar_edge_function('consultar_perfil', { perfil_id: perfil_id });
+  if (resultado.ok && resultado.data) {
+    return resultado.data;
   }
-
   return null;
 }

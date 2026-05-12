@@ -3,12 +3,12 @@
 function verificar_jwt(token) {
   var props = PropertiesService.getScriptProperties();
   var supabase_url = props.getProperty('SUPABASE_URL');
-  var service_key = props.getProperty('SUPABASE_SERVICE_ROLE_KEY');
+  var pub = props.getProperty('SUPABASE_PUBLISHABLE_KEY');
 
   var respuesta = UrlFetchApp.fetch(supabase_url + '/auth/v1/user', {
     method: 'get',
     headers: {
-      'apikey': service_key,
+      'apikey': pub,
       'Authorization': 'Bearer ' + token
     },
     muteHttpExceptions: true

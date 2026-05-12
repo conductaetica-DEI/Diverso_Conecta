@@ -1,25 +1,37 @@
-// Comunicación con Supabase — actualizar perfil con carpeta Drive
+// Supabase via Edge Function proxy — evita restricción de sb_secret en User-Agent browser
+// GAS llama a db-admin Edge Function, que usa service_role internamente
 
-function actualizar_carpeta_perfil(profile_id, carpeta_drive_id) {
+function llamar_edge_function(accion, datos) {
   var props = PropertiesService.getScriptProperties();
-  var url = props.getProperty('SUPABASE_URL') +
-    '/rest/v1/profiles?id=eq.' + encodeURIComponent(profile_id);
-  var key = props.getProperty('SUPABASE_SERVICE_ROLE_KEY');
+  var url = props.getProperty('SUPABASE_URL');
+  var pub = props.getProperty('SUPABASE_PUBLISHABLE_KEY');
+  var gasSecret = props.getProperty('GAS_SHARED_SECRET');
 
-  var respuesta = UrlFetchApp.fetch(url, {
-    method: 'patch',
+  var payload = datos || {};
+  payload.action = accion;
+
+  var respuesta = UrlFetchApp.fetch(url + '/functions/v1/db-admin', {
+    method: 'post',
     contentType: 'application/json',
     headers: {
-      'apikey': key,
-      'Authorization': 'Bearer ' + key,
-      'Prefer': 'return=minimal'
+      'apikey': pub,
+      'x-gas-secret': gasSecret
     },
-    payload: JSON.stringify({
-      carpeta_drive_id: carpeta_drive_id
-    }),
+    payload: JSON.stringify(payload),
     muteHttpExceptions: true
   });
 
-  var codigo_http = respuesta.getResponseCode();
-  return codigo_http >= 200 && codigo_http < 300;
+  try {
+    return JSON.parse(respuesta.getContentText());
+  } catch (e) {
+    return { ok: false, error: 'EDGE_PARSE_ERROR', detalle: respuesta.getContentText() };
+  }
+}
+
+function actualizar_carpeta_perfil(profile_id, carpeta_drive_id) {
+  var resultado = llamar_edge_function('actualizar_carpeta', {
+    perfil_id: profile_id,
+    carpeta_drive_id: carpeta_drive_id
+  });
+  return resultado.ok;
 }
