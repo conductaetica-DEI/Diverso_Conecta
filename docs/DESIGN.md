@@ -37,7 +37,7 @@ Derivado del Manual de Marca oficial de DiversoLab. TODO elemento visual usa est
 | Aprobado / Completo | Aqua | --color-exito | Badge "Completada", check ✓ |
 | En progreso | Sol | --color-progreso | Badge "En curso", barras |
 | Pendiente / Alerta | Coral | --color-alerta | Badge "Urgente", contadores |
-| Información / Neutro | Lavanda | --color-neutro | Badge "Capa 2", bordes |
+| Información / Neutro | Lavanda | --color-neutro | Badges informativos, bordes |
 | Texto principal | Violeta | --color-texto | Body, headers |
 | Texto secundario | Violeta al 70% | --color-texto-muted | Descripciones, ayudas |
 

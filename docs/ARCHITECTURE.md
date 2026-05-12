@@ -508,10 +508,11 @@ DiversoLab_Expedientes/
 
 ---
 
-## Tablas futuras (Fase 1+)
+## Estado del expediente — limitaciones actuales
 
-- `ubicacion` — Capa 1
-- `kyc_personas` — Capa 2 persona natural
-- `kyc_empresas` — Capa 2 persona jurídica
+El sistema de capas del mockup (Capa 0 Registro, Capa 1 Ubicación, Capa 2 KYC, Capa 3 Caracterización, Capa 4 Documentos) **no está implementado**. No existen tablas de ubicación, KYC ni caracterización en Supabase. Por lo tanto:
 
-Tablas que NO van a Supabase: caract_pcdi, caract_empresarial, qol_respuestas, dei_respuestas, cargo_dei — viven en Google Sheets (Forms → GAS).
+- **No se puede determinar el estado real de un expediente.** Solo existe `estado_perfil` (pendiente/activo/suspendido/inactivo), que es un estado administrativo de aprobación, no de completitud.
+- **No mostrar indicadores de completitud en el frontend** hasta que existan los datos para evaluarlos.
+- Las tablas `ubicacion`, `kyc_personas`, `kyc_empresas` están descartadas como tablas Supabase.
+- caract_pcdi, caract_empresarial, qol_respuestas, dei_respuestas, cargo_dei viven en Google Sheets (Forms → GAS), no en Supabase.

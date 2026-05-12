@@ -234,12 +234,12 @@ Modos vista:
 Secciones:
 1. Header: encabezado-app (logo + "Panel de gestión" + cerrar sesión), info usuario (nombre + badges permisos + link accesos) debajo
 2. KPIs: perfiles asignados, tareas activas, docs pendientes revision
-3. Expedientes: tabla con nombre, tipo (badge), estado (badge), completitud por capas (C0/F/C1/C2), ultima actividad
+3. Expedientes: tabla con nombre, tipo (badge), estado (badge), ultima actividad
 4. Tareas recientes: tabla con tipo, perfil, detalle, estado, fecha
 5. Modal "Nueva tarea": búsqueda perfil (nombre/email/doc + chip selección), tipo, detalle, fecha limite, urgencia → INSERT tareas
 6. Modal "Solicitar firma": toggle Perfil existente (búsqueda nombre/email/doc + chip selección) | Externo (formulario: tipo persona, nombre, apellido, doc, email, teléfono; si jurídica: empresa, NIT, cargo), programa, C3-C7 obligatorios (C1+C2 disabled checked) → CREATE tarea consentimiento (perfil_id o null + firmante_externo en detalle) + notificar_email con link /firma.html?token={tarea_id}
 
-Caracteristicas: filtrado por permisos + asignaciones, batch query consentimientos para completitud, event delegation, CSP, accesibilidad, responsive 480px.
+Caracteristicas: filtrado por permisos + asignaciones, event delegation, CSP, accesibilidad, responsive 480px.
 
 ## Todas las paginas construidas
 
