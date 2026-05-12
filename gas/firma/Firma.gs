@@ -169,7 +169,8 @@ function obtener_datos_firma(token) {
     nombre: perfil.razon_social || ((perfil.nombre || '') + ' ' + (perfil.apellido || '')).trim(),
     email: perfil.email_principal,
     tipo_documento: perfil.tipo_documento,
-    numero_documento: perfil.numero_documento
+    numero_documento: perfil.numero_documento,
+    telefono: perfil.telefono || null
   };
 
   if (es_empresa) {
