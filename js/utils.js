@@ -35,7 +35,7 @@ var MENSAJES_USUARIO = {
 var MENSAJE_FALLBACK = 'Ocurrió un error. Intenta de nuevo o contacta soporte.';
 
 function mensaje_usuario(codigo_error) {
-  return MENSAJES_USUARIO[codigo_error] || MENSAJE_FALLBACK;
+  return MENSAJES_USUARIO[codigo_error] || (MENSAJE_FALLBACK + ' [' + codigo_error + ']');
 }
 
 // --- Toast / Notificaciones ---

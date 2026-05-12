@@ -80,8 +80,6 @@ function verificarOTP(email, codigo) {
     return { ok: false, error: 'OTP_INCORRECTO', intentos_restantes: OTP_MAX_INTENTOS - otp.intentos };
   }
 
-  cache.remove(clave_otp);
-
   var usuario_auth = obtener_o_crear_usuario_auth(email);
   if (!usuario_auth) {
     return { ok: false, error: 'ERROR_CREAR_USUARIO' };
@@ -93,6 +91,8 @@ function verificarOTP(email, codigo) {
   if (!sesion) {
     return { ok: false, error: 'ERROR_GENERAR_SESION' };
   }
+
+  cache.remove(clave_otp);
 
   var token = generar_token_verificacion();
   cache.put('tkn_' + email, JSON.stringify({
