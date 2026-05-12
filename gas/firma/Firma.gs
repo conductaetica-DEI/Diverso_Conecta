@@ -107,7 +107,21 @@ function firmar(datos) {
     programa: datos.programa
   });
 
-  return { ok: true, folios: folios, pdf_url: pdf.url };
+  var c1 = null;
+  for (var r = 0; r < registros.length; r++) {
+    if (registros[r].codigo === 'C1') { c1 = registros[r]; break; }
+  }
+
+  return {
+    ok: true,
+    folios: folios,
+    pdf_url: pdf.url,
+    c1: c1 ? {
+      decision: c1.aceptado ? 'ACEPTADO' : 'RECHAZADO',
+      folio: c1.folio,
+      hash: c1.hash_firma
+    } : null
+  };
 }
 
 function verificarFirma(folio) {

@@ -517,8 +517,10 @@
           <h2 class="confirmacion-titulo">Firma registrada exitosamente</h2>
 
           <div class="tarjeta folios-tarjeta">
-            <h3 class="folios-titulo">Folios de consentimiento</h3>
-            <ul id="folios-lista" class="folios-lista" aria-label="Folios generados"></ul>
+            <h3 class="folios-titulo">C1 — Consentimiento General</h3>
+            <div class="firmante-dato"><strong>Decisión:</strong><span id="confirmacion-c1-decision"></span></div>
+            <div class="firmante-dato"><strong>Folio:</strong><span id="confirmacion-c1-folio"></span></div>
+            <div class="firmante-dato" style="word-break:break-all"><strong>Hash SHA-256:</strong><span id="confirmacion-c1-hash"></span></div>
           </div>
 
           <div class="firmante-dato"><strong>Fecha y hora:</strong><span id="confirmacion-fecha"></span></div>
@@ -528,7 +530,7 @@
             <a id="link-pdf" class="btn-secundario" href="#" target="_blank" rel="noopener" hidden>Descargar constancia PDF</a>
           </div>
 
-          <p class="confirmacion-nota">Se envió copia a <strong id="confirmacion-email"></strong></p>
+          <p class="confirmacion-nota">Se envió copia de la constancia a <strong id="confirmacion-email"></strong></p>
           <p class="confirmacion-mensaje">Tu solicitud fue recibida. Un miembro de DiversoLab la revisará.</p>
           <p class="confirmacion-nota">Para consultas: <a href="mailto:info@diversolab.org">info@diversolab.org</a></p>
         </div>
@@ -1130,14 +1132,10 @@
     }
 
     function poblar_confirmacion(resultado) {
-      var lista = document.getElementById('folios-lista');
-      lista.innerHTML = '';
-      if (resultado && resultado.folios) {
-        for (var i = 0; i < resultado.folios.length; i++) {
-          var li = document.createElement('li');
-          li.textContent = resultado.folios[i];
-          lista.appendChild(li);
-        }
+      if (resultado && resultado.c1) {
+        document.getElementById('confirmacion-c1-decision').textContent = resultado.c1.decision;
+        document.getElementById('confirmacion-c1-folio').textContent = resultado.c1.folio;
+        document.getElementById('confirmacion-c1-hash').textContent = resultado.c1.hash;
       }
 
       document.getElementById('confirmacion-fecha').textContent = formatear_fecha_cot();
