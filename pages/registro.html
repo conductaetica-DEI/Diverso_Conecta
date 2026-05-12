@@ -891,7 +891,7 @@
         configurar_otp_inputs();
         iniciar_temporizador();
       } catch (error) {
-        mostrar_error(mensaje_usuario(error.message));
+        mostrar_error(mensaje_usuario(error.message, error.detalle));
       } finally {
         habilitar_boton(btn, 'Enviar código de verificación');
       }
@@ -995,7 +995,7 @@
         mostrar_exito('Código reenviado a ' + email);
         iniciar_temporizador();
       } catch (error) {
-        mostrar_error(mensaje_usuario(error.message));
+        mostrar_error(mensaje_usuario(error.message, error.detalle));
         btn.disabled = false;
       }
     }
@@ -1029,7 +1029,7 @@
         actualizar_indicador(4);
 
       } catch (error) {
-        mostrar_error(mensaje_usuario(error.message));
+        mostrar_error(mensaje_usuario(error.message, error.detalle));
         limpiar_otp_inputs();
       } finally {
         habilitar_boton(btn, 'Firmar');

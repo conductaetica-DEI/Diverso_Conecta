@@ -1,6 +1,6 @@
 // Lógica OTP — generación, verificación, rate limit, token de verificación
 
-var OTP_MAX_SOLICITUDES = 3;
+var OTP_MAX_SOLICITUDES = 20;
 var OTP_VENTANA_SEG = 600;
 var OTP_MAX_INTENTOS = 5;
 var OTP_TTL_SEG = 600;

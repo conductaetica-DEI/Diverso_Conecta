@@ -32,7 +32,7 @@ function doPost(e) {
 
     return respuesta_json(resultado);
   } catch (err) {
-    return respuesta_json({ ok: false, error: 'ERROR_SERVIDOR' });
+    return respuesta_json({ ok: false, error: 'ERROR_SERVIDOR', detalle: String(err) });
   }
 }
 

@@ -23,7 +23,9 @@ async function gas_fetch(url, datos) {
   var resultado = await respuesta.json();
 
   if (!resultado.ok) {
-    throw new Error(resultado.error || 'ERROR_SERVIDOR');
+    var err = new Error(resultado.error || 'ERROR_SERVIDOR');
+    err.detalle = resultado.detalle || null;
+    throw err;
   }
 
   return resultado;
