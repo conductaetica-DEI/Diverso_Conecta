@@ -10,7 +10,6 @@ var estado = {
   tipos_permitidos: [],
   expedientes: [],
   tareas: [],
-  perfiles_con_firma: {},
   total_docs_pendientes: 0
 };
 
@@ -141,12 +140,6 @@ async function cargar_datos_secundarios() {
   if (ids.length > 0) {
     consultas.push(
       supabase_fetch(
-        '/consentimientos?perfil_id=in.(' + ids_str + ')&aceptado=eq.true&select=perfil_id',
-        estado.jwt
-      ).catch(function() { return []; })
-    );
-    consultas.push(
-      supabase_fetch(
         '/catalogo_docs?perfil_id=in.(' + ids_str + ')&estado=eq.pendiente&select=id',
         estado.jwt
       ).catch(function() { return []; })
@@ -156,12 +149,7 @@ async function cargar_datos_secundarios() {
   var resultados = await Promise.all(consultas);
 
   estado.tareas = resultados[0] || [];
-
-  (resultados[1] || []).forEach(function(c) {
-    estado.perfiles_con_firma[c.perfil_id] = true;
-  });
-
-  estado.total_docs_pendientes = (resultados[2] || []).length;
+  estado.total_docs_pendientes = (resultados[1] || []).length;
 }
 
 // --- Poblar UI ---
@@ -204,7 +192,6 @@ function poblar_expedientes() {
     '<th scope="col">Nombre</th>' +
     '<th scope="col">Tipo</th>' +
     '<th scope="col">Estado</th>' +
-    '<th scope="col">Completitud</th>' +
     '<th scope="col">Actividad</th>' +
     '</tr></thead><tbody>';
 
@@ -214,7 +201,6 @@ function poblar_expedientes() {
       '<td>' + escapar_html(nombre_display(e)) + '</td>' +
       '<td>' + badge_tipo(e.profile_type) + '</td>' +
       '<td>' + badge_estado_perfil(e.estado_perfil) + '</td>' +
-      '<td>' + completitud_capas(e.id) + '</td>' +
       '<td>' + formatear_fecha_corta(e.updated_at || e.fecha_registro) + '</td>' +
     '</tr>';
   }
@@ -755,12 +741,3 @@ function buscar_expediente(perfil_id) {
   return null;
 }
 
-function completitud_capas(perfil_id) {
-  var firma = estado.perfiles_con_firma[perfil_id];
-  return '<div class="completitud-grupo">' +
-    '<span class="comp-paso comp-completo" title="Registro">C0</span>' +
-    '<span class="comp-paso' + (firma ? ' comp-completo' : '') + '" title="Firma">' + (firma ? 'F' : 'F') + '</span>' +
-    '<span class="comp-paso" title="Ubicación">C1</span>' +
-    '<span class="comp-paso" title="Documentación">C2</span>' +
-  '</div>';
-}
