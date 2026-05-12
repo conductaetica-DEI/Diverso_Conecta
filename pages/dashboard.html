@@ -380,10 +380,22 @@
       <h3 class="modal-titulo" id="modal-tarea-titulo">Nueva tarea</h3>
 
       <div class="modal-campo">
-        <label for="tarea-perfil" class="campo-label">Perfil <span class="campo-obligatorio">*</span></label>
-        <select id="tarea-perfil" class="campo-select" aria-required="true">
-          <option value="">Seleccionar perfil...</option>
-        </select>
+        <label for="tarea-buscar" class="campo-label">Perfil <span class="campo-obligatorio">*</span></label>
+        <div class="buscar-contenedor">
+          <input type="text" id="tarea-buscar" class="campo-texto"
+                 placeholder="Nombre, email o documento..." autocomplete="off" aria-required="true">
+          <div id="tarea-resultados" class="buscar-resultados" hidden role="listbox"></div>
+        </div>
+        <p id="tarea-buscar-ayuda" class="buscar-ayuda">Escribe al menos 2 caracteres</p>
+        <div id="tarea-seleccion" class="chip-contenedor" hidden>
+          <div class="chip">
+            <span id="tarea-chip-nombre"></span>
+            <span class="insignia insignia-neutra" id="tarea-chip-tipo"></span>
+            <button type="button" class="chip-quitar" id="tarea-chip-quitar"
+                    aria-label="Quitar seleccion">&times;</button>
+          </div>
+        </div>
+        <input type="hidden" id="tarea-perfil-id" value="">
       </div>
 
       <div class="modal-campo">
@@ -909,6 +921,18 @@
         }
       });
       document.getElementById('firma-ext-tipo').addEventListener('change', al_cambiar_tipo_externo);
+      document.getElementById('tarea-buscar').addEventListener('input', al_buscar_perfil_tarea);
+      document.getElementById('tarea-chip-quitar').addEventListener('click', limpiar_busqueda_tarea);
+      document.getElementById('tarea-resultados').addEventListener('click', function(e) {
+        var item = e.target.closest('.buscar-resultado-item');
+        if (item) al_seleccionar_perfil_tarea(item.dataset.perfilId);
+      });
+      document.getElementById('tarea-resultados').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          var item = e.target.closest('.buscar-resultado-item');
+          if (item) al_seleccionar_perfil_tarea(item.dataset.perfilId);
+        }
+      });
 
       var cerrar_btns = document.querySelectorAll('[data-cerrar-modal]');
       for (var j = 0; j < cerrar_btns.length; j++) {
@@ -930,7 +954,7 @@
     // --- Modal: Nueva tarea ---
 
     function al_abrir_modal_tarea() {
-      poblar_selector_perfiles('tarea-perfil');
+      limpiar_busqueda_tarea();
       document.getElementById('tarea-tipo').value = '';
       document.getElementById('tarea-detalle').value = '';
       document.getElementById('tarea-fecha').value = '';
@@ -939,7 +963,7 @@
     }
 
     async function al_crear_tarea() {
-      var perfil_id = document.getElementById('tarea-perfil').value;
+      var perfil_id = document.getElementById('tarea-perfil-id').value;
       var tipo = document.getElementById('tarea-tipo').value;
       var detalle = document.getElementById('tarea-detalle').value.trim();
       var fecha = document.getElementById('tarea-fecha').value;
@@ -1103,6 +1127,79 @@
       document.getElementById('firma-seleccion').hidden = true;
       document.getElementById('firma-buscar-ayuda').hidden = false;
     }
+
+    // --- Búsqueda perfil: modal tarea ---
+
+    var _tarea_buscar_timeout = null;
+
+    function al_buscar_perfil_tarea() {
+      clearTimeout(_tarea_buscar_timeout);
+      var termino = document.getElementById('tarea-buscar').value.trim();
+
+      if (termino.length < 2) {
+        document.getElementById('tarea-resultados').hidden = true;
+        return;
+      }
+
+      _tarea_buscar_timeout = setTimeout(function() {
+        var resultados = filtrar_perfiles_firma(termino);
+        mostrar_resultados_tarea(resultados);
+      }, 200);
+    }
+
+    function mostrar_resultados_tarea(resultados) {
+      var contenedor = document.getElementById('tarea-resultados');
+
+      if (resultados.length === 0) {
+        contenedor.innerHTML = '<div class="buscar-resultado-vacio">Sin resultados</div>';
+        contenedor.hidden = false;
+        return;
+      }
+
+      var html = '';
+      for (var i = 0; i < resultados.length; i++) {
+        var e = resultados[i];
+        var tipo_label = LABELS_TIPOS[e.profile_type] || e.profile_type;
+        var doc_display = (e.tipo_documento && e.numero_documento)
+          ? escapar_html(e.tipo_documento) + ' ' + escapar_html(e.numero_documento)
+          : '';
+
+        html += '<div class="buscar-resultado-item" role="option" tabindex="0" data-perfil-id="' + e.id + '">' +
+          '<span class="buscar-resultado-nombre">' + escapar_html(nombre_display(e)) + '</span> ' +
+          '<span class="insignia insignia-neutra">' + escapar_html(tipo_label) + '</span> ' +
+          (doc_display ? '<span class="buscar-resultado-detalle">' + doc_display + '</span> ' : '') +
+          '<span class="buscar-resultado-detalle">' + escapar_html(e.email_principal || '') + '</span>' +
+        '</div>';
+      }
+
+      contenedor.innerHTML = html;
+      contenedor.hidden = false;
+    }
+
+    function al_seleccionar_perfil_tarea(perfil_id) {
+      var perfil = buscar_expediente(perfil_id);
+      if (!perfil) return;
+
+      document.getElementById('tarea-perfil-id').value = perfil_id;
+      document.getElementById('tarea-chip-nombre').textContent = nombre_display(perfil);
+      document.getElementById('tarea-chip-tipo').textContent = LABELS_TIPOS[perfil.profile_type] || perfil.profile_type;
+
+      document.getElementById('tarea-seleccion').hidden = false;
+      document.getElementById('tarea-buscar').hidden = true;
+      document.getElementById('tarea-resultados').hidden = true;
+      document.getElementById('tarea-buscar-ayuda').hidden = true;
+    }
+
+    function limpiar_busqueda_tarea() {
+      document.getElementById('tarea-perfil-id').value = '';
+      document.getElementById('tarea-buscar').value = '';
+      document.getElementById('tarea-buscar').hidden = false;
+      document.getElementById('tarea-resultados').hidden = true;
+      document.getElementById('tarea-seleccion').hidden = true;
+      document.getElementById('tarea-buscar-ayuda').hidden = false;
+    }
+
+    // --- Firma: tipo externo ---
 
     function al_cambiar_tipo_externo() {
       var es_juridica = document.getElementById('firma-ext-tipo').value === 'persona_juridica';
@@ -1290,19 +1387,6 @@
       for (var i = 0; i < overlays.length; i++) {
         overlays[i].classList.remove('modal-visible');
       }
-    }
-
-    function poblar_selector_perfiles(selector_id) {
-      var selector = document.getElementById(selector_id);
-      var html = '<option value="">Seleccionar perfil...</option>';
-      for (var i = 0; i < estado.expedientes.length; i++) {
-        var e = estado.expedientes[i];
-        var tipo_label = LABELS_TIPOS[e.profile_type] || e.profile_type;
-        html += '<option value="' + e.id + '">' +
-          escapar_html(nombre_display(e)) + ' (' + tipo_label + ')' +
-        '</option>';
-      }
-      selector.innerHTML = html;
     }
 
     // --- Helpers ---

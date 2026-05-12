@@ -1027,11 +1027,11 @@
         estado.token_verificacion = otp_resultado.token_verificacion;
         estado.access_token = otp_resultado.access_token;
 
-        btn.textContent = 'Registrando firma...';
-        var firma_resultado = await firmar_consentimientos(preparar_payload_firma());
-
         btn.textContent = 'Creando perfil...';
-        await crear_perfil_supabase();
+        var perfil_nuevo = await crear_perfil_supabase();
+
+        btn.textContent = 'Registrando firma...';
+        var firma_resultado = await firmar_consentimientos(preparar_payload_firma(perfil_nuevo.id));
 
         if (estado.reloj_id) clearInterval(estado.reloj_id);
 
@@ -1049,7 +1049,7 @@
       }
     }
 
-    function preparar_payload_firma() {
+    function preparar_payload_firma(perfil_id) {
       var firmante;
 
       if (estado.es_juridica) {
@@ -1074,6 +1074,7 @@
       }
 
       return {
+        perfil_id: perfil_id,
         token_verificacion: estado.token_verificacion,
         tipo_firma: estado.es_juridica ? 'persona_juridica' : 'persona_natural',
         firmante: firmante,
@@ -1127,7 +1128,7 @@
           'apikey': CONFIG.SUPABASE_ANON_KEY,
           'Authorization': 'Bearer ' + estado.access_token,
           'Content-Type': 'application/json',
-          'Prefer': 'return=minimal'
+          'Prefer': 'return=representation'
         },
         body: JSON.stringify(datos_perfil)
       });
@@ -1142,6 +1143,9 @@
         }
         throw new Error('ERROR_REGISTRO_BD');
       }
+
+      var datos = await respuesta.json();
+      return datos[0];
     }
 
     function poblar_confirmacion(resultado) {

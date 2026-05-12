@@ -279,8 +279,6 @@
   </header>
 
   <main id="contenido-principal" class="expediente-contenedor">
-    <p id="encabezado-subtitulo" class="cargando-texto encabezado-subtitulo">Cargando...</p>
-
     <section class="tarjeta" id="seccion-perfil" aria-label="Datos del perfil">
       <div id="contenido-perfil">
         <p class="cargando-texto" aria-busy="true">Cargando...</p>
@@ -391,7 +389,7 @@
       try {
         var perfiles = await supabase_fetch(
           '/profiles?auth_user_id=eq.' + estado.sesion.user.id +
-          '&select=id,profile_type,nombre,apellido,razon_social,tipo_documento,numero_documento,email_principal,estado_perfil&limit=1',
+          '&select=id,profile_type,nombre,apellido,razon_social,tipo_documento,numero_documento,email_principal,telefono,estado_perfil&limit=1',
           estado.jwt
         );
 
@@ -407,7 +405,6 @@
           return;
         }
 
-        poblar_encabezado();
         poblar_perfil();
 
         var resultados = await Promise.all([
@@ -454,11 +451,6 @@
 
     // --- Encabezado ---
 
-    function poblar_encabezado() {
-      var nombre = estado.perfil.razon_social || ((estado.perfil.nombre || '') + ' ' + (estado.perfil.apellido || '')).trim() || '';
-      document.getElementById('encabezado-subtitulo').textContent = nombre;
-    }
-
     // --- Perfil ---
 
     function poblar_perfil() {
@@ -470,6 +462,7 @@
           '<div class="perfil-nombre">' + escapar_html(nombre) + '</div>' +
           '<div class="perfil-detalle">' +
             '<span>' + escapar_html(p.tipo_documento + ' ' + p.numero_documento) + '</span>' +
+            (p.telefono ? '<span>' + escapar_html(p.telefono) + '</span>' : '') +
             '<span>' + escapar_html(p.email_principal) + '</span>' +
           '</div>' +
         '</div>' +
@@ -490,7 +483,7 @@
       var pasos = [
         { etiqueta: 'Registro', completo: true },
         { etiqueta: 'Consentimientos', completo: tiene_consentimientos },
-        { etiqueta: 'Ubicación', completo: false },
+        { etiqueta: 'KYC', completo: false },
         { etiqueta: 'Documentación', completo: false }
       ];
 

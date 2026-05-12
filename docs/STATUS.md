@@ -53,11 +53,11 @@ Auth: `x-gas-secret` header, `verify_jwt: false`. Versión desplegada: v3.
 | Pdf.gs | generar_pdf_constancia, construir_encabezado/datos/tabla/evidencia, anexos legales (F-DATO-01, SICE-POL-01), estilos |
 | Supabase.gs | insertar_consentimientos, consultar_por_folio, registrar_log, obtener_carpeta_perfil, consultar_tarea_firma, completar_tarea, consultar_perfil |
 
-Script Properties configuradas (10):
+Script Properties configuradas (9):
 - API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, EMAIL_REPLY_TO
 - OTP_URL, OTP_API_KEY (inter-servicio con GAS OTP)
 - DRIVE_CARPETA_FIRMAS, FOLIO_PREFIJO (DL)
-- DOC_ID_FDATO01, DOC_ID_SICEPOL01 (Google Docs con documentos legales completos)
+- DOC_ID_PLANTILLA_FIRMA (Google Doc plantilla para PDF de constancia)
 
 Pendiente: pruebas con POST real (tablas ya creadas en Supabase).
 
@@ -67,7 +67,7 @@ Guardados en `docs/` como referencia local:
 - `F-DATO-01_Consentimiento-Integral.md` — 7 consentimientos con textos aprobados
 - `SICE-POL-01_Politica-Datos.md` — Política de Protección de Datos (39 artículos)
 
-Los originales viven en Google Docs (DOC_ID_FDATO01 y DOC_ID_SICEPOL01) y se embeben como anexos en el PDF de constancia.
+Los originales viven en Google Docs y se referencian via config.js (frontend iframes). El PDF de constancia usa DOC_ID_PLANTILLA_FIRMA (Script Property de GAS Firma).
 
 ## GAS Drive — Servicio implementado
 

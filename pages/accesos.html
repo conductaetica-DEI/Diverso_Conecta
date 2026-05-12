@@ -692,22 +692,19 @@
           prefer: 'return=minimal'
         });
 
-        try {
-          await crear_carpeta({
+        await Promise.all([
+          crear_carpeta({
             profile_id: perfil.id,
             profile_type: perfil.profile_type,
             nombre: ((perfil.nombre || '') + ' ' + (perfil.apellido || '')).trim(),
             razon_social: perfil.razon_social
-          });
-        } catch (e) { /* carpeta se puede crear después */ }
-
-        try {
-          await notificar_email(
+          }).catch(function() {}),
+          notificar_email(
             perfil.email_principal,
             'Tu cuenta ha sido aprobada — DiversoLab',
             'Hola ' + escapar_html(nombre_display(perfil)) + ', tu cuenta en DiversoLab ha sido aprobada. Ya puedes iniciar sesión en app.diversolab.org.'
-          );
-        } catch (e) { /* notificación no bloquea */ }
+          ).catch(function() {})
+        ]);
 
         mostrar_exito('Perfil aprobado: ' + nombre_display(perfil));
         cargar_pendientes();
