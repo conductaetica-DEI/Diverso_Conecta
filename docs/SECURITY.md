@@ -53,7 +53,7 @@ La seguridad está en Supabase (RLS) y GAS (validación), NO en el frontend. El 
 | Hash SHA-256 | Integridad del contenido | Hash de email+codigo+version+timestamp+ip. Si se modifica un registro, el hash no coincide |
 | Inmutabilidad BD | No repudio | Tabla consentimientos: no UPDATE, no DELETE. Ni con service_role |
 | Folio único | Trazabilidad | DL-{codigo}-{año}-{secuencial}. Verificable por cualquiera |
-| PDF constancia | Evidencia jurídica | PDF con todos los datos de firma depositado en Drive + enviado por email |
+| PDF constancia | Evidencia jurídica | PDF con todos los datos de firma enviado por email al firmante. Almacenado en Drive para auditoría interna (no accesible desde frontend) |
 | JWT + token_verificacion | Acceso al servicio | Acciones autenticadas requieren JWT válido; firma usa token_verificacion de OTP |
 
 ### Cumplimiento legal

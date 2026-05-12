@@ -156,8 +156,7 @@ esas o# VISTAS-FIRMA.md — Vistas de firma de consentimientos
  Fecha y hora: 10 de mayo de 2026, 11:45:23 PM (COT)
  IP: 190.xxx.xxx.xxx
 
- [Descargar constancia PDF]
- Se envió copia a juan.perez@email.com
+ Se envió copia de la constancia a juan.perez@email.com
 
 ╔══════════════════════════════════════════════════════════╗
 ║  DiversoLab · diversolab.org                             ║

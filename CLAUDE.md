@@ -54,9 +54,9 @@ diversolab-app/
     drive/                  ← servicio Drive (Codigo.gs, Auth.gs, Drive.gs, Supabase.gs)
   css/
     tokens.css              ← design system
-    componentes.css         ← botones, inputs, cards, badges
+    componentes.css         ← botones, inputs, cards, badges, toggles, búsqueda, chips
   js/
-    config.js               ← URLs Supabase + GAS (públicas)
+    config.js               ← URLs Supabase + GAS + Doc IDs (públicas)
     supabase-client.js      ← init Supabase + auth helpers
     gas-client.js           ← helpers para llamar servicios GAS
     utils.js                ← toasts, mensajes, validación, formato, helpers UI

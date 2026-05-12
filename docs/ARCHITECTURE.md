@@ -288,7 +288,11 @@ Firma electrónica de consentimientos y documentos. Servicio transversal reutili
 | verificarFirma | folio | { ok, datos_firma } |
 | obtenerDatosFirma | token (uuid tarea) | { ok, tarea_id, perfil_id, tipo_firma, firmante, programa, obligatorios } |
 
-**obtenerDatosFirma** — endpoint intermediario para la página standalone `/firma.html`. Consulta tareas y profiles con service_role (el frontend no tiene sesión Supabase en este flujo). Valida que la tarea exista, esté pendiente y sea tipo "consentimiento". Retorna datos del firmante y configuración de obligatorios desde `tarea.detalle` (JSON).
+**obtenerDatosFirma** — endpoint intermediario para la página standalone `/firma.html`. Consulta tareas y profiles con service_role (el frontend no tiene sesión Supabase en este flujo). Valida que la tarea exista, esté pendiente y sea tipo "consentimiento". Dual-path:
+- Si `tarea.perfil_id` existe → consulta perfil en BD y construye firmante desde perfil
+- Si `tarea.perfil_id` es null → lee `firmante_externo` del JSON en `tarea.detalle` (firma externa sin perfil)
+
+Retorna la misma estructura en ambos casos: `{ ok, tarea_id, perfil_id (o null), tipo_firma, firmante, programa, obligatorios }`.
 
 **Parámetros de firmar — dos líneas según tipo:**
 
@@ -302,7 +306,8 @@ Persona natural (beneficiario, contratista):
     "nombre": "Juan Pérez",
     "email": "juan@email.com",
     "tipo_documento": "CC",
-    "numero_documento": "1234567890"
+    "numero_documento": "1234567890",
+    "telefono": "+57 300 1111111"
   },
   "consentimientos": [...],
   "solicitado_por": "uuid-analista o null",
@@ -323,6 +328,7 @@ Persona jurídica (aliado, proveedor):
     "email": "arestrepo@empresa.com",
     "tipo_documento": "CC",
     "numero_documento": "9876543210",
+    "telefono": "+57 310 2222222",
     "cargo": "Representante Legal",
     "empresa": "Inclusión Total S.A.S.",
     "nit_empresa": "900123456-1"
@@ -360,11 +366,11 @@ Persona jurídica (aliado, proveedor):
 4. Valida que todos los consentimientos con es_obligatorio=true estén aceptados
 5. Por cada consentimiento: genera folio (DL-{codigo}-{año}-{secuencial}), genera hash SHA-256 (email + codigo + version + timestamp + ip)
 6. Escribe a Supabase tabla consentimientos (service_role) — un registro por consentimiento (aceptados Y rechazados)
-7. Genera PDF de constancia con todos los datos del firmante + tabla de consentimientos
-8. PDF diferenciado: persona natural muestra (nombre, documento, fecha, folio). Persona jurídica muestra (empresa, NIT, firmante, documento, cargo, fecha, folio)
-9. Sube PDF a Drive (carpeta del perfil si existe, o carpeta temporal de firmas)
+7. Genera PDF de constancia usando plantilla Google Docs (Script Property `DOC_ID_PLANTILLA_FIRMA`): makeCopy → replaceText placeholders → getAs PDF → trash copy
+8. PDF diferenciado: persona natural muestra (nombre, documento, teléfono, fecha, folio). Persona jurídica muestra (empresa, NIT, firmante, documento, cargo, teléfono, fecha, folio). Incluye tabla de decisiones C1-C7 con tipo OBLIGATORIO/VOLUNTARIO
+9. Sube PDF a Drive (carpeta del perfil si existe, o carpeta temporal de firmas) — solo almacenamiento interno, no accesible desde frontend
 10. Envía email al firmante con PDF adjunto
-11. Retorna { ok, folios: [...], pdf_url }
+11. Retorna { ok, folios: [...], pdf_url, resumen: [{codigo, decision, folio, hash}, ...] }
 
 ### GAS Drive (`gas/drive/`)
 
@@ -447,13 +453,15 @@ DiversoLab_Expedientes/
 
 ### Firma solicitada por analista
 
-1. Analista abre modal de solicitud de firma en /dashboard.html
-2. Llena: programa, firmante, email, documento, cuáles C3-C7 obligatorios
-3. Sistema crea tarea tipo "consentimiento" en Supabase
-4. GAS envía email al firmante con link: `/firma.html?token={uuid}`
-5. Firmante abre → ve los 7 consentimientos con obligatorios marcados
-6. Acepta → OTP → GAS Firma → constancia PDF → email confirmación
-7. Tarea se marca como completada
+1. Analista abre modal "Solicitar firma" en /dashboard.html
+2. Toggle: "Perfil existente" (búsqueda por nombre/email/doc con chip de selección) o "Externo" (formulario manual: tipo persona, nombre, apellido, documento, email, teléfono; si jurídica: empresa, NIT, cargo)
+3. Llena: programa, cuáles C3-C7 son obligatorios (C1+C2 siempre obligatorios)
+4. Sistema crea tarea tipo "consentimiento" en Supabase. Si externo: `perfil_id: null`, datos del firmante en `detalle.firmante_externo` (JSON)
+5. Email al firmante con link: `/firma.html?token={uuid}`
+6. Firmante abre → GAS obtenerDatosFirma resuelve datos (desde perfil o desde firmante_externo)
+7. Ve los 7 consentimientos con obligatorios marcados
+8. Acepta → OTP → GAS Firma → constancia PDF por email
+9. Tarea se marca como completada
 
 ---
 

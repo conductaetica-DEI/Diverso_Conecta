@@ -147,6 +147,24 @@ Afecta: mensajes de error de formularios (`.campo-mensaje-error`), secciones de 
 - Header: fondo --color-violeta, texto blanco, borde inferior --color-sol
 - Filas: hover fondo --color-sol-10
 - Bordes: 1px solid #f0ece0
+- Celdas compactas: `.tabla-celda-xs` (text-xs), `.tabla-celda-hash` (text-xs + word-break)
+
+### Toggle grupo
+- Contenedor flex con borde lavanda, overflow hidden, radius-sm
+- Botones: flex:1, font-titulos 700, text-sm, bg white, color muted
+- Activo (`.toggle-activo`): bg --color-sol, color --color-violeta
+- Hover: bg --color-sol-10
+
+### Búsqueda con resultados
+- Input de búsqueda estándar dentro de `.buscar-contenedor` (position relative)
+- Dropdown `.buscar-resultados`: absoluto debajo del input, bg white, borde lavanda, shadow-md, max-height 240px, z-index 10
+- Cada resultado: flex, nombre (bold violeta) + badge tipo + detalle (muted, font-datos text-xs)
+- Hover/focus: bg --color-sol-10
+- "Sin resultados": centrado, muted
+
+### Chip de selección
+- `.chip`: inline-flex, bg lavanda-10, borde lavanda, radius-full, font-cuerpo text-sm
+- Botón quitar (`.chip-quitar`): × sin fondo, hover coral con bg coral-10
 
 ---
 

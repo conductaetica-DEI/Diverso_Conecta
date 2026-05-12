@@ -110,7 +110,7 @@ Estos códigos se usan en `<select>` HTML, en `validar_documento()` (utils.js) y
 
 | Tipo | Convención | Ejemplo |
 |------|-----------|---------|
-| HTML pages | kebab-case en español | mi-expediente.html, solicitar-firma.html |
+| HTML pages | kebab-case en español | mi-expediente.html, firma.html |
 | CSS | kebab-case | tokens.css, componentes.css |
 | JS modules | kebab-case en español | supabase-client.js, gas-client.js |
 | GAS | PascalCase (requerido por GAS) | Codigo.gs, Otp.gs, Firma.gs |

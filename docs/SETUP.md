@@ -245,7 +245,9 @@ var CONFIG = {
   SUPABASE_ANON_KEY: 'sb_publishable_xxxx',  // publishable key (formato opaco, no JWT)
   GAS_OTP_URL: 'https://script.google.com/macros/s/xxxxx/exec',
   GAS_FIRMA_URL: 'https://script.google.com/macros/s/xxxxx/exec',
-  GAS_DRIVE_URL: 'https://script.google.com/macros/s/xxxxx/exec'
+  GAS_DRIVE_URL: 'https://script.google.com/macros/s/xxxxx/exec',
+  DOC_SICE_POL_01: 'GOOGLE_DOC_ID_sice_pol_01',
+  DOC_F_DATO_01: 'GOOGLE_DOC_ID_f_dato_01'
 };
 ```
 
